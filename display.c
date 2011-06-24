@@ -755,7 +755,7 @@ PyImaging_DrawWmf(PyObject* self, PyObject* args)
     int width, height;
     int x0, y0, x1, y1;
 
-    if (!PyArg_ParseTuple(args, "s#(ii)(iiii):_load", &data, &datasize,
+    if (!PyArg_ParseTuple(args, "y#(ii)(iiii):_load", &data, &datasize,
                           &width, &height, &x0, &x1, &y0, &y1))
         return NULL;
 
