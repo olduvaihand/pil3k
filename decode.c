@@ -211,8 +211,7 @@ statichere PyTypeObject ImagingDecoderType = {
     0,                               /* tp_weaklistoffset */
     0,                               /* tp_iter */
     0,                               /* tp_iternext */
-    methods,                         /* tp_methods */
-    0                                /* tp_members */
+    methods                          /* tp_methods */
 };
 
 /* -------------------------------------------------------------------- */
@@ -246,13 +245,13 @@ PyObject*
 PyImaging_BitDecoderNew(PyObject* self, PyObject* args)
 {
     ImagingDecoderObject* decoder;
-
     char* mode;
     int bits  = 8;
     int pad   = 8;
     int fill  = 0;
     int sign  = 0;
     int ystep = 1;
+
     if (!PyArg_ParseTuple(args, "s|iiiii", &mode, &bits, &pad, &fill,
                           &sign, &ystep))
         return NULL;
@@ -306,10 +305,10 @@ PyObject*
 PyImaging_GifDecoderNew(PyObject* self, PyObject* args)
 {
     ImagingDecoderObject* decoder;
-
     char* mode;
     int bits = 8;
     int interlace = 0;
+
     if (!PyArg_ParseTuple(args, "s|ii", &mode, &bits, &interlace))
         return NULL;
 
@@ -339,9 +338,9 @@ PyObject*
 PyImaging_HexDecoderNew(PyObject* self, PyObject* args)
 {
     ImagingDecoderObject* decoder;
-
     char* mode;
     char* rawmode;
+
     if (!PyArg_ParseTuple(args, "ss", &mode, &rawmode))
         return NULL;
 
@@ -366,10 +365,10 @@ PyObject*
 PyImaging_TiffLzwDecoderNew(PyObject* self, PyObject* args)
 {
     ImagingDecoderObject* decoder;
-
     char* mode;
     char* rawmode;
     int filter = 0;
+
     if (!PyArg_ParseTuple(args, "ss|i", &mode, &rawmode, &filter))
         return NULL;
 
@@ -418,9 +417,9 @@ PyObject*
 PyImaging_PackbitsDecoderNew(PyObject* self, PyObject* args)
 {
     ImagingDecoderObject* decoder;
-
     char* mode;
     char* rawmode;
+
     if (!PyArg_ParseTuple(args, "ss", &mode, &rawmode))
         return NULL;
 
@@ -468,10 +467,10 @@ PyObject*
 PyImaging_PcxDecoderNew(PyObject* self, PyObject* args)
 {
     ImagingDecoderObject* decoder;
-
     char* mode;
     char* rawmode;
     int stride;
+
     if (!PyArg_ParseTuple(args, "ssi", &mode, &rawmode, &stride))
         return NULL;
 
@@ -498,11 +497,11 @@ PyObject*
 PyImaging_RawDecoderNew(PyObject* self, PyObject* args)
 {
     ImagingDecoderObject* decoder;
-
     char* mode;
     char* rawmode;
     int stride = 0;
     int ystep  = 1;
+
     if (!PyArg_ParseTuple(args, "ss|ii", &mode, &rawmode, &stride, &ystep))
         return NULL;
 
@@ -531,9 +530,9 @@ PyObject*
 PyImaging_SunRleDecoderNew(PyObject* self, PyObject* args)
 {
     ImagingDecoderObject* decoder;
-
     char* mode;
     char* rawmode;
+
     if (!PyArg_ParseTuple(args, "ss", &mode, &rawmode))
         return NULL;
 
@@ -558,11 +557,11 @@ PyObject*
 PyImaging_TgaRleDecoderNew(PyObject* self, PyObject* args)
 {
     ImagingDecoderObject* decoder;
-
     char* mode;
     char* rawmode;
     int ystep = 1;
     int depth = 8;
+
     if (!PyArg_ParseTuple(args, "ss|ii", &mode, &rawmode, &ystep, &depth))
         return NULL;
 
@@ -616,10 +615,10 @@ PyObject*
 PyImaging_ZipDecoderNew(PyObject* self, PyObject* args)
 {
     ImagingDecoderObject* decoder;
-
     char* mode;
     char* rawmode;
     int interlaced = 0;
+
     if (!PyArg_ParseTuple(args, "ss|i", &mode, &rawmode, &interlaced))
         return NULL;
 
@@ -664,12 +663,12 @@ PyObject*
 PyImaging_JpegDecoderNew(PyObject* self, PyObject* args)
 {
     ImagingDecoderObject* decoder;
-
     char* mode;
     char* rawmode; /* what we wan't from the decoder */
     char* jpegmode; /* what's in the file */
     int scale = 1;
     int draft = 0;
+
     if (!PyArg_ParseTuple(args, "ssz|ii", &mode, &rawmode, &jpegmode,
                           &scale, &draft))
         return NULL;
