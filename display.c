@@ -204,14 +204,22 @@ _tostring(ImagingDisplayObject* display, PyObject* args)
 }
 
 static struct PyMethodDef methods[] = {
-    {"draw", (PyCFunction)_draw, 1, "doc string for draw"},
-    {"expose", (PyCFunction)_expose, 1, "doc string for expose"},
-    {"paste", (PyCFunction)_paste, 1, "doc string for paste"},
-    {"query_palette", (PyCFunction)_query_palette, 1, "doc string for query_palette"},
-    {"getdc", (PyCFunction)_getdc, 1, "doc string for getdc"},
-    {"releasedc", (PyCFunction)_releasedc, 1, "doc string for releasedc"},
-    {"fromstring", (PyCFunction)_fromstring, 1, "doc string for fromstring"},
-    {"tostring", (PyCFunction)_tostring, 1, "doc string for tostring"},
+    {"draw", (PyCFunction)_draw, METH_VARARGS,
+        "FIXME: draw doc string"},
+    {"expose", (PyCFunction)_expose, METH_VARARGS,
+        "FIXME: expose doc string"},
+    {"paste", (PyCFunction)_paste, METH_VARARGS,
+        "FIXME: paste doc string"},
+    {"query_palette", (PyCFunction)_query_palette, METH_VARARGS,
+        "FIXME: query_palette doc string"},
+    {"getdc", (PyCFunction)_getdc, METH_VARARGS,
+        "FIXME: getdc doc string"},
+    {"releasedc", (PyCFunction)_releasedc, METH_VARARGS,
+        "FIXME: releasedc doc string"},
+    {"fromstring", (PyCFunction)_fromstring, METH_VARARGS,
+        "FIXME: fromstring doc string"},
+    {"tostring", (PyCFunction)_tostring, METH_VARARGS,
+        "FIXME: tostring doc string"},
     {NULL, NULL, NULL, NULL} /* sentinel */
 };
 

@@ -172,16 +172,12 @@ _setimage(ImagingDecoderObject* decoder, PyObject* args)
 }
 
 static struct PyMethodDef methods[] = {
-    {"decode", (PyCFunction)_decode, 1, "FIXME: the decode doc string"},
-    {"setimage", (PyCFunction)_setimage, 1, "FIXME: the setimage doc string"},
+    {"decode", (PyCFunction)_decode, METH_VARARGS,
+        "FIXME: the decode doc string"},
+    {"setimage", (PyCFunction)_setimage, METH_VARARGS,
+        "FIXME: the setimage doc string"},
     {NULL, NULL, NULL, NULL}    /* sentinel */
 };
-
-static PyObject*  
-_getattro(ImagingDecoderObject* self, char* name)
-{
-    return Py_FindMethod(methods, (PyObject*) self, name);
-}
 
 statichere PyTypeObject ImagingDecoderType = {
     PyVarObject_HEAD_INIT(NULL, 0)
