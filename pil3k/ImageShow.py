@@ -96,7 +96,7 @@ if sys.platform == "win32":
     class WindowsViewer(Viewer):
         format = "BMP"
         def get_command(self, file, **options):
-            return "start /wait %s && del /f %s" % (file, file)
+            return "start /wait {0} && del /f {0}".format(file)
 
     register(WindowsViewer)
 
@@ -108,7 +108,7 @@ elif sys.platform == "darwin":
             # on darwin open returns immediately resulting in the temp
             # file removal while app is opening
             command = "open -a /Applications/Preview.app"
-            command = "(%s %s; sleep 20; rm -f %s)&" % (command, file, file)
+            command = "({0} {1}; sleep 20; rm -f {1})&".format(command, file)
             return command
 
     register(MacViewer)
@@ -131,7 +131,7 @@ else:
     class UnixViewer(Viewer):
         def show_file(self, file, **options):
             command, executable = self.get_command_ex(file, **options)
-            command = "(%s %s; rm -f %s)&" % (command, file, file)
+            command = "({0} {1}; rm -f {1})&".format(command, file)
             os.system(command)
             return 1
 
@@ -152,7 +152,7 @@ else:
             command = executable = "xv"
             if title:
                 # FIXME: do full escaping
-                command = command + " -name \"%s\"" % title
+                command = command + " -name \"{0}\"".format(title)
             return command, executable
 
     if which("xv"):
