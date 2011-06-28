@@ -112,7 +112,7 @@ def _save(im, fp, filename):
         rawmode, head = "RGB", "P6"
     else:
         raise IOError("cannot write mode {0} as PPM".format(im.mode))
-    fp.write(head + "\n%d %d\n" % im.size)
+    fp.write(head + "\n{0} {1}\n".format(*im.size))
     if head != "P4":
         fp.write("255\n")
     ImageFile._save(im, fp, [("raw", (0,0)+im.size, 0, (rawmode, 0, 1))])
