@@ -48,7 +48,7 @@ def raise_ioerror(error):
     except AttributeError:
         message = ERRORS.get(error)
     if not message:
-        message = "decoder error %d" % error
+        message = "decoder error {0}".format(error)
     raise IOError(message + " when reading image file")
 
 #
