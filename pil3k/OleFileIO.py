@@ -362,9 +362,9 @@ class OleFileIO:
     def _clsid(self, clsid):
         if clsid == "\0" * len(clsid):
             return ""
-        return (("%08X-%04X-%04X-%02X%02X-" + "%02X" * 6) %
-                ((i32(clsid, 0), i16(clsid, 4), i16(clsid, 6)) +
-                tuple(map(ord, clsid[8:16]))))
+        return "{0:08X}-{1:04X}-{2:04X}-{3:02X}{4:02X}-{5:02X}{6:02X}{7:02X}"\
+               "{8:02X}{9:02X}{10:02X}".format(i32(clsid, 0), i16(clsid, 4),
+               i16(clsid, 6), *tuple(map(ord, clsid[8:16])))
 
     def _list(self, files, prefix, node):
         # listdir helper
