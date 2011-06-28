@@ -38,8 +38,8 @@ class GbrImageFile(ImageFile.ImageFile):
 
         width = i32(self.fp.read(4))
         height = i32(self.fp.read(4))
-        bytes = i32(self.fp.read(4))
-        if width <= 0 or height <= 0 or bytes != 1:
+        nbytes = i32(self.fp.read(4))
+        if width <= 0 or height <= 0 or nbytes != 1:
             raise SyntaxError("not a GIMP brush")
 
         comment = self.fp.read(header_size - 20)[:-1]

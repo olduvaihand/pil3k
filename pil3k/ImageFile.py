@@ -243,7 +243,7 @@ class ImageFile(Image.Image):
     #     pass
 
     # may be defined for blocked formats (e.g. PNG)
-    # def load_read(self, bytes):
+    # def load_read(self, nbytes):
     #     pass
 
 ##
@@ -303,10 +303,10 @@ class _ParserFile(object):
             # force error in Image.open
             raise IOError("illegal argument to seek")
 
-    def read(self, bytes=0):
+    def read(self, nbytes=0):
         pos = self.offset
-        if bytes:
-            data = self.data[pos:pos+bytes]
+        if nbytes:
+            data = self.data[pos:pos+nbytes]
         else:
             data = self.data[pos:]
         self.offset = pos + len(data)

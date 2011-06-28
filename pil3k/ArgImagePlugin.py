@@ -24,7 +24,7 @@ import Image, ImageFile, ImagePalette
 
 from PngImagePlugin import i16, i32, ChunkStream, _MODES
 
-MAGIC = "\212ARG\r\n\032\n"
+MAGIC = b"\212ARG\r\n\032\n"
 
 # --------------------------------------------------------------------
 # ARG parser
@@ -37,7 +37,6 @@ class ArgStream(ChunkStream):
         ChunkStream.__init__(self, fp)
 
         self.eof = 0
-
         self.im = None
         self.palette = None
 
@@ -55,14 +54,14 @@ class ArgStream(ChunkStream):
         self.names = {}
 
 
-    def chunk_AHDR(self, offset, bytes):
+    def chunk_AHDR(self, offset, nbytes):
         "AHDR -- animation header"
 
         # assertions
         if self.count != 0:
             raise SyntaxError("misplaced AHDR chunk")
 
-        s = self.fp.read(bytes)
+        s = self.fp.read(nbytes)
         self.size = i32(s), i32(s[4:])
         try:
             self.mode, self.rawmode = _MODES[(ord(s[8]), ord(s[9]))]
@@ -75,7 +74,7 @@ class ArgStream(ChunkStream):
 
         return s
 
-    def chunk_AFRM(self, offset, bytes):
+    def chunk_AFRM(self, offset, nbytes):
         "AFRM -- next frame follows"
 
         # assertions
@@ -87,7 +86,7 @@ class ArgStream(ChunkStream):
         self.count = 1
         self.repair = None
 
-        s = self.fp.read(bytes)
+        s = self.fp.read(nbytes)
         if len(s) >= 2:
             self.id = i16(s)
             if len(s) >= 4:
@@ -102,7 +101,7 @@ class ArgStream(ChunkStream):
 
         return s
 
-    def chunk_ADEF(self, offset, bytes):
+    def chunk_ADEF(self, offset, nbytes):
         "ADEF -- store image"
 
         # assertions
@@ -114,7 +113,7 @@ class ArgStream(ChunkStream):
         self.count = 1
         self.repair = None
 
-        s = self.fp.read(bytes)
+        s = self.fp.read(nbytes)
         if len(s) >= 2:
             self.id = i16(s)
             if len(s) >= 4:
@@ -125,19 +124,19 @@ class ArgStream(ChunkStream):
 
         return s
 
-    def chunk_NAME(self, offset, bytes):
+    def chunk_NAME(self, offset, nbytes):
         "NAME -- name the current image"
 
         # assertions
         if self.count == 0:
             raise SyntaxError("misplaced NAME chunk")
 
-        name = self.fp.read(bytes)
+        name = self.fp.read(nbytes)
         self.names[self.id] = name
 
         return name
 
-    def chunk_AEND(self, offset, bytes):
+    def chunk_AEND(self, offset, nbytes):
         "AEND -- end of animation"
 
         if Image.DEBUG:
@@ -164,7 +163,7 @@ class ArgStream(ChunkStream):
 
         return size, mode, rawmode
 
-    def chunk_PAST(self, offset, bytes):
+    def chunk_PAST(self, offset, nbytes):
         "PAST -- paste one image into another"
 
         # assertions
@@ -183,7 +182,7 @@ class ArgStream(ChunkStream):
             self.images[self.id] = self.images[self.repair].copy()
             self.repair = None
 
-        s = self.fp.read(bytes)
+        s = self.fp.read(nbytes)
         im = self.images[i16(s)]
         x, y = i32(s[2:6]), i32(s[6:10])
         bbox = x, y, im.size[0]+x, im.size[1]+y
@@ -201,14 +200,14 @@ class ArgStream(ChunkStream):
 
         return s
 
-    def chunk_BLNK(self, offset, bytes):
+    def chunk_BLNK(self, offset, nbytes):
         "BLNK -- create blank image"
 
         # assertions
         if self.count == 0:
             raise SyntaxError("misplaced BLNK chunk")
 
-        s = self.fp.read(bytes)
+        s = self.fp.read(nbytes)
         size, mode, rawmode = self.__getmodesize(s, 0)
 
         # store image (FIXME: handle colour)
@@ -218,7 +217,7 @@ class ArgStream(ChunkStream):
 
         return s
 
-    def chunk_IHDR(self, offset, bytes):
+    def chunk_IHDR(self, offset, nbytes):
         "IHDR -- full image follows"
 
         # assertions
@@ -226,7 +225,7 @@ class ArgStream(ChunkStream):
             raise SyntaxError("misplaced IHDR chunk")
 
         # image header
-        s = self.fp.read(bytes)
+        s = self.fp.read(nbytes)
         size, mode, rawmode = self.__getmodesize(s)
 
         # decode and store image
@@ -238,14 +237,14 @@ class ArgStream(ChunkStream):
 
         return s
 
-    def chunk_DHDR(self, offset, bytes):
+    def chunk_DHDR(self, offset, nbytes):
         "DHDR -- delta image follows"
 
         # assertions
         if self.count == 0:
             raise SyntaxError("misplaced DHDR chunk")
 
-        s = self.fp.read(bytes)
+        s = self.fp.read(nbytes)
 
         size, mode, rawmode = self.__getmodesize(s)
 
@@ -271,7 +270,7 @@ class ArgStream(ChunkStream):
 
         return s
 
-    def chunk_JHDR(self, offset, bytes):
+    def chunk_JHDR(self, offset, nbytes):
         "JHDR -- JPEG image follows"
 
         # assertions
@@ -279,7 +278,7 @@ class ArgStream(ChunkStream):
             raise SyntaxError("misplaced JHDR chunk")
 
         # image header
-        s = self.fp.read(bytes)
+        s = self.fp.read(nbytes)
         size, mode, rawmode = self.__getmodesize(s, 0)
 
         # decode and store image
@@ -291,7 +290,7 @@ class ArgStream(ChunkStream):
 
         return s
 
-    def chunk_UHDR(self, offset, bytes):
+    def chunk_UHDR(self, offset, nbytes):
         "UHDR -- uncompressed image data follows (EXPERIMENTAL)"
 
         # assertions
@@ -299,7 +298,7 @@ class ArgStream(ChunkStream):
             raise SyntaxError("misplaced UHDR chunk")
 
         # image header
-        s = self.fp.read(bytes)
+        s = self.fp.read(nbytes)
         size, mode, rawmode = self.__getmodesize(s, 0)
 
         # decode and store image
@@ -311,11 +310,11 @@ class ArgStream(ChunkStream):
 
         return s
 
-    def chunk_IDAT(self, offset, bytes):
+    def chunk_IDAT(self, offset, nbytes):
         "IDAT -- image data block"
 
         # pass compressed chunks through the decoder
-        s = self.fp.read(bytes)
+        s = self.fp.read(nbytes)
         self.data = self.data + s
         n, e = self.decoder.decode(self.data)
         if n < 0:
@@ -327,16 +326,16 @@ class ArgStream(ChunkStream):
 
         return s
 
-    def chunk_DEND(self, offset, bytes):
-        return self.chunk_IEND(offset, bytes)
+    def chunk_DEND(self, offset, nbytes):
+        return self.chunk_IEND(offset, nbytes)
 
-    def chunk_JEND(self, offset, bytes):
-        return self.chunk_IEND(offset, bytes)
+    def chunk_JEND(self, offset, nbytes):
+        return self.chunk_IEND(offset, nbytes)
 
-    def chunk_UEND(self, offset, bytes):
-        return self.chunk_IEND(offset, bytes)
+    def chunk_UEND(self, offset, nbytes):
+        return self.chunk_IEND(offset, nbytes)
 
-    def chunk_IEND(self, offset, bytes):
+    def chunk_IEND(self, offset, nbytes):
         "IEND -- end of image"
 
         # we now have a new image.  carry out the operation
@@ -348,7 +347,7 @@ class ArgStream(ChunkStream):
 
         self.__store()
 
-        return self.fp.read(bytes)
+        return self.fp.read(nbytes)
 
     def __store(self):
 
@@ -374,21 +373,21 @@ class ArgStream(ChunkStream):
             self.im = self.images[self.id]
             raise EOFError() # end of this frame
 
-    def chunk_PLTE(self, offset, bytes):
+    def chunk_PLTE(self, offset, nbytes):
         "PLTE -- palette data"
 
-        s = self.fp.read(bytes)
+        s = self.fp.read(nbytes)
         if self.mode == "P":
             self.palette = ImagePalette.raw("RGB", s)
         return s
 
-    def chunk_sYNC(self, offset, bytes):
+    def chunk_sYNC(self, offset, nbytes):
         "SYNC -- reset decoder"
 
         if self.count != 0:
             raise SyntaxError("misplaced sYNC chunk")
 
-        s = self.fp.read(bytes)
+        s = self.fp.read(nbytes)
         self.__reset()
         return s
 
@@ -424,12 +423,12 @@ class ArgImageFile(ImageFile.ImageFile):
 
         # read and process the first chunk (AHDR)
 
-        cid, offset, bytes = self.arg.read()
+        cid, offset, nbytes = self.arg.read()
 
         if cid != "AHDR":
             raise SyntaxError("expected an AHDR chunk")
 
-        s = self.arg.call(cid, offset, bytes)
+        s = self.arg.call(cid, offset, nbytes)
 
         self.arg.crc(cid, s)
 
@@ -461,21 +460,21 @@ class ArgImageFile(ImageFile.ImageFile):
             #
             # process chunks
 
-            cid, offset, bytes = self.arg.read()
+            cid, offset, nbytes = self.arg.read()
 
             if self.arg.eof:
                 raise EOFError("end of animation")
 
             try:
-                s = self.arg.call(cid, offset, bytes)
+                s = self.arg.call(cid, offset, nbytes)
             except EOFError:
                 break
 
             # FIXME: string exception
             except "glurk": # AttributeError
                 if Image.DEBUG:
-                    print(cid, bytes, "(unknown)")
-                s = self.fp.read(bytes)
+                    print(cid, nbytes, "(unknown)")
+                s = self.fp.read(nbytes)
 
             self.arg.crc(cid, s)
 
