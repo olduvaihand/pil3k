@@ -37,12 +37,12 @@ import StringIO
 #  5. page contents
 
 def _obj(fp, obj, **dict):
-    fp.write("%d 0 obj\n" % obj)
+    fp.write("{0} 0 obj\n".format(obj))
     if dict:
         fp.write("<<\n")
         for k, v in dict.items():
             if v is not None:
-                fp.write("/%s %s\n" % (k, v))
+                fp.write("/{0} {1}\n".format(k, v))
         fp.write(">>\n")
 
 def _endobj(fp):
@@ -82,7 +82,7 @@ def _save(im, fp, filename):
         bits = 1
     elif im.mode == "L":
         filter = "/DCTDecode"
-        # params = "<< /Predictor 15 /Columns %d >>" % (width-2)
+        # params = "<< /Predictor 15 /Columns {0} >>".format(width-2)
         colorspace = "/DeviceGray"
         procset = "/ImageB" # grayscale
     elif im.mode == "P":
@@ -93,7 +93,7 @@ def _save(im, fp, filename):
             r = ord(palette[i*3])
             g = ord(palette[i*3+1])
             b = ord(palette[i*3+2])
-            colorspace = colorspace + "%02x%02x%02x " % (r, g, b)
+            colorspace = colorspace + "{0:02x}{1:02x}{2:02x} ".format(r, g, b)
         colorspace = colorspace + "> ]"
         procset = "/ImageI" # indexed color
     elif im.mode == "RGB":
@@ -168,11 +168,17 @@ def _save(im, fp, filename):
 
     xref[4] = fp.tell()
     _obj(fp, 4)
-    fp.write("<<\n/Type /Page\n/Parent 2 0 R\n"\
-             "/Resources <<\n/ProcSet [ /PDF %s ]\n"\
-             "/XObject << /image 3 0 R >>\n>>\n"\
-             "/MediaBox [ 0 0 %d %d ]\n/Contents 5 0 R\n>>\n" %\
-             (procset, int(width * 72.0 /resolution) , int(height * 72.0 / resolution)))
+    fp.write("<<\n"\
+             "/Type /Page\n"\
+             "/Parent 2 0 R\n"\
+             "/Resources <<\n"\
+             "/ProcSet [ /PDF {0} ]\n"\
+             "/XObject << /image 3 0 R >>\n"\
+             ">>\n"\
+             "/MediaBox [ 0 0 {1} {2} ]\n"\
+             "/Contents 5 0 R\n"\
+             ">>\n".format(procset, int(width*72.0/resolution),
+                 int(height*72.0/resolution)))
     _endobj(fp)
 
     #
@@ -180,7 +186,8 @@ def _save(im, fp, filename):
 
     op = StringIO.StringIO()
 
-    op.write("q %d 0 0 %d 0 0 cm /image Do Q\n" % (int(width * 72.0 / resolution), int(height * 72.0 / resolution)))
+    op.write("q {0} 0 0 {1} 0 0 cm /image Do Q\n".format(
+        int(width*72.0/resolution), int(height*72.0/resolution)))
 
     xref[5] = fp.tell()
     _obj(fp, 5, Length = len(op.getvalue()))
@@ -194,11 +201,11 @@ def _save(im, fp, filename):
     #
     # trailer
     startxref = fp.tell()
-    fp.write("xref\n0 %d\n0000000000 65535 f \n" % len(xref))
+    fp.write("xref\n0 {0}\n0000000000 65535 f \n".format(len(xref)))
     for x in xref[1:]:
-        fp.write("%010d 00000 n \n" % x)
-    fp.write("trailer\n<<\n/Size %d\n/Root 1 0 R\n>>\n" % len(xref))
-    fp.write("startxref\n%d\n%%%%EOF\n" % startxref)
+        fp.write("{0:010d} 00000 n \n".format(x))
+    fp.write("trailer\n<<\n/Size {0}\n/Root 1 0 R\n>>\n".format(len(xref)))
+    fp.write("startxref\n{0}\n%%%%EOF\n".format(startxref))
     fp.flush()
 
 #
