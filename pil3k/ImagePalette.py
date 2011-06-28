@@ -79,11 +79,11 @@ class ImagePalette:
         if type(fp) == type(""):
             fp = open(fp, "w")
         fp.write("# Palette\n")
-        fp.write("# Mode: %s\n" % self.mode)
+        fp.write("# Mode: {0}\n".format(self.mode))
         for i in range(256):
-            fp.write("%d" % i)
+            fp.write("{0}".format(i))
             for j in range(i, len(self.palette), 256):
-                fp.write(" %d" % self.palette[j])
+                fp.write(" {0}".format(self.palette[j]))
             fp.write("\n")
         fp.close()
 
