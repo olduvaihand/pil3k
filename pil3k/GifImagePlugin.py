@@ -311,9 +311,9 @@ def _save_netpbm(im, fp, filename):
     import os
     file = im._dump()
     if im.mode != "RGB":
-        os.system("ppmtogif %s >%s" % (file, filename))
+        os.system("ppmtogif {0} > {1}".format(file, filename))
     else:
-        os.system("ppmquant 256 %s | ppmtogif >%s" % (file, filename))
+        os.system("ppmquant 256 {0} | ppmtogif > {1}".format(file, filename))
     try:
         os.unlink(file)
     except:
