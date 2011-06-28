@@ -505,10 +505,9 @@ class Image:
         return file
 
     def __repr__(self):
-        return "<%s.%s image mode=%s size=%dx%d at 0x%X>" % (
+        return "<{0}.{1} image mode={2} size={3[0]}x{3[1]} at 0x{4:X}>".format(
             self.__class__.__module__, self.__class__.__name__,
-            self.mode, self.size[0], self.size[1],
-            id(self)
+            self.mode, self.size, id(self)
             )
 
     def __getattr__(self, name):
@@ -574,9 +573,11 @@ class Image:
         if self.mode != "1":
             raise ValueError("not a bitmap")
         data = self.tostring("xbm")
-        return string.join(["#define %s_width %d\n" % (name, self.size[0]),
-                "#define %s_height %d\n"% (name, self.size[1]),
-                "static char %s_bits[] = {\n" % name, data, "};"], "")
+        return "#define {name}_width {size[0]}\n"\
+               "#define {name}_height {size[1]}\n"\
+               "static char {name}_bits[] = {{\n"\
+               "{data}"\
+               "}};".format(name=name, size=self.size, data=data)
 
     ##
     # Loads this image with pixel data from a string.
