@@ -319,7 +319,7 @@ def _save(im, fp, filename, eps=1):
         fp.write("%%EndComments\n")
         fp.write("%%Page: 1 1\n")
         fp.write("%%ImageData: {0[0]} {0[1]}".format(im.size))
-        fp.write("{0[0]} {0[1]} 0 1 1 \"{0[2]}\"\n" % operator)
+        fp.write("{0[0]} {0[1]} 0 1 1 \"{0[2]}\"\n".format(operator))
 
     #
     # image header
