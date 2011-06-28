@@ -69,7 +69,7 @@ class GifImageFile(ImageFile.ImageFile):
         # Screen
         s = self.fp.read(13)
         if s[:6] not in ["GIF87a", "GIF89a"]:
-            raise SyntaxError, "not a GIF file"
+            raise SyntaxError("not a GIF file")
 
         self.info["version"] = s[:6]
 
@@ -106,7 +106,7 @@ class GifImageFile(ImageFile.ImageFile):
             self.__fp.seek(self.__rewind)
 
         if frame != self.__frame + 1:
-            raise ValueError, "cannot seek to frame %d" % frame
+            raise ValueError("cannot seek to frame {0}".format(frame))
         self.__frame = frame
 
         self.tile = []
@@ -197,11 +197,11 @@ class GifImageFile(ImageFile.ImageFile):
 
             else:
                 pass
-                # raise IOError, "illegal GIF tag `%x`" % ord(s)
+                # raise IOError("illegal GIF tag `{0:}x`".format(ord(s))
 
         if not self.tile:
             # self.__fp = None
-            raise EOFError, "no more images in GIF file"
+            raise EOFError("no more images in GIF file")
 
         self.mode = "L"
         if self.palette:
@@ -298,7 +298,8 @@ def _save(im, fp, filename):
 
     try:
         fp.flush()
-    except: pass
+    except:
+        pass
 
 def _save_netpbm(im, fp, filename):
 
@@ -313,8 +314,10 @@ def _save_netpbm(im, fp, filename):
         os.system("ppmtogif %s >%s" % (file, filename))
     else:
         os.system("ppmquant 256 %s | ppmtogif >%s" % (file, filename))
-    try: os.unlink(file)
-    except: pass
+    try:
+        os.unlink(file)
+    except:
+        pass
 
 
 # --------------------------------------------------------------------

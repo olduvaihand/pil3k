@@ -74,7 +74,7 @@ class Viewer:
         return self.format
 
     def get_command(self, file, **options):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def save_image(self, image):
         # save to temporary file, and return filename
@@ -160,4 +160,4 @@ else:
 
 if __name__ == "__main__":
     # usage: python ImageShow.py imagefile [title]
-    print show(Image.open(sys.argv[1]), *sys.argv[2:])
+    print(show(Image.open(sys.argv[1]), *sys.argv[2:]))

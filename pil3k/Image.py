@@ -54,7 +54,7 @@ try:
     import _imaging
     core = _imaging
     del _imaging
-except ImportError, v:
+except ImportError as v:
     core = _imaging_not_installed()
     if str(v)[:20] == "Module use of python" and warnings:
         # The _imaging C module is present, but not compiled for
@@ -357,8 +357,8 @@ def init():
                         del sys.path[0]
                 except ImportError:
                     if DEBUG:
-                        print "Image: failed to import",
-                        print f, ":", sys.exc_value
+                        print("Image: failed to import", end=" ")
+                        print(f, ":", sys.exc_value)
         visited[fullpath] = None
 
     if OPEN or SAVE:
@@ -379,10 +379,10 @@ def _getdecoder(mode, decoder_name, args, extra=()):
     try:
         # get decoder
         decoder = getattr(core, decoder_name + "_decoder")
-        # print decoder, (mode,) + args + extra
+        # print(decoder, (mode,) + args + extra)
         return apply(decoder, (mode,) + args + extra)
     except AttributeError:
-        raise IOError("decoder %s not available" % decoder_name)
+        raise IOError("decoder {0} not available".format(decoder_name))
 
 def _getencoder(mode, encoder_name, args, extra=()):
 
@@ -395,20 +395,29 @@ def _getencoder(mode, encoder_name, args, extra=()):
     try:
         # get encoder
         encoder = getattr(core, encoder_name + "_encoder")
-        # print encoder, (mode,) + args + extra
+        # print(encoder, (mode,) + args + extra)
         return apply(encoder, (mode,) + args + extra)
     except AttributeError:
-        raise IOError("encoder %s not available" % encoder_name)
+        raise IOError("encoder {0} not available".format(encoder_name))
 
 
 # --------------------------------------------------------------------
 # Simple expression analyzer
 
 class _E:
-    def __init__(self, data): self.data = data
-    def __coerce__(self, other): return self, _E(other)
-    def __add__(self, other): return _E((self.data, "__add__", other.data))
-    def __mul__(self, other): return _E((self.data, "__mul__", other.data))
+
+    def __init__(self, data):
+        self.data = data
+
+    def __coerce__(self, other):
+        return self, _E(other)
+
+    def __add__(self, other):
+        return _E((self.data, "__add__", other.data))
+
+    def __mul__(self, other):
+        return _E((self.data, "__mul__", other.data))
+
 
 def _getscaleoffset(expr):
     stub = ["stub"]
@@ -419,13 +428,15 @@ def _getscaleoffset(expr):
             return c, 0.0
         if (a is stub and b == "__add__" and isNumberType(c)):
             return 1.0, c
-    except TypeError: pass
+    except TypeError:
+        pass
     try:
         ((a, b, c), d, e) = data # full syntax
         if (a is stub and b == "__mul__" and isNumberType(c) and
             d == "__add__" and isNumberType(e)):
             return c, e
-    except TypeError: pass
+    except TypeError:
+        pass
     raise ValueError("illegal expression")
 
 
@@ -544,7 +555,7 @@ class Image:
             if s:
                 break
         if s < 0:
-            raise RuntimeError("encoder error %d in tostring" % s)
+            raise RuntimeError("encoder error {0} in tostring".format(s))
 
         return string.join(data, "")
 
@@ -1164,7 +1175,7 @@ class Image:
                     # do things the hard way
                     im = self.im.convert(mode)
                     if im.mode not in ("LA", "RGBA"):
-                        raise ValueError # sanity check
+                        raise ValueError() # sanity check
                     self.im = im
                 self.mode = self.im.mode
             except (KeyError, ValueError):
@@ -1461,7 +1472,7 @@ class Image:
 
         # overridden by file handlers
         if frame != 0:
-            raise EOFError
+            raise EOFError()
 
     ##
     # Displays this image. This method is mainly intended for
@@ -1882,7 +1893,7 @@ def fromarray(obj, mode=None):
             typekey = (1, 1) + shape[2:], arr['typestr']
             mode, rawmode = _fromarray_typemap[typekey]
         except KeyError:
-            # print typekey
+            # print(typekey)
             raise TypeError("Cannot handle this data type")
     else:
         rawmode = mode

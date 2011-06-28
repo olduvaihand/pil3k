@@ -381,10 +381,10 @@ if __name__ == "__main__":
     # create font data chunk for embedding
     import base64, os, sys
     font = "../Images/courB08"
-    print "    f._load_pilfont_data("
-    print "         # %s" % os.path.basename(font)
-    print "         StringIO(base64.decodestring('''"
+    print("    f._load_pilfont_data(")
+    print("         # %s" % os.path.basename(font))
+    print("         StringIO(base64.decodestring('''")
     base64.encode(open(font + ".pil", "rb"), sys.stdout)
-    print "''')), Image.open(StringIO(base64.decodestring('''"
+    print("''')), Image.open(StringIO(base64.decodestring('''")
     base64.encode(open(font + ".pbm", "rb"), sys.stdout)
-    print "'''))))"
+    print("'''))))")

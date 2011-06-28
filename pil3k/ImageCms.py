@@ -292,7 +292,7 @@ def profileToProfile(im, inputProfile, outputProfile, renderingIntent=INTENT_PER
         raise PyCMSError("renderingIntent must be an integer between 0 and 3")
 
     if type(flags) != type(1) or not (0 <= flags <= _MAX_FLAG):
-        raise PyCMSError("flags must be an integer between 0 and %s" + _MAX_FLAG)
+        raise PyCMSError("flags must be an integer between 0 and {0}".format(_MAX_FLAG))
 
     try:
         if not isinstance(inputProfile, ImageCmsProfile):
@@ -307,7 +307,7 @@ def profileToProfile(im, inputProfile, outputProfile, renderingIntent=INTENT_PER
             imOut = None
         else:
             imOut = transform.apply(im)
-    except (IOError, TypeError, ValueError), v:
+    except (IOError, TypeError, ValueError) as v:
         raise PyCMSError(v)
 
     return imOut
@@ -334,7 +334,7 @@ def getOpenProfile(profileFilename):
 
     try:
         return ImageCmsProfile(profileFilename)
-    except (IOError, TypeError, ValueError), v:
+    except (IOError, TypeError, ValueError) as v:
         raise PyCMSError(v)
 
 ##
@@ -400,7 +400,7 @@ def buildTransform(inputProfile, outputProfile, inMode, outMode, renderingIntent
         raise PyCMSError("renderingIntent must be an integer between 0 and 3")
 
     if type(flags) != type(1) or not (0 <= flags <= _MAX_FLAG):
-        raise PyCMSError("flags must be an integer between 0 and %s" + _MAX_FLAG)
+        raise PyCMSError("flags must be an integer between 0 and {0}".format(_MAX_FLAG))
 
     try:
         if not isinstance(inputProfile, ImageCmsProfile):
@@ -408,7 +408,7 @@ def buildTransform(inputProfile, outputProfile, inMode, outMode, renderingIntent
         if not isinstance(outputProfile, ImageCmsProfile):
             outputProfile = ImageCmsProfile(outputProfile)
         return ImageCmsTransform(inputProfile, outputProfile, inMode, outMode, renderingIntent, flags=flags)
-    except (IOError, TypeError, ValueError), v:
+    except (IOError, TypeError, ValueError) as v:
         raise PyCMSError(v)
 
 ##
@@ -491,7 +491,7 @@ def buildProofTransform(inputProfile, outputProfile, proofProfile, inMode, outMo
         raise PyCMSError("renderingIntent must be an integer between 0 and 3")
 
     if type(flags) != type(1) or not (0 <= flags <= _MAX_FLAG):
-        raise PyCMSError("flags must be an integer between 0 and %s" + _MAX_FLAG)
+        raise PyCMSError("flags must be an integer between 0 and {0}".format(_MAX_FLAG))
 
     try:
         if not isinstance(inputProfile, ImageCmsProfile):
@@ -501,7 +501,7 @@ def buildProofTransform(inputProfile, outputProfile, proofProfile, inMode, outMo
         if not isinstance(proofProfile, ImageCmsProfile):
             proofProfile = ImageCmsProfile(proofProfile)
         return ImageCmsTransform(inputProfile, outputProfile, inMode, outMode, renderingIntent, proofProfile, proofRenderingIntent, flags)
-    except (IOError, TypeError, ValueError), v:
+    except (IOError, TypeError, ValueError) as v:
         raise PyCMSError(v)
 
 buildTransformFromOpenProfiles = buildTransform
@@ -557,7 +557,7 @@ def applyTransform(im, transform, inPlace=0):
             imOut = None
         else:
             imOut = transform.apply(im)
-    except (TypeError, ValueError), v:
+    except (TypeError, ValueError) as v:
         raise PyCMSError(v)
 
     return imOut
@@ -592,17 +592,19 @@ def createProfile(colorSpace, colorTemp=-1):
 
     """
     if colorSpace not in ["LAB", "XYZ", "sRGB"]:
-        raise PyCMSError("Color space not supported for on-the-fly profile creation (%s)" % colorSpace)
+        raise PyCMSError("Color space not supported for on-the-fly profile "
+            "creation ({0})".format(colorSpace))
 
     if colorSpace == "LAB":
         if type(colorTemp) == type(5000.0):
             colorTemp = int(colorTemp + 0.5)
         if type (colorTemp) != type (5000):
-            raise PyCMSError("Color temperature must be a positive integer, \"%s\" not valid" % colorTemp)
+            raise PyCMSError("Color temperature must be a positive integer, "
+                "\"{0}\" not valid".format(colorTemp))
 
     try:
         return core.createProfile(colorSpace, colorTemp)
-    except (TypeError, ValueError), v:
+    except (TypeError, ValueError) as v:
         raise PyCMSError(v)
 
 ##
@@ -633,7 +635,7 @@ def getProfileName(profile):
         if not isinstance(profile, ImageCmsProfile):
             profile = ImageCmsProfile(profile)
         return profile.profile.product_name + "\n"
-    except (AttributeError, IOError, TypeError, ValueError), v:
+    except (AttributeError, IOError, TypeError, ValueError) as v:
         raise PyCMSError(v)
 
 ##
@@ -665,7 +667,7 @@ def getProfileInfo(profile):
             profile = ImageCmsProfile(profile)
         # add an extra newline to preserve pyCMS compatibility
         return profile.product_info + "\n"
-    except (AttributeError, IOError, TypeError, ValueError), v:
+    except (AttributeError, IOError, TypeError, ValueError) as v:
         raise PyCMSError(v)
 
 ##
@@ -703,7 +705,7 @@ def getDefaultIntent(profile):
         if not isinstance(profile, ImageCmsProfile):
             profile = ImageCmsProfile(profile)
         return profile.profile.rendering_intent
-    except (AttributeError, IOError, TypeError, ValueError), v:
+    except (AttributeError, IOError, TypeError, ValueError) as v:
         raise PyCMSError(v)
 
 ##
@@ -752,7 +754,7 @@ def isIntentSupported(profile, intent, direction):
             return 1
         else:
             return -1
-    except (AttributeError, IOError, TypeError, ValueError), v:
+    except (AttributeError, IOError, TypeError, ValueError) as v:
         raise PyCMSError(v)
 
 ##
@@ -771,16 +773,16 @@ if __name__ == "__main__":
 
     import ImageCms
     import string
-    print __doc__
+    print(__doc__)
 
     for f in dir(pyCMS):
-        print "="*80
-        print "%s" %f
+        print("="*80)
+        print("{0}".format(f))
 
         try:
             exec ("doc = ImageCms.%s.__doc__" %(f))
             if string.find(doc, "pyCMS") >= 0:
                 # so we don't get the __doc__ string for imported modules
-                print doc
+                print(doc)
         except AttributeError:
             pass

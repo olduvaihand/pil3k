@@ -96,7 +96,7 @@ class ChunkStream:
             len = i32(s)
 
         if not is_cid(cid):
-            raise SyntaxError, "broken PNG file (chunk %s)" % repr(cid)
+            raise SyntaxError("broken PNG file (chunk {0:r})".format(cid))
 
         return cid, pos, len
 
@@ -111,7 +111,7 @@ class ChunkStream:
         "Call the appropriate chunk handler"
 
         if Image.DEBUG:
-            print "STREAM", cid, pos, len
+            print("STREAM", cid, pos, len)
         return getattr(self, "chunk_" + cid)(pos, len)
 
     def crc(self, cid, data):
@@ -120,8 +120,8 @@ class ChunkStream:
         crc1 = Image.core.crc32(data, Image.core.crc32(cid))
         crc2 = i16(self.fp.read(2)), i16(self.fp.read(2))
         if crc1 != crc2:
-            raise SyntaxError, "broken PNG file"\
-                "(bad header checksum in %s)" % cid
+            raise SyntaxError("broken PNG file "
+                "(bad header checksum in {0})".format(cid))
 
     def crc_skip(self, cid, data):
         "Read checksum.  Used if the C module is not present"
@@ -191,11 +191,12 @@ class PngStream(ChunkStream):
         # Compressed profile    n bytes (zlib with deflate compression)
         i = string.find(s, chr(0))
         if Image.DEBUG:
-            print "iCCP profile name", s[:i]
-            print "Compression method", ord(s[i])
+            print("iCCP profile name", s[:i])
+            print("Compression method", ord(s[i]))
         comp_method = ord(s[i])
         if comp_method != 0:
-            raise SyntaxError("Unknown compression method %s in iCCP chunk" % comp_method)
+            raise SyntaxError("Unknown compression method {0} in iCCP "
+                "chunk".format(comp_method))
         try:
             icc_profile = zlib.decompress(s[i+2:])
         except zlib.error:
@@ -215,7 +216,7 @@ class PngStream(ChunkStream):
         if ord(s[12]):
             self.im_info["interlace"] = 1
         if ord(s[11]):
-            raise SyntaxError, "unknown filter category"
+            raise SyntaxError("unknown filter category")
         return s
 
     def chunk_IDAT(self, pos, len):
@@ -223,12 +224,12 @@ class PngStream(ChunkStream):
         # image data
         self.im_tile = [("zip", (0,0)+self.im_size, pos, self.im_rawmode)]
         self.im_idat = len
-        raise EOFError
+        raise EOFError()
 
     def chunk_IEND(self, pos, len):
 
         # end of PNG image
-        raise EOFError
+        raise EOFError()
 
     def chunk_PLTE(self, pos, len):
 
@@ -291,7 +292,8 @@ class PngStream(ChunkStream):
         k, v = string.split(s, "\0", 1)
         comp_method = ord(v[0])
         if comp_method != 0:
-            raise SyntaxError("Unknown compression method %s in zTXt chunk" % comp_method)
+            raise SyntaxError("Unknown compression method {0} in zTXt "
+                "chunk".format(comp_method))
         import zlib
         self.im_info[k] = self.im_text[k] = zlib.decompress(v[1:])
         return s
@@ -313,7 +315,7 @@ class PngImageFile(ImageFile.ImageFile):
     def _open(self):
 
         if self.fp.read(8) != _MAGIC:
-            raise SyntaxError, "not a PNG file"
+            raise SyntaxError("not a PNG file")
 
         #
         # Parse headers up to the first IDAT chunk
@@ -333,7 +335,7 @@ class PngImageFile(ImageFile.ImageFile):
                 break
             except AttributeError:
                 if Image.DEBUG:
-                    print cid, pos, len, "(unknown)"
+                    print(cid, pos, len, "(unknown)")
                 s = ImageFile._safe_read(self.fp, len)
 
             self.png.crc(cid, s)
@@ -503,7 +505,7 @@ def _save(im, fp, filename, chunk=putchunk, check=0):
     try:
         rawmode, mode = _OUTMODES[mode]
     except KeyError:
-        raise IOError, "cannot write mode %s as PNG" % mode
+        raise IOError("cannot write mode {0} as PNG".format(mode))
 
     if check:
         return check

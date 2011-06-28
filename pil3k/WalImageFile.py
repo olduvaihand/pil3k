@@ -122,5 +122,5 @@ quake2palette = (
 
 if __name__ == "__main__":
     im = open("../hacks/sample.wal")
-    print im.info, im.mode, im.size
+    print(im.info, im.mode, im.size)
     im.save("../out.png")

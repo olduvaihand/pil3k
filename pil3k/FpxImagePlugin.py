@@ -60,10 +60,10 @@ class FpxImageFile(ImageFile.ImageFile):
         try:
             self.ole = OleFileIO(self.fp)
         except IOError:
-            raise SyntaxError, "not an FPX file; invalid OLE file"
+            raise SyntaxError("not an FPX file; invalid OLE file")
 
         if self.ole.root.clsid != "56616700-C154-11CE-8553-00AA00A1F95B":
-            raise SyntaxError, "not an FPX file; bad root CLSID"
+            raise SyntaxError("not an FPX file; bad root CLSID")
 
         self._open_index(1)
 
@@ -111,7 +111,7 @@ class FpxImageFile(ImageFile.ImageFile):
             if prop.has_key(id):
                 self.jpeg[i] = prop[id]
 
-        # print len(self.jpeg), "tables loaded"
+        # print(len(self.jpeg), "tables loaded")
 
         self._open_subimage(1, self.maxid)
 
@@ -140,10 +140,10 @@ class FpxImageFile(ImageFile.ImageFile):
         offset = i32(s, 28)
         length = i32(s, 32)
 
-        # print size, self.mode, self.rawmode
+        # print(size, self.mode, self.rawmode)
 
         if size != self.size:
-            raise IOError, "subimage mismatch"
+            raise IOError("subimage mismatch")
 
         # get tile descriptors
         fp.seek(28 + offset)
@@ -198,7 +198,7 @@ class FpxImageFile(ImageFile.ImageFile):
                     self.tile_prefix = self.jpeg[jpeg_tables]
 
             else:
-                raise IOError, "unknown/invalid compression"
+                raise IOError("unknown/invalid compression")
 
             x = x + xtile
             if x >= xsize:

@@ -158,7 +158,7 @@ def _save(im, fp, filename, check=0):
 
     else:
 
-        raise IOError, "cannot write mode %s as Palm" % im.mode
+        raise IOError("cannot write mode {0} as Palm".format(im.mode))
 
     if check:
         return check

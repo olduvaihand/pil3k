@@ -44,8 +44,8 @@ def i(c):
 
 def dump(c):
     for i in c:
-        print "%02x" % ord(i),
-    print
+        print("{0:02x}".format(ord(i),), end=" ")
+    print("\n")
 
 ##
 # Image plugin for IPTC/NAA datastreams.  To read IPTC/NAA fields
@@ -70,12 +70,12 @@ class IptcImageFile(ImageFile.ImageFile):
 
         # syntax
         if ord(s[0]) != 0x1C or tag[0] < 1 or tag[0] > 9:
-            raise SyntaxError, "invalid IPTC/NAA file"
+            raise SyntaxError("invalid IPTC/NAA file")
 
         # field size
         size = ord(s[3])
         if size > 132:
-            raise IOError, "illegal field length in IPTC/NAA file"
+            raise IOError("illegal field length in IPTC/NAA file")
         elif size == 128:
             size = 0
         elif size > 128:
@@ -127,7 +127,7 @@ class IptcImageFile(ImageFile.ImageFile):
             else:
                 self.info[tag] = tagdata
 
-            # print tag, self.info[tag]
+            # print(tag, self.info[tag])
 
         # mode
         layers = ord(self.info[(3,60)][0])
@@ -150,7 +150,7 @@ class IptcImageFile(ImageFile.ImageFile):
         try:
             compression = COMPRESSION[self.getint((3,120))]
         except KeyError:
-            raise IOError, "Unknown IPTC image compression"
+            raise IOError("Unknown IPTC image compression")
 
         # tile
         if tag == (8,10):
@@ -201,8 +201,10 @@ class IptcImageFile(ImageFile.ImageFile):
                 im.load()
                 self.im = im.im
         finally:
-            try: os.unlink(outfile)
-            except: pass
+            try:
+                os.unlink(outfile)
+            except:
+                pass
 
 
 Image.register_open("IPTC", IptcImageFile)

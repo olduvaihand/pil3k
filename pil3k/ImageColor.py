@@ -94,7 +94,7 @@ def getrgb(color):
             int(rgb[1] * 255 + 0.5),
             int(rgb[2] * 255 + 0.5)
             )
-    raise ValueError("unknown color specifier: %r" % color)
+    raise ValueError("unknown color specifier: {0:r}".format(color))
 
 def getcolor(color, mode):
     # same as getrgb, but converts the result to the given mode

@@ -132,7 +132,7 @@ def SOF(self, marker):
 
     self.bits = ord(s[0])
     if self.bits != 8:
-        raise SyntaxError("cannot handle %d-bit layers" % self.bits)
+        raise SyntaxError("cannot handle {0}-bit layers".format(self.bits))
 
     self.layers = ord(s[5])
     if self.layers == 1:
@@ -142,7 +142,7 @@ def SOF(self, marker):
     elif self.layers == 4:
         self.mode = "CMYK"
     else:
-        raise SyntaxError("cannot handle %d-layer images" % self.layers)
+        raise SyntaxError("cannot handle {0}-layer images".format(self.layers))
 
     if marker in [0xFFC2, 0xFFC6, 0xFFCA, 0xFFCE]:
         self.info["progressive"] = self.info["progression"] = 1
@@ -185,7 +185,7 @@ def DQT(self, marker):
             s = s[65:]
         else:
             return # FIXME: add code to read 16-bit tables!
-            # raise SyntaxError, "bad quantization table element size"
+            # raise SyntaxError("bad quantization table element size")
 
 
 #
@@ -296,7 +296,7 @@ class JpegImageFile(ImageFile.ImageFile):
 
             if MARKER.has_key(i):
                 name, description, handler = MARKER[i]
-                # print hex(i), name, description
+                # print(hex(i), name, description)
                 if handler is not None:
                     handler(self, i)
                 if i == 0xFFDA: # start of scan
@@ -345,13 +345,15 @@ class JpegImageFile(ImageFile.ImageFile):
 
         import tempfile, os
         file = tempfile.mktemp()
-        os.system("djpeg %s >%s" % (self.filename, file))
+        os.system("djpeg {0} > {1}".format(self.filename, file))
 
         try:
             self.im = Image.core.open_ppm(file)
         finally:
-            try: os.unlink(file)
-            except: pass
+            try:
+                os.unlink(file)
+            except:
+                pass
 
         self.mode = self.im.mode
         self.size = self.im.size
@@ -422,7 +424,7 @@ def _save(im, fp, filename):
     try:
         rawmode = RAWMODE[im.mode]
     except KeyError:
-        raise IOError("cannot write mode %s as JPEG" % im.mode)
+        raise IOError("cannot write mode {0} as JPEG".format(im.mode))
 
     info = im.encoderinfo
 
@@ -475,8 +477,10 @@ def _save_cjpeg(im, fp, filename):
     import os
     file = im._dump()
     os.system("cjpeg %s >%s" % (file, filename))
-    try: os.unlink(file)
-    except: pass
+    try:
+        os.unlink(file)
+    except:
+        pass
 
 # -------------------------------------------------------------------q-
 # Registry stuff

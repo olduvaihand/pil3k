@@ -107,7 +107,7 @@ class _OleStream(StringIO.StringIO):
 
         data = string.join(data, "")
 
-        # print len(data), size
+        # print(len(data), size)
 
         StringIO.StringIO.__init__(self, data[:size])
 
@@ -208,12 +208,12 @@ class _OleDirectoryEntry:
         TYPES = ["(invalid)", "(storage)", "(stream)", "(lockbytes)",
                  "(property)", "(root)"]
 
-        print " "*tab + repr(self.name), TYPES[self.type],
+        print(" "*tab + repr(self.name), TYPES[self.type], end=" ")
         if self.type in (2, 5):
-            print self.size, "bytes",
-        print
+            print(self.size, "bytes", end=" ")
+        print("\n")
         if self.type in (1, 5) and self.clsid:
-            print " "*tab + "{%s}" % self.clsid
+            print(" "*tab + "{{{0!s}}}".format(self.clsid))
 
         for kid in self.kids:
             kid.dump(tab + 2)
@@ -273,7 +273,7 @@ class OleFileIO:
         header = self.fp.read(512)
 
         if len(header) != 512 or header[:8] != MAGIC:
-            raise IOError, "not an OLE2 structured storage file"
+            raise IOError("not an OLE2 structured storage file")
 
         # file clsid (probably never used, so we don't store it)
         clsid = self._clsid(header[8:24])
@@ -385,7 +385,7 @@ class OleFileIO:
                 if kid.name == name:
                     break
             else:
-                raise IOError, "file not found"
+                raise IOError("file not found")
             node = kid
         return node.sid
 
@@ -423,7 +423,7 @@ class OleFileIO:
         slot = self._find(filename)
         name, type, sect, size, sids, clsid = self.sidlist[slot]
         if type != 2:
-            raise IOError, "this file is not a stream"
+            raise IOError("this file is not a stream")
         return self._open(sect, size)
 
     ##
@@ -493,8 +493,8 @@ class OleFileIO:
 
             # FIXME: add support for VT_VECTOR
 
-            #print "%08x" % id, repr(value),
-            #print "(%s)" % VT[i32(s, offset) & 0xFFF]
+            #print("{0:08x}".format(id), repr(value), end=" ")
+            #print("({0!s})".format(VT[i32(s, offset) & 0xFFF]))
 
             data[id] = value
 
@@ -512,17 +512,17 @@ if __name__ == "__main__":
     for file in sys.argv[1:]:
         try:
             ole = OleFileIO(file)
-            print "-" * 68
-            print file
-            print "-" * 68
+            print("-" * 68)
+            print(file)
+            print("-" * 68)
             ole.dumpdirectory()
             for file in ole.listdir():
                 if file[-1][0] == "\005":
-                    print file
+                    print(file)
                     props = ole.getproperties(file)
                     props = props.items()
                     props.sort()
                     for k, v in props:
-                        print "   ", k, v
-        except IOError, v:
-            print "***", "cannot read", file, "-", v
+                        print("   ", k, v)
+        except IOError as v:
+            print("***", "cannot read", file, "-", v)

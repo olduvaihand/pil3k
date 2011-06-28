@@ -27,7 +27,7 @@ def read_32t(fobj, (start, length), (width, height)):
     fobj.seek(start)
     sig = fobj.read(4)
     if sig != '\x00\x00\x00\x00':
-        raise SyntaxError, 'Unknown signature, expecting 0x00000000'
+        raise SyntaxError('Unknown signature, expecting 0x00000000')
     return read_32(fobj, (start + 4, length - 4), (width, height))
 
 def read_32(fobj, (start, length), size):
@@ -65,7 +65,7 @@ def read_32(fobj, (start, length), size):
                     break
             if bytesleft != 0:
                 raise SyntaxError(
-                    "Error reading channel [%r left]" % bytesleft
+                    "Error reading channel [{0:r} left]".format(bytesleft)
                     )
             band = Image.frombuffer(
                 "L", size, string.join(data, ""), "raw", "L", 0, 1
@@ -111,7 +111,7 @@ class IcnsFile:
         self.fobj = fobj
         sig, filesize = nextheader(fobj)
         if sig != 'icns':
-            raise SyntaxError, 'not an icns file'
+            raise SyntaxError('not an icns file')
         i = HEADERSIZE
         while i < filesize:
             sig, blocksize = nextheader(fobj)
@@ -133,7 +133,7 @@ class IcnsFile:
     def bestsize(self):
         sizes = self.itersizes()
         if not sizes:
-            raise SyntaxError, "No 32bit icon resources found"
+            raise SyntaxError("No 32bit icon resources found")
         return max(sizes)
 
     def dataforsize(self, size):

@@ -105,7 +105,7 @@ def _save(im, fp, filename):
         colorspace = "/DeviceCMYK"
         procset = "/ImageC" # color images
     else:
-        raise ValueError("cannot save mode %s" % im.mode)
+        raise ValueError("cannot save mode {0}".format(im.mode))
 
     #
     # catalogue
@@ -144,7 +144,7 @@ def _save(im, fp, filename):
     elif filter == "/RunLengthDecode":
         ImageFile._save(im, op, [("packbits", (0,0)+im.size, 0, im.mode)])
     else:
-        raise ValueError("unsupported PDF filter (%s)" % filter)
+        raise ValueError("unsupported PDF filter ({0})".format(filter))
 
     xref[3] = fp.tell()
     _obj(fp, 3, Type = "/XObject",

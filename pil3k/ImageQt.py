@@ -73,7 +73,7 @@ class ImageQt(QImage):
                 im = Image.merge("RGBA", (b, g, r, a))
             format = QImage.Format_ARGB32
         else:
-            raise ValueError("unsupported image mode %r" % im.mode)
+            raise ValueError("unsupported image mode {0:r}".format(im.mode))
 
         # must keep a reference, or Qt will crash!
         self.__data = data or im.tostring()

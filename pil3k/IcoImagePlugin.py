@@ -48,7 +48,7 @@ class IcoImageFile(BmpImagePlugin.BmpImageFile):
         # check magic
         s = self.fp.read(6)
         if not _accept(s):
-            raise SyntaxError, "not an ICO file"
+            raise SyntaxError("not an ICO file")
 
         # pick the largest icon in the file
         m = ""
@@ -58,14 +58,14 @@ class IcoImageFile(BmpImagePlugin.BmpImageFile):
                 m = s
             elif ord(s[0]) > ord(m[0]) and ord(s[1]) > ord(m[1]):
                 m = s
-            #print "width", ord(s[0])
-            #print "height", ord(s[1])
-            #print "colors", ord(s[2])
-            #print "reserved", ord(s[3])
-            #print "planes", i16(s[4:])
-            #print "bitcount", i16(s[6:])
-            #print "bytes", i32(s[8:])
-            #print "offset", i32(s[12:])
+            #print("width", ord(s[0]))
+            #print("height", ord(s[1]))
+            #print("colors", ord(s[2]))
+            #print("reserved", ord(s[3]))
+            #print("planes", i16(s[4:]))
+            #print("bitcount", i16(s[6:]))
+            #print("bytes", i32(s[8:]))
+            #print "offset", i32(s[12:]))
 
         # load as bitmap
         self._bitmap(i32(m[12:]))

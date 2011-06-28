@@ -99,7 +99,7 @@ class BmpImageFile(ImageFile.ImageFile):
                 direction = 0
 
         else:
-            raise IOError("Unsupported BMP header type (%d)" % len(s))
+            raise IOError("Unsupported BMP header type ({0})".format(len(s)))
 
         if not colors:
             colors = 1 << bits
@@ -108,7 +108,7 @@ class BmpImageFile(ImageFile.ImageFile):
         try:
             self.mode, rawmode = BIT2MODE[bits]
         except KeyError:
-            raise IOError("Unsupported BMP pixel depth (%d)" % bits)
+            raise IOError("Unsupported BMP pixel depth ({0})".format(bits))
 
         if compression == 3:
             # BI_BITFIELDS compression
@@ -120,10 +120,10 @@ class BmpImageFile(ImageFile.ImageFile):
             elif bits == 16 and mask == (0x007c00, 0x0003e0, 0x00001f):
                 rawmode = "BGR;15"
             else:
-                # print bits, map(hex, mask)
+                # print(bits, map(hex, mask))
                 raise IOError("Unsupported BMP bitfields layout")
         elif compression != 0:
-            raise IOError("Unsupported BMP compression (%d)" % compression)
+            raise IOError("Unsupported BMP compression ({0})".format(compression))
 
         # LUT
         if self.mode == "P":
@@ -200,7 +200,7 @@ def _save(im, fp, filename, check=0):
     try:
         rawmode, bits, colors = SAVE[im.mode]
     except KeyError:
-        raise IOError("cannot write mode %s as BMP" % im.mode)
+        raise IOError("cannot write mode {0} as BMP".format(im.mode))
 
     if check:
         return check

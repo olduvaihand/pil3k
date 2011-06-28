@@ -89,25 +89,25 @@ class ImageFile(Image.Image):
 
         try:
             self._open()
-        except IndexError, v: # end of data
+        except IndexError as v: # end of data
             if Image.DEBUG > 1:
                 traceback.print_exc()
-            raise SyntaxError, v
-        except TypeError, v: # end of data (ord)
+            raise SyntaxError(v)
+        except TypeError as v: # end of data (ord)
             if Image.DEBUG > 1:
                 traceback.print_exc()
-            raise SyntaxError, v
-        except KeyError, v: # unsupported mode
+            raise SyntaxError(v)
+        except KeyError as v: # unsupported mode
             if Image.DEBUG > 1:
                 traceback.print_exc()
-            raise SyntaxError, v
-        except EOFError, v: # got header but not the first frame
+            raise SyntaxError(v)
+        except EOFError as v: # got header but not the first frame
             if Image.DEBUG > 1:
                 traceback.print_exc()
-            raise SyntaxError, v
+            raise SyntaxError(v)
 
         if not self.mode or self.size[0] <= 0:
-            raise SyntaxError, "not identified by this driver"
+            raise SyntaxError("not identified by this driver")
 
     def draft(self, mode, size):
         "Set draft mode"
@@ -198,7 +198,8 @@ class ImageFile(Image.Image):
                     s = read(self.decodermaxblock)
                     if not s:
                         self.tile = []
-                        raise IOError("image file is truncated (%d bytes not processed)" % len(b))
+                        raise IOError("image file is truncated ({0} bytes not "
+                            "processed)".format(len(b)))
                     b = b + s
                     n, e = d.decode(b)
                     if n < 0:
@@ -262,7 +263,7 @@ class StubImageFile(ImageFile):
     def load(self):
         loader = self._load()
         if loader is None:
-            raise IOError("cannot find loader for this %s file" % self.format)
+            raise IOError("cannot find loader for this {0} file".format(self.format))
         image = loader.load(self)
         assert image is not None
         # become the other object (!)
@@ -488,7 +489,7 @@ def _save(im, fp, tile):
                 if s:
                     break
             if s < 0:
-                raise IOError("encoder error %d when writing image file" % s)
+                raise IOError("encoder error {0} when writing image file".format(s))
     else:
         # slight speedup: compress to real file object
         for e, b, o, a in tile:
@@ -498,10 +499,11 @@ def _save(im, fp, tile):
             e.setimage(im.im, b)
             s = e.encode_to_file(fh, bufsize)
             if s < 0:
-                raise IOError("encoder error %d when writing image file" % s)
+                raise IOError("encoder error {0} when writing image file".format(s))
     try:
         fp.flush()
-    except: pass
+    except:
+        pass
 
 
 ##

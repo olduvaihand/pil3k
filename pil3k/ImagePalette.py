@@ -32,7 +32,7 @@ class ImagePalette:
         self.colors = {}
         self.dirty = None
         if len(self.mode)*256 != len(self.palette):
-            raise ValueError, "wrong palette size"
+            raise ValueError("wrong palette size")
 
     def getdata(self):
         # experimental: get palette contents in format suitable
@@ -70,7 +70,7 @@ class ImagePalette:
                 self.dirty = 1
                 return index
         else:
-            raise ValueError("unknown color specifier: %r" % color)
+            raise ValueError("unknown color specifier: {0:r}".format(color))
 
     def save(self, fp):
         # (experimental) save palette to text file
@@ -106,7 +106,7 @@ def _make_linear_lut(black, white):
         for i in range(256):
             lut.append(white*i/255)
     else:
-        raise NotImplementedError # FIXME
+        raise NotImplementedError() # FIXME
     return lut
 
 def _make_gamma_lut(exp, mode="RGB"):
@@ -176,7 +176,7 @@ def load(filename):
             pass
 
     if not lut:
-        raise IOError, "cannot load palette"
+        raise IOError("cannot load palette")
 
     return lut # data, rawmode
 
