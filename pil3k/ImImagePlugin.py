@@ -76,16 +76,16 @@ OPEN = {
 
 # ifunc95 extensions
 for i in ["8", "8S", "16", "16S", "32", "32F"]:
-    OPEN["L %s image" % i] = ("F", "F;%s" % i)
-    OPEN["L*%s image" % i] = ("F", "F;%s" % i)
+    OPEN["L {0} image".format(i)] = ("F", "F;{0}".format(i))
+    OPEN["L*{0} image".format(i)] = ("F", "F;{0}".format(i))
 for i in ["16", "16L", "16B"]:
-    OPEN["L %s image" % i] = ("I;%s" % i, "I;%s" % i)
-    OPEN["L*%s image" % i] = ("I;%s" % i, "I;%s" % i)
+    OPEN["L {0} image".format(i)] = ("I;{0}".format(i), "I;{0}".format(i))
+    OPEN["L*{0} image".format(i)] = ("I;{0}".format(i), "I;{0}".format(i))
 for i in ["32S"]:
-    OPEN["L %s image" % i] = ("I", "I;%s" % i)
-    OPEN["L*%s image" % i] = ("I", "I;%s" % i)
+    OPEN["L {0} image".format(i)] = ("I", "I;{0}".format(i))
+    OPEN["L*{0} image".format(i)] = ("I", "I;{0}".format(i))
 for i in range(2, 33):
-    OPEN["L*%s image" % i] = ("F", "F;%s" % i)
+    OPEN["L*{0} image".format(i)] = ("F", "F;{0}".format(i))
 
 
 # --------------------------------------------------------------------
@@ -314,11 +314,11 @@ def _save(im, fp, filename, check=0):
     if check:
         return check
 
-    fp.write("Image type: %s image\r\n" % type)
+    fp.write("Image type: {0} image\r\n".format(type))
     if filename:
-        fp.write("Name: %s\r\n" % filename)
-    fp.write("Image size (x*y): %d*%d\r\n" % im.size)
-    fp.write("File size (no of images): %d\r\n" % frames)
+        fp.write("Name: {0}\r\n".format(filename))
+    fp.write("Image size (x*y): {size[0]}*{size[1]}\r\n".format(size=im.size))
+    fp.write("File size (no of images): {0}\r\n".format(frames))
     if im.mode == "P":
         fp.write("Lut: 1\r\n")
     fp.write("\000" * (511-fp.tell()) + "\032")
