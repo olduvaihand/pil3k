@@ -491,7 +491,7 @@ def _save(im, fp, filename, chunk=putchunk, check=0):
             bits = 8
 
         if bits != 8:
-            mode = "%s;%d" % (mode, bits)
+            mode = "{0};{1}".format(mode, bits)
 
     # encoder options
     if im.encoderinfo.has_key("dictionary"):
