@@ -48,11 +48,11 @@ def Ghostscript(tile, size, fp):
 
     # Build ghostscript command
     command = ["gs",
-               "-q",                    # quite mode
-               "-g%dx%d" % size,        # set output geometry (pixels)
-               "-dNOPAUSE -dSAFER",     # don't pause between pages, safe mode
-               "-sDEVICE=ppmraw",       # ppm driver
-               "-sOutputFile=%s" % file,# output file
+               "-q",                            # quite mode
+               "-g{0}x{1}".format(*size),       # set output geometry (pixels)
+               "-dNOPAUSE -dSAFER",             # don't pause between pages, safe mode
+               "-sDEVICE=ppmraw",               # ppm driver
+               "-sOutputFile={0}".format(file), # output file
                "- >/dev/null 2>/dev/null"]
 
     command = string.join(command)
@@ -62,7 +62,7 @@ def Ghostscript(tile, size, fp):
         gs = os.popen(command, "w")
         # adjust for image origin
         if bbox[0] != 0 or bbox[1] != 0:
-            gs.write("%d %d translate\n" % (-bbox[0], -bbox[1]))
+            gs.write("{0} {1} translate\n".format(-bbox[0], -bbox[1]))
         fp.seek(offset)
         while length > 0:
             s = fp.read(8192)
@@ -314,23 +314,23 @@ def _save(im, fp, filename, eps=1):
         fp.write("%!PS-Adobe-3.0 EPSF-3.0\n")
         fp.write("%%Creator: PIL 0.1 EpsEncode\n")
         #fp.write("%%CreationDate: %s"...)
-        fp.write("%%%%BoundingBox: 0 0 %d %d\n" % im.size)
+        fp.write("%%%%BoundingBox: 0 0 {0[0]} {0[1]}\n".format(im.size))
         fp.write("%%Pages: 1\n")
         fp.write("%%EndComments\n")
         fp.write("%%Page: 1 1\n")
-        fp.write("%%ImageData: %d %d " % im.size)
-        fp.write("%d %d 0 1 1 \"%s\"\n" % operator)
+        fp.write("%%ImageData: {0[0]} {0[1]}".format(im.size))
+        fp.write("{0[0]} {0[1]} 0 1 1 \"{0[2]}\"\n" % operator)
 
     #
     # image header
     fp.write("gsave\n")
     fp.write("10 dict begin\n")
-    fp.write("/buf %d string def\n" % (im.size[0] * operator[1]))
-    fp.write("%d %d scale\n" % im.size)
-    fp.write("%d %d 8\n" % im.size) # <= bits
-    fp.write("[%d 0 0 -%d 0 %d]\n" % (im.size[0], im.size[1], im.size[1]))
+    fp.write("/buf {0} string def\n".format(im.size[0] * operator[1]))
+    fp.write("{0[0]} {0[1]} scale\n".format(im.size))
+    fp.write("{0[0]} {0[1]} 8\n".format(im.size)) # <= bits
+    fp.write("[{0[0]} 0 0 -{0[1]} 0 {0[1]}]\n".format(im.size))
     fp.write("{ currentfile buf readhexstring pop } bind\n")
-    fp.write("%s\n" % operator[2])
+    fp.write("{0[2]}\n".format(operator))
 
     ImageFile._save(im, fp, [("eps", (0,0)+im.size, 0, None)])
 
