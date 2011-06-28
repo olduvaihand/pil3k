@@ -382,7 +382,7 @@ if __name__ == "__main__":
     import base64, os, sys
     font = "../Images/courB08"
     print("    f._load_pilfont_data(")
-    print("         # %s" % os.path.basename(font))
+    print("         # {0}".format(os.path.basename(font)))
     print("         StringIO(base64.decodestring('''")
     base64.encode(open(font + ".pil", "rb"), sys.stdout)
     print("''')), Image.open(StringIO(base64.decodestring('''")
