@@ -59,7 +59,7 @@ def APP(self, marker):
     n = i16(self.fp.read(2))-2
     s = ImageFile._safe_read(self.fp, n)
 
-    app = "APP%d" % (marker&15)
+    app = "APP{0}".format(marker&15)
 
     self.app[app] = s # compatibility
     self.applist.append((app, s))
@@ -476,7 +476,7 @@ def _save_cjpeg(im, fp, filename):
     # ALTERNATIVE: handle JPEGs via the IJG command line utilities.
     import os
     file = im._dump()
-    os.system("cjpeg %s >%s" % (file, filename))
+    os.system("cjpeg {0} > {1}".format(file, filename))
     try:
         os.unlink(file)
     except:
