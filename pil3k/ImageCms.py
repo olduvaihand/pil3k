@@ -780,7 +780,7 @@ if __name__ == "__main__":
         print("{0}".format(f))
 
         try:
-            exec ("doc = ImageCms.%s.__doc__" %(f))
+            exec("doc = ImageCms.{0}.__doc__".format(f))
             if string.find(doc, "pyCMS") >= 0:
                 # so we don't get the __doc__ string for imported modules
                 print(doc)
