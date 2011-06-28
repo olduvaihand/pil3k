@@ -549,7 +549,7 @@ class Image:
         bufsize = max(65536, self.size[0] * 4) # see RawEncode.c
 
         data = []
-        while 1:
+        while True:
             l, s, d = e.encode(bufsize)
             data.append(d)
             if s:

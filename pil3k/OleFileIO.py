@@ -173,7 +173,7 @@ class _OleDirectoryEntry:
                 if right != -1: # 0xFFFFFFFFL:
                     # and then back to the left
                     sid = right
-                    while 1:
+                    while True:
                         left, right, child = sidlist[sid][4]
                         if left == -1: # 0xFFFFFFFFL:
                             break
@@ -181,7 +181,7 @@ class _OleDirectoryEntry:
                         sid = left
                 else:
                     # couldn't move right; move up instead
-                    while 1:
+                    while True:
                         ptr = stack[-1]
                         del stack[-1]
                         left, right, child = sidlist[ptr][4]
@@ -243,7 +243,7 @@ class OleFileIO:
             if entry[1:2] == "Image":
                 fin = ole.openstream(entry)
                 fout = open(entry[0:1], "wb")
-                while 1:
+                while True:
                     s = fin.read(8192)
                     if not s:
                         break
@@ -340,7 +340,7 @@ class OleFileIO:
 
         # create list of sid entries
         self.sidlist = []
-        while 1:
+        while True:
             entry = fp.read(128)
             if not entry:
                 break

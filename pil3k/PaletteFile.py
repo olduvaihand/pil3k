@@ -26,7 +26,7 @@ class PaletteFile:
 
         self.palette = map(lambda i: (i, i, i), range(256))
 
-        while 1:
+        while True:
 
             s = fp.readline()
 

@@ -288,7 +288,7 @@ class JpegImageFile(ImageFile.ImageFile):
         self.applist = []
         self.icclist = []
 
-        while 1:
+        while True:
 
             s = s + self.fp.read(1)
 
