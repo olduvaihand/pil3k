@@ -314,7 +314,7 @@ def _save(im, fp, filename, eps=1):
         fp.write("%!PS-Adobe-3.0 EPSF-3.0\n")
         fp.write("%%Creator: PIL 0.1 EpsEncode\n")
         #fp.write("%%CreationDate: %s"...)
-        fp.write("%%%%BoundingBox: 0 0 {0[0]} {0[1]}\n".format(im.size))
+        fp.write("%%BoundingBox: 0 0 {0[0]} {0[1]}\n".format(im.size))
         fp.write("%%Pages: 1\n")
         fp.write("%%EndComments\n")
         fp.write("%%Page: 1 1\n")
@@ -334,7 +334,7 @@ def _save(im, fp, filename, eps=1):
 
     ImageFile._save(im, fp, [("eps", (0,0)+im.size, 0, None)])
 
-    fp.write("\n%%%%EndBinary\n")
+    fp.write("\n%%EndBinary\n")
     fp.write("grestore end\n")
     fp.flush()
 

@@ -205,7 +205,7 @@ def _save(im, fp, filename):
     for x in xref[1:]:
         fp.write("{0:010d} 00000 n \n".format(x))
     fp.write("trailer\n<<\n/Size {0}\n/Root 1 0 R\n>>\n".format(len(xref)))
-    fp.write("startxref\n{0}\n%%%%EOF\n".format(startxref))
+    fp.write("startxref\n{0}\n%%EOF\n".format(startxref))
     fp.flush()
 
 #
