@@ -364,7 +364,7 @@ def getdata(im, offset = (0, 0), **params):
        The first string is a local image header, the rest contains
        encoded image data."""
 
-    class collector:
+    class collector(object):
         data = []
         def write(self, data):
             self.data.append(data)

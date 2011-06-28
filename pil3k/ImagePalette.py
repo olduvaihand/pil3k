@@ -22,7 +22,7 @@ import Image, ImageColor
 ##
 # Colour palette wrapper for palette mapped images.
 
-class ImagePalette:
+class ImagePalette(object):
     "Colour palette for palette mapped images"
 
     def __init__(self, mode = "RGB", palette = None):

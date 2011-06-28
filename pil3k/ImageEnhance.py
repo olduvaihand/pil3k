@@ -20,7 +20,7 @@
 
 import Image, ImageFilter, ImageStat
 
-class _Enhance:
+class _Enhance(object):
 
     ##
     # Returns an enhanced image. The enhancement factor is a floating

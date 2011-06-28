@@ -34,7 +34,7 @@ import operator, math
 # only the regions covered by that mask are included in the
 # statistics.
 
-class Stat:
+class Stat(object):
     "Get image or feature statistics"
 
     ##

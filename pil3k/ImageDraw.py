@@ -43,7 +43,7 @@ except ImportError:
 # Application code should use the <b>Draw</b> factory, instead of
 # directly.
 
-class ImageDraw:
+class ImageDraw(object):
 
     ##
     # Create a drawing instance.

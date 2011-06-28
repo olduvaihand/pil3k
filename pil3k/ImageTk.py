@@ -59,7 +59,7 @@ def _pilbitmap_check():
 # everywhere Tkinter expects an image object.  If the image is an RGBA
 # image, pixels having alpha 0 are treated as transparent.
 
-class PhotoImage:
+class PhotoImage(object):
 
     ##
     # Create a photo image object. The constructor takes either
@@ -194,7 +194,7 @@ class PhotoImage:
 # Create a Tkinter-compatible bitmap image.  This can be used
 # everywhere Tkinter expects an image object.
 
-class BitmapImage:
+class BitmapImage(object):
 
     ##
     # Create a Tkinter-compatible bitmap image.

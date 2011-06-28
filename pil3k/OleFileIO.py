@@ -117,7 +117,7 @@ class _OleStream(StringIO.StringIO):
 # FIXME: should add a counter in here to avoid looping forever
 # if the tree is broken.
 
-class _OleDirectoryEntry:
+class _OleDirectoryEntry(object):
 
     """OLE2 Directory Entry
 
@@ -226,7 +226,7 @@ class _OleDirectoryEntry:
 # storage file.  Use the {@link listdir} and {@link openstream}
 # methods to access the contents of this file.
 
-class OleFileIO:
+class OleFileIO(object):
     """OLE container object
 
     This class encapsulates the interface to an OLE 2 structured

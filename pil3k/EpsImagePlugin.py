@@ -83,7 +83,7 @@ def Ghostscript(tile, size, fp):
     return im
 
 
-class PSFile:
+class PSFile(object):
     """Wrapper that treats either CR or LF as end of line."""
     def __init__(self, fp):
         self.fp = fp

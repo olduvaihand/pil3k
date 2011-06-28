@@ -23,13 +23,13 @@ import Image
 # The <b>ImageWin</b> module contains support to create and display
 # images under Windows 95/98, NT, 2000 and later.
 
-class HDC:
+class HDC(object):
     def __init__(self, dc):
         self.dc = dc
     def __int__(self):
         return self.dc
 
-class HWND:
+class HWND(object):
     def __init__(self, wnd):
         self.wnd = wnd
     def __int__(self):
@@ -47,7 +47,7 @@ class HWND:
 # To make sure that palettes work properly under Windows, you must
 # call the <b>palette</b> method upon certain events from Windows.
 
-class Dib:
+class Dib(object):
 
     ##
     # Create Windows bitmap.
@@ -171,7 +171,7 @@ class Dib:
 ##
 # Create a Window with the given title size.
 
-class Window:
+class Window(object):
 
     def __init__(self, title="PIL", width=None, height=None):
         self.hwnd = Image.core.createwindow(

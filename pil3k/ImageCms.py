@@ -132,7 +132,7 @@ for flag in FLAGS.values():
 ##
 # Profile.
 
-class ImageCmsProfile:
+class ImageCmsProfile(object):
 
     def __init__(self, profile):
         # accepts a string (filename), a file-like object, or a low-level

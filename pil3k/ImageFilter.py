@@ -15,7 +15,7 @@
 # See the README file for information on usage and redistribution.
 #
 
-class Filter:
+class Filter(object):
     pass
 
 ##

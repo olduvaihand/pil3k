@@ -31,7 +31,7 @@ try:
 except ImportError:
     warnings = None
 
-class _imaging_not_installed:
+class _imaging_not_installed(object):
     # module placeholder
     def __getattr__(self, id):
         raise ImportError("The _imaging C module is not installed")
@@ -404,7 +404,7 @@ def _getencoder(mode, encoder_name, args, extra=()):
 # --------------------------------------------------------------------
 # Simple expression analyzer
 
-class _E:
+class _E(object):
 
     def __init__(self, data):
         self.data = data
@@ -452,7 +452,7 @@ def _getscaleoffset(expr):
 # @see #new
 # @see #fromstring
 
-class Image:
+class Image(object):
 
     format = None
     format_description = None
@@ -1727,11 +1727,11 @@ class _ImageCrop(Image):
 # --------------------------------------------------------------------
 # Abstract handlers.
 
-class ImagePointHandler:
+class ImagePointHandler(object):
     # used as a mixin by point transforms (for use with im.point)
     pass
 
-class ImageTransformHandler:
+class ImageTransformHandler(object):
     # used as a mixin by geometry transforms (for use with im.transform)
     pass
 

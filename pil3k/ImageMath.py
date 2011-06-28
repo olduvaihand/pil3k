@@ -23,7 +23,7 @@ VERBOSE = 0
 def _isconstant(v):
     return isinstance(v, type(0)) or isinstance(v, type(0.0))
 
-class _Operand:
+class _Operand(object):
     # wraps an image operand, providing standard operators
 
     def __init__(self, im):

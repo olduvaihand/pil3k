@@ -22,7 +22,7 @@ import _imaginggl
 ##
 # Texture factory.
 
-class TextureFactory:
+class TextureFactory(object):
     pass # overwritten by the _imaginggl module
 
 from _imaginggl import *

@@ -81,7 +81,7 @@ def read_mk(fobj, (start, length), size):
         )
     return {"A": band}
 
-class IcnsFile:
+class IcnsFile(object):
 
     SIZES = {
         (128, 128): [

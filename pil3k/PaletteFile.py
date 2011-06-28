@@ -18,7 +18,7 @@ import string
 ##
 # File handler for Teragon-style palette files.
 
-class PaletteFile:
+class PaletteFile(object):
 
     rawmode = "RGB"
 

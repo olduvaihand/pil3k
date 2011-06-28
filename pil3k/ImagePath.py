@@ -19,7 +19,7 @@ import Image
 ##
 # Path wrapper.
 
-class Path:
+class Path(object):
 
     ##
     # Creates a path object.
