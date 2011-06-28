@@ -178,7 +178,7 @@ class IptcImageFile(ImageFile.ImageFile):
         if encoding == "raw":
             # To simplify access to the extracted file,
             # prepend a PPM header
-            o.write("P5\n%d %d\n255\n" % self.size)
+            o.write("P5\n{0} {1}\n255\n".format(*self.size))
         while True:
             type, size = self.field()
             if type != (8, 10):
