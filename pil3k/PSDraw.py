@@ -54,27 +54,26 @@ class PSDraw:
     def setfont(self, font, size):
         if not self.isofont.has_key(font):
             # reencode font
-            self.fp.write("/PSDraw-%s ISOLatin1Encoding /%s E\n" %\
-                          (font, font))
+            self.fp.write("/PSDraw-{0} ISOLatin1Encoding /{0} E\n".format(font))
             self.isofont[font] = 1
         # rough
-        self.fp.write("/F0 %d /PSDraw-%s F\n" % (size, font))
+        self.fp.write("/F0 {0} /PSDraw-{1} F\n".format(size, font))
 
     def setink(self, ink):
         print("*** NOT YET IMPLEMENTED ***")
 
     def line(self, xy0, xy1):
         xy = xy0 + xy1
-        self.fp.write("%d %d %d %d Vl\n" % xy)
+        self.fp.write("{0} {1} {2} {3} Vl\n".format(*tuple(xy)))
 
     def rectangle(self, box):
-        self.fp.write("%d %d M %d %d 0 Vr\n" % box)
+        self.fp.write("{0} {1} M {2} {3} 0 Vr\n".format(*tuple(box)))
 
     def text(self, xy, text):
         text = string.joinfields(string.splitfields(text, "("), "\\(")
         text = string.joinfields(string.splitfields(text, ")"), "\\)")
         xy = xy + (text,)
-        self.fp.write("%d %d M (%s) S\n" % xy)
+        self.fp.write("{0} {1} M ({3}) S\n".format(*xy))
 
     def image(self, box, im, dpi = None):
         "Write an PIL image"
@@ -96,12 +95,12 @@ class PSDraw:
             x = x * ymax / y; y = ymax
         dx = (xmax - x) / 2 + box[0]
         dy = (ymax - y) / 2 + box[1]
-        self.fp.write("gsave\n%f %f translate\n" % (dx, dy))
+        self.fp.write("gsave\n{0} {1} translate\n".format(dx, dy))
         if (x, y) != im.size:
             # EpsImagePlugin._save prints the image at (0,0,xsize,ysize)
             sx = x / im.size[0]
             sy = y / im.size[1]
-            self.fp.write("%f %f scale\n" % (sx, sy))
+            self.fp.write("{0} {1} scale\n".format(sx, sy))
         EpsImagePlugin._save(im, self.fp, None, 0)
         self.fp.write("\ngrestore\n")
 
