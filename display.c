@@ -370,6 +370,7 @@ static BOOL CALLBACK list_windows_callback(HWND hwnd, LPARAM lParam)
     PyObject* window_list = (PyObject*) lParam;
     PyObject* item;
     PyObject* title;
+    PyObject* encoded_title;
     RECT inner, outer;
     int title_size;
     int status;
@@ -377,11 +378,15 @@ static BOOL CALLBACK list_windows_callback(HWND hwnd, LPARAM lParam)
     /* get window title */
     title_size = GetWindowTextLength(hwnd);
     if (title_size > 0) {
-        title = PyString_FromStringAndSize(NULL, title_size);
-        if (title)
-            GetWindowText(hwnd, PyString_AS_STRING(title), title_size+1);
+        title = PyUnicode_FromStringAndSize(NULL, title_size);
+        if (title) {
+            // encode the unicode object
+            encoded_title = PyUnicode_EncodeUTF8(title, (Py_ssize_t)title_size,
+                    "ignore");
+            GetWindowText(hwnd, PyBytes_AS_STRING(encoded_title), title_size+1);
+        }
     } else
-        title = PyString_FromString("");
+        title = PyUnicode_FromString("");
 
     if (!title)
         return 0;
