@@ -27,11 +27,6 @@ http://www.cazabon.com\n\
 #include "lcms.h"
 #include "Imaging.h"
 
-#if PY_VERSION_HEX < 0x01060000
-#define PyObject_New PyObject_NEW
-#define PyObject_Del PyMem_DEL
-#endif
-
 #if LCMS_VERSION < 117
 #define LCMSBOOL BOOL
 #endif
@@ -191,18 +186,30 @@ static const char*
 findICmode(icColorSpaceSignature cs)
 {
     switch (cs) {
-    case icSigXYZData: return "XYZ";
-    case icSigLabData: return "LAB";
-    case icSigLuvData: return "LUV";
-    case icSigYCbCrData: return "YCbCr";
-    case icSigYxyData: return "YXY";
-    case icSigRgbData: return "RGB";
-    case icSigGrayData: return "L";
-    case icSigHsvData: return "HSV";
-    case icSigHlsData: return "HLS";
-    case icSigCmykData: return "CMYK";
-    case icSigCmyData: return "CMY";
-    default: return ""; /* other TBA */
+    case icSigXYZData:
+        return "XYZ";
+    case icSigLabData:
+        return "LAB";
+    case icSigLuvData:
+        return "LUV";
+    case icSigYCbCrData:
+        return "YCbCr";
+    case icSigYxyData:
+        return "YXY";
+    case icSigRgbData:
+        return "RGB";
+    case icSigGrayData:
+        return "L";
+    case icSigHsvData:
+        return "HSV";
+    case icSigHlsData:
+        return "HLS";
+    case icSigCmykData:
+        return "CMYK";
+    case icSigCmyData:
+        return "CMY";
+    default:
+        return ""; /* other TBA */
     }
 }
 
@@ -265,7 +272,8 @@ pyCMSdoTransform(Imaging im, Imaging imOut, cmsHTRANSFORM hTransform)
 }
 
 static cmsHTRANSFORM
-_buildTransform(cmsHPROFILE hInputProfile, cmsHPROFILE hOutputProfile, char *sInMode, char *sOutMode, int iRenderingIntent, DWORD cmsFLAGS)
+_buildTransform(cmsHPROFILE hInputProfile, cmsHPROFILE hOutputProfile,
+    char *sInMode, char *sOutMode, int iRenderingIntent, DWORD cmsFLAGS)
 {
     cmsHTRANSFORM hTransform;
 
@@ -274,11 +282,9 @@ _buildTransform(cmsHPROFILE hInputProfile, cmsHPROFILE hOutputProfile, char *sIn
     Py_BEGIN_ALLOW_THREADS
 
     /* create the transform */
-    hTransform = cmsCreateTransform(hInputProfile,
-                                    findLCMStype(sInMode),
-                                    hOutputProfile,
-                                    findLCMStype(sOutMode),
-                                    iRenderingIntent, cmsFLAGS);
+    hTransform = cmsCreateTransform(hInputProfile, findLCMStype(sInMode),
+                     hOutputProfile, findLCMStype(sOutMode),
+                     iRenderingIntent, cmsFLAGS);
 
     Py_END_ALLOW_THREADS
 
@@ -289,7 +295,9 @@ _buildTransform(cmsHPROFILE hInputProfile, cmsHPROFILE hOutputProfile, char *sIn
 }
 
 static cmsHTRANSFORM
-_buildProofTransform(cmsHPROFILE hInputProfile, cmsHPROFILE hOutputProfile, cmsHPROFILE hProofProfile, char *sInMode, char *sOutMode, int iRenderingIntent, int iProofIntent, DWORD cmsFLAGS)
+_buildProofTransform(cmsHPROFILE hInputProfile, cmsHPROFILE hOutputProfile,
+    cmsHPROFILE hProofProfile, char *sInMode, char *sOutMode,
+    int iRenderingIntent, int iProofIntent, DWORD cmsFLAGS)
 {
     cmsHTRANSFORM hTransform;
 
@@ -298,14 +306,9 @@ _buildProofTransform(cmsHPROFILE hInputProfile, cmsHPROFILE hOutputProfile, cmsH
     Py_BEGIN_ALLOW_THREADS
 
     /* create the transform */
-    hTransform =  cmsCreateProofingTransform(hInputProfile,
-                                             findLCMStype(sInMode),
-                                             hOutputProfile,
-                                             findLCMStype(sOutMode),
-                                             hProofProfile,
-                                             iRenderingIntent,
-                                             iProofIntent,
-                                             cmsFLAGS);
+    hTransform = cmsCreateProofingTransform(hInputProfile,
+        findLCMStype(sInMode), hOutputProfile, findLCMStype(sOutMode),
+        hProofProfile, iRenderingIntent, iProofIntent, cmsFLAGS);
 
     Py_END_ALLOW_THREADS
 
@@ -329,12 +332,16 @@ buildTransform(PyObject *self, PyObject *args) {
 
     cmsHTRANSFORM transform = NULL;
 
-    if (!PyArg_ParseTuple(args, "O!O!ss|ii:buildTransform", &CmsProfile_Type, &pInputProfile, &CmsProfile_Type, &pOutputProfile, &sInMode, &sOutMode, &iRenderingIntent, &cmsFLAGS))
+    if (!PyArg_ParseTuple(args, "O!O!ss|ii:buildTransform", &CmsProfile_Type,
+            &pInputProfile, &CmsProfile_Type, &pOutputProfile, &sInMode,
+            &sOutMode, &iRenderingIntent, &cmsFLAGS))
         return NULL;
 
     cmsErrorAction(LCMS_ERROR_IGNORE);
 
-    transform = _buildTransform(pInputProfile->profile, pOutputProfile->profile, sInMode, sOutMode, iRenderingIntent, cmsFLAGS);
+    transform = _buildTransform(pInputProfile->profile,
+        pOutputProfile->profile, sInMode, sOutMode, iRenderingIntent,
+        cmsFLAGS);
 
     if (!transform)
         return NULL;
@@ -356,12 +363,17 @@ buildProofTransform(PyObject *self, PyObject *args)
 
     cmsHTRANSFORM transform = NULL;
 
-    if (!PyArg_ParseTuple(args, "O!O!O!ss|iii:buildProofTransform", &CmsProfile_Type, &pInputProfile, &CmsProfile_Type, &pOutputProfile, &CmsProfile_Type, &pProofProfile, &sInMode, &sOutMode, &iRenderingIntent, &iProofIntent, &cmsFLAGS))
+    if (!PyArg_ParseTuple(args, "O!O!O!ss|iii:buildProofTransform",
+             &CmsProfile_Type, &pInputProfile, &CmsProfile_Type,
+             &pOutputProfile, &CmsProfile_Type, &pProofProfile, &sInMode,
+             &sOutMode, &iRenderingIntent, &iProofIntent, &cmsFLAGS))
         return NULL;
 
     cmsErrorAction(LCMS_ERROR_IGNORE);
 
-    transform = _buildProofTransform(pInputProfile->profile, pOutputProfile->profile, pProofProfile->profile, sInMode, sOutMode, iRenderingIntent, iProofIntent, cmsFLAGS);
+    transform = _buildProofTransform(pInputProfile->profile,
+        pOutputProfile->profile, pProofProfile->profile, sInMode, sOutMode,
+        iRenderingIntent, iProofIntent, cmsFLAGS);
   
     if (!transform)
         return NULL;
@@ -414,7 +426,9 @@ createProfile(PyObject *self, PyObject *args)
         if (iColorTemp > 0) {
             result = cmsWhitePointFromTemp(iColorTemp, whitePoint);
             if (!result) {
-                PyErr_SetString(PyExc_ValueError, "ERROR: Could not calculate white point from color temperature provided, must be integer in degrees Kelvin");
+                PyErr_SetString(PyExc_ValueError,"ERROR: Could not calculate "\
+                    "white point from color temperature provided, must be "\
+                    "integer in degrees Kelvin");
                 return NULL;
             }
             hProfile = cmsCreateLabProfile(whitePoint);
@@ -429,7 +443,8 @@ createProfile(PyObject *self, PyObject *args)
         hProfile = NULL;
 
     if (!hProfile) {
-        PyErr_SetString(PyExc_ValueError, "failed to create requested color space");
+        PyErr_SetString(PyExc_ValueError,
+            "failed to create requested color space");
         return NULL;
     }
 
@@ -451,7 +466,8 @@ cms_profile_is_intent_supported(CmsProfileObject *self, PyObject *args)
 
     result = cmsIsIntentSupported(self->profile, intent, direction);
 
-    /* printf("cmsIsIntentSupported(%p, %d, %d) => %d\n", self->profile, intent, direction, result); */
+    /* printf("cmsIsIntentSupported(%p, %d, %d) => %d\n", self->profile,
+     * intent, direction, result); */
 
     return PyInt_FromLong(result != 0);
 }
@@ -491,118 +507,179 @@ cms_get_display_profile_win32(PyObject* self, PyObject* args)
 /* Python interface setup */
 
 static PyMethodDef pyCMSdll_methods[] = {
-
-    {"profile_open", cms_profile_open, 1},
-    {"profile_fromstring", cms_profile_fromstring, 1},
+    {"profile_open", cms_profile_open, METH_VARARGS,
+        "FIXME: profile_open doc string"},
+    {"profile_fromstring", cms_profile_fromstring, METH_VARARGS,
+        "FIXME: profile_fromstring doc string"},
 
     /* profile and transform functions */
-    {"buildTransform", buildTransform, 1},
-    {"buildProofTransform", buildProofTransform, 1},
-    {"createProfile", createProfile, 1},
+    {"buildTransform", buildTransform, METH_VARARGS,
+        "FIXME: buildTransform doc string"},
+    {"buildProofTransform", buildProofTransform, METH_VARARGS,
+        "FIXME: buildProofTransform doc string"},
+    {"createProfile", createProfile, METH_VARARGS,
+        "FIXME: createProfile doc string"},
 
     /* platform specific tools */
 #ifdef WIN32
-    {"get_display_profile_win32", cms_get_display_profile_win32, 1},
+    {"get_display_profile_win32", cms_get_display_profile_win32,
+        METH_VARARGS, "FIXME: get_display_profile_win32 doc string"},
 #endif
 
-    {NULL, NULL}
+    {NULL, NULL, NULL, NULL}    /* sentinel */
 };
 
 static struct PyMethodDef cms_profile_methods[] = {
-    {"is_intent_supported", (PyCFunction) cms_profile_is_intent_supported, 1},
-    {NULL, NULL} /* sentinel */
+    {"is_intent_supported", (PyCFunction) cms_profile_is_intent_supported,
+        METH_VARARGS, "FIXME: is_intent_supported doc string"},
+    {NULL, NULL, NULL, NULL}    /* sentinel */
 };
 
 static PyObject*  
-cms_profile_getattr(CmsProfileObject* self, char* name)
+cms_profile_getattro(CmsProfileObject* self, PyObject* name)
 {
-    if (!strcmp(name, "product_name"))
-        return PyString_FromString(cmsTakeProductName(self->profile));
-    if (!strcmp(name, "product_desc"))
-        return PyString_FromString(cmsTakeProductDesc(self->profile));
-    if (!strcmp(name, "product_info"))
-        return PyString_FromString(cmsTakeProductInfo(self->profile));
-    if (!strcmp(name, "rendering_intent"))
-        return PyInt_FromLong(cmsTakeRenderingIntent(self->profile));
-    if (!strcmp(name, "pcs"))
-        return PyString_FromString(findICmode(cmsGetPCS(self->profile)));
-    if (!strcmp(name, "color_space"))
-        return PyString_FromString(findICmode(cmsGetColorSpace(self->profile)));
+    PyObject* bytes_name = PyUnicode_Encode(PyUnicode_AsUnicode(name),
+        PyUnicode_GetSize(name), "ascii", "ignore");
+    char* encoded_name = PyBytes_AsString(bytes_name);
+
+    if (!strcmp(encoded_name, "product_name"))
+        return PyUnicode_FromFormat("%s", cmsTakeProductName(self->profile));
+    if (!strcmp(encoded_name, "product_desc"))
+        return PyUnicode_FromFormat("%s", cmsTakeProductDesc(self->profile));
+    if (!strcmp(encoded_name, "product_info"))
+        return PyUnicode_FromFormat("%s", cmsTakeProductInfo(self->profile));
+    if (!strcmp(encoded_name, "rendering_intent"))
+        return PyLong_FromLong(cmsTakeRenderingIntent(self->profile));
+    if (!strcmp(encoded_name, "pcs"))
+        return PyUnicode_FromFormat("%s", findICmode(cmsGetPCS(self->profile)));
+    if (!strcmp(encoded_name, "color_space"))
+        return PyUnicode_FromFormat("%s",
+                findICmode(cmsGetColorSpace(self->profile)));
     /* FIXME: add more properties (creation_datetime etc) */
 
-    return Py_FindMethod(cms_profile_methods, (PyObject*) self, name);
+    return PyObject_GenericGetAttr((PyObject*) self, name);
 }
 
 statichere PyTypeObject CmsProfile_Type = {
-    PyObject_HEAD_INIT(NULL)
-    0, "CmsProfile", sizeof(CmsProfileObject), 0,
-    /* methods */
-    (destructor) cms_profile_dealloc, /*tp_dealloc*/
-    0, /*tp_print*/
-    (getattrfunc) cms_profile_getattr, /*tp_getattr*/
-    0, /*tp_setattr*/
-    0, /*tp_compare*/
-    0, /*tp_repr*/
-    0, /*tp_as_number */
-    0, /*tp_as_sequence */
-    0, /*tp_as_mapping */
-    0 /*tp_hash*/
+    PyVarObject_HEAD_INIT(NULL, 0)
+    "CmsProfile",                          /* tp_name */
+    sizeof(CmsProfileObject),              /* tp_basicsize */
+    0,                                     /* tp_itemsize */
+    (destructor) cms_profile_dealloc,      /* tp_dealloc */
+    0,                                     /* tp_print */
+    0,                                     /* tp_getattr */
+    0,                                     /* tp_setattr */
+    0,                                     /* tp_reserved */
+    0,                                     /* tp_repr */
+    0,                                     /* tp_as_number */
+    0,                                     /* tp_as_sequence */
+    0,                                     /* tp_as_mapping */
+    0,                                     /* tp_hash */
+    0,                                     /* tp_call */
+    0,                                     /* tp_str */
+    (getattrofunc)cms_profile_getattro,    /* tp_getattro */
+    0,                                     /* tp_setattro */
+    0,                                     /* tp_as_buffer */
+    0,                                     /* tp_flags */
+    0,                                     /* tp_doc */
+    0,                                     /* tp_traverse */
+    0,                                     /* tp_clear */
+    0,                                     /* tp_richcompare */
+    0,                                     /* tp_weaklistoffset */
+    0,                                     /* tp_iter */
+    0,                                     /* tp_iternext */
+    cms_profile_methods                    /* tp_methods */
+};
+
+PyObject*
+PyImaging_DisplayWin32(PyObject* self, PyObject* args)
+{
+    ImagingDisplayObject* display;
 };
 
 static struct PyMethodDef cms_transform_methods[] = {
-    {"apply", (PyCFunction) cms_transform_apply, 1},
-    {NULL, NULL} /* sentinel */
+    {"apply", (PyCFunction) cms_transform_apply, METH_VARARGS,
+        "FIXME: apply doc string"},
+    {NULL, NULL, NULL, NULL}    /* sentinel */
 };
 
 static PyObject*  
-cms_transform_getattr(CmsTransformObject* self, char* name)
+cms_transform_getattro(CmsTransformObject* self, PyObject* name)
 {
-    if (!strcmp(name, "inputMode"))
-        return PyString_FromString(self->mode_in);
-    if (!strcmp(name, "outputMode"))
-        return PyString_FromString(self->mode_out);
+    PyObject* bytes_name = PyUnicode_Encode(PyUnicode_AsUnicode(name),
+        PyUnicode_GetSize(name), "ascii", "ignore");
+    char* encoded_name = PyBytes_AsString(bytes_name);
 
-    return Py_FindMethod(cms_transform_methods, (PyObject*) self, name);
+    if (!strcmp(encoded_name, "inputMode"))
+        return PyUnicode_FromFormat("%s", self->mode_in);
+    if (!strcmp(encoded_name, "outputMode"))
+        return PyUnicode_FromFormat("%s", self->mode_out);
+
+    return PyObject_GenericGetAttr((PyObject*) self, name);
 }
 
 statichere PyTypeObject CmsTransform_Type = {
-    PyObject_HEAD_INIT(NULL)
-    0, "CmsTransform", sizeof(CmsTransformObject), 0,
-    /* methods */
-    (destructor) cms_transform_dealloc, /*tp_dealloc*/
-    0, /*tp_print*/
-    (getattrfunc) cms_transform_getattr, /*tp_getattr*/
-    0, /*tp_setattr*/
-    0, /*tp_compare*/
-    0, /*tp_repr*/
-    0, /*tp_as_number */
-    0, /*tp_as_sequence */
-    0, /*tp_as_mapping */
-    0 /*tp_hash*/
+    PyVarObject_HEAD_INIT(NULL, 0)
+    "CmsTransform",                          /* tp_name */
+    sizeof(CmsTransformObject),              /* tp_basicsize */
+    0,                                       /* tp_itemsize */
+    (destructor) cms_transform_dealloc,      /* tp_dealloc */
+    0,                                       /* tp_print */
+    0,                                       /* tp_getattr */
+    0,                                       /* tp_setattr */
+    0,                                       /* tp_reserved */
+    0,                                       /* tp_repr */
+    0,                                       /* tp_as_number */
+    0,                                       /* tp_as_sequence */
+    0,                                       /* tp_as_mapping */
+    0,                                       /* tp_hash */
+    0,                                       /* tp_call */
+    0,                                       /* tp_str */
+    (getattrofunc)cms_transform_getattro,    /* tp_getattro */
+    0,                                       /* tp_setattro */
+    0,                                       /* tp_as_buffer */
+    0,                                       /* tp_flags */
+    0,                                       /* tp_doc */
+    0,                                       /* tp_traverse */
+    0,                                       /* tp_clear */
+    0,                                       /* tp_richcompare */
+    0,                                       /* tp_weaklistoffset */
+    0,                                       /* tp_iter */
+    0,                                       /* tp_iternext */
+    cms_transform_methods                    /* tp_methods */
 };
 
-DL_EXPORT(void)
-init_imagingcms(void)
+static struct PyModuleDef moduledef = {
+    PyModuleDef_HEAD_INIT,
+    "_imagingcms",          /* m_name */
+    "FIXME: doc string",    /* m_doc */
+    -1,                     /* m_size */
+    pyCMSdll_methods,       /* m_methods */
+    NULL,                   /* m_reload */
+    NULL,                   /* m_traverse */
+    NULL,                   /* m_clear */
+    NULL                    /* m_free */
+};
+
+DL_EXPORT(PyObject*)
+init_imagingcms(PyObject*)
 {
-    PyObject *m;
-    PyObject *d;
-    PyObject *v;
+    PyObject *module = PyModule_Create(&moduledef);
+    PyObject *dict;
+    PyObject *version;
+
+    if (module == NULL)
+        return NULL;
 
     /* Patch up object types */
     CmsProfile_Type.ob_type = &PyType_Type;
     CmsTransform_Type.ob_type = &PyType_Type;
 
-    m = Py_InitModule("_imagingcms", pyCMSdll_methods);
-    d = PyModule_GetDict(m);
+    dict = PyModule_GetDict(module);
 
-#if PY_VERSION_HEX >= 0x02020000
-    v = PyString_FromFormat("%d.%d", LCMS_VERSION / 100, LCMS_VERSION % 100);
-#else
-    {
-        char buffer[100];
-        sprintf(buffer, "%d.%d", LCMS_VERSION / 100, LCMS_VERSION % 100);
-        v = PyString_FromString(buffer);
-    }
-#endif
-    PyDict_SetItemString(d, "littlecms_version", v);
+    version = PyUnicode_FromFormat("%d.%d", LCMS_VERSION / 100, LCMS_VERSION % 100);
+
+    PyDict_SetItemString(dict, "littlecms_version", version);
+
+    return module;
 }

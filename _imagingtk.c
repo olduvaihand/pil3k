@@ -59,12 +59,29 @@ _tkinit(PyObject* self, PyObject* args)
 
 static PyMethodDef functions[] = {
     /* Tkinter interface stuff */
-    {"tkinit", (PyCFunction)_tkinit, 1},
-    {NULL, NULL} /* sentinel */
+    {"tkinit", (PyCFunction)_tkinit, METH_VARARGS, "FIXME: tkinit doc string"},
+    {NULL, NULL, NULL, NULL}    /* sentinel */
 };
 
-DL_EXPORT(void)
-init_imagingtk(void)
+static struct PyModuleDef moduledef = {
+    PyModuleDef_HEAD_INIT,
+    "_imagingtk",           /* m_name */
+    "FIXME: doc string",    /* m_doc */
+    -1,                     /* m_size */
+    functions,              /* m_methods */
+    NULL,                   /* m_reload */
+    NULL,                   /* m_traverse */
+    NULL,                   /* m_clear */
+    NULL                    /* m_free */
+}
+
+DL_EXPORT(PyObject*)
+PyInit__imagingtk(void)
 {
-    Py_InitModule("_imagingtk", functions);
+    PyObject* module = PyModule_Create(&moduledef);
+
+    if (module == NULL)
+        return NULL;
+
+    return module;
 }

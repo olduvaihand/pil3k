@@ -30,26 +30,12 @@
 
 #include <math.h>
 
-#if PY_VERSION_HEX < 0x01060000
-#define PyObject_New PyObject_NEW
-#define PyObject_Del PyMem_DEL
-#endif
-
-#if PY_VERSION_HEX < 0x02050000
-#define Py_ssize_t int
-#define lenfunc inquiry
-#define ssizeargfunc intargfunc
-#define ssizessizeargfunc intintargfunc
-#define ssizeobjargproc intobjargproc
-#define ssizessizeobjargproc intintobjargproc
-#endif
-
 /* compatibility wrappers (defined in _imaging.c) */
 extern int PyImaging_CheckBuffer(PyObject* buffer);
 extern int PyImaging_ReadBuffer(PyObject* buffer, const void** ptr);
 
 /* -------------------------------------------------------------------- */
-/* Class								*/
+/* Class                                */
 /* -------------------------------------------------------------------- */
 
 typedef struct {
@@ -65,6 +51,7 @@ static double*
 alloc_array(int count)
 {
     double* xy;
+
     if (count < 0) {
         PyErr_NoMemory();
         return NULL;
@@ -91,7 +78,7 @@ path_new(Py_ssize_t count, double* xy, int duplicate)
 
     path = PyObject_New(PyPathObject, &PyPathType);
     if (path == NULL)
-	return NULL;
+        return NULL;
 
     path->count = count;
     path->xy = xy;
@@ -107,7 +94,7 @@ path_dealloc(PyPathObject* path)
 }
 
 /* -------------------------------------------------------------------- */
-/* Helpers								*/
+/* Helpers                                */
 /* -------------------------------------------------------------------- */
 
 #define PyPath_Check(op) ((op)->ob_type == &PyPathType)
@@ -119,20 +106,21 @@ PyPath_Flatten(PyObject* data, double **pxy)
     double *xy;
 
     if (PyPath_Check(data)) {
-	/* This was another path object. */
-	PyPathObject *path = (PyPathObject*) data;
+        /* This was another path object. */
+        PyPathObject *path = (PyPathObject*) data;
         xy = alloc_array(path->count);
-	if (!xy)
-	    return -1;
-	memcpy(xy, path->xy, 2 * path->count * sizeof(double));
-	*pxy = xy;
-	return path->count;
+        if (!xy)
+            return -1;
+        memcpy(xy, path->xy, 2 * path->count * sizeof(double));
+        *pxy = xy;
+        return path->count;
     }
-	
+    
     if (PyImaging_CheckBuffer(data)) {
         /* Assume the buffer contains floats */
         float* ptr;
         int n = PyImaging_ReadBuffer(data, (const void**) &ptr);
+
         n /= 2 * sizeof(float);
         xy = alloc_array(n);
         if (!xy)
@@ -144,8 +132,8 @@ PyPath_Flatten(PyObject* data, double **pxy)
     }
 
     if (!PySequence_Check(data)) {
-	PyErr_SetString(PyExc_TypeError, "argument must be sequence");
-	return -1;
+        PyErr_SetString(PyExc_TypeError, "argument must be sequence");
+        return -1;
     }
 
     j = 0;
@@ -157,17 +145,18 @@ PyPath_Flatten(PyObject* data, double **pxy)
     /* Allocate for worst case */
     xy = alloc_array(n);
     if (!xy)
-	return -1;
+        return -1;
 
     /* Copy table to path array */
     if (PyList_Check(data)) {
         for (i = 0; i < n; i++) {
             double x, y;
             PyObject *op = PyList_GET_ITEM(data, i);
+
             if (PyFloat_Check(op))
-		xy[j++] = PyFloat_AS_DOUBLE(op);
-            else if (PyInt_Check(op))
-		xy[j++] = (float) PyInt_AS_LONG(op);
+                xy[j++] = PyFloat_AS_DOUBLE(op);
+            else if (PyLong_Check(op))
+                xy[j++] = PyLong_AsDouble(op);
             else if (PyNumber_Check(op))
                 xy[j++] = PyFloat_AsDouble(op);
             else if (PyArg_ParseTuple(op, "dd", &x, &y)) {
@@ -182,10 +171,11 @@ PyPath_Flatten(PyObject* data, double **pxy)
         for (i = 0; i < n; i++) {
             double x, y;
             PyObject *op = PyTuple_GET_ITEM(data, i);
+
             if (PyFloat_Check(op))
-		xy[j++] = PyFloat_AS_DOUBLE(op);
-            else if (PyInt_Check(op))
-		xy[j++] = (float) PyInt_AS_LONG(op);
+                xy[j++] = PyFloat_AS_DOUBLE(op);
+            else if (PyLong_Check(op))
+                xy[j++] = PyLong_AsDouble(op);
             else if (PyNumber_Check(op))
                 xy[j++] = PyFloat_AsDouble(op);
             else if (PyArg_ParseTuple(op, "dd", &x, &y)) {
@@ -200,6 +190,7 @@ PyPath_Flatten(PyObject* data, double **pxy)
         for (i = 0; i < n; i++) {
             double x, y;
             PyObject *op = PySequence_GetItem(data, i);
+
             if (!op) {
                 /* treat IndexError as end of sequence */
                 if (PyErr_Occurred() &&
@@ -212,9 +203,9 @@ PyPath_Flatten(PyObject* data, double **pxy)
                 }
             }
             if (PyFloat_Check(op))
-		xy[j++] = PyFloat_AS_DOUBLE(op);
-            else if (PyInt_Check(op))
-		xy[j++] = (float) PyInt_AS_LONG(op);
+                xy[j++] = PyFloat_AS_DOUBLE(op);
+            else if (PyLong_Check(op))
+                xy[j++] = PyLong_AsDouble(op);
             else if (PyNumber_Check(op))
                 xy[j++] = PyFloat_AsDouble(op);
             else if (PyArg_ParseTuple(op, "dd", &x, &y)) {
@@ -230,9 +221,9 @@ PyPath_Flatten(PyObject* data, double **pxy)
     }
 
     if (j & 1) {
-	PyErr_SetString(PyExc_ValueError, "wrong number of coordinates");
-	free(xy);
-	return -1;
+        PyErr_SetString(PyExc_ValueError, "wrong number of coordinates");
+        free(xy);
+        return -1;
     }
 
     *pxy = xy;
@@ -241,7 +232,7 @@ PyPath_Flatten(PyObject* data, double **pxy)
 
 
 /* -------------------------------------------------------------------- */
-/* Factories								*/
+/* Factories                                */
 /* -------------------------------------------------------------------- */
 
 PyObject*
@@ -275,7 +266,7 @@ PyPath_Create(PyObject* self, PyObject* args)
 
 
 /* -------------------------------------------------------------------- */
-/* Methods								*/
+/* Methods                                */
 /* -------------------------------------------------------------------- */
 
 static PyObject*
@@ -290,17 +281,17 @@ path_compact(PyPathObject* self, PyObject* args)
     double cityblock = 2.0;
 
     if (!PyArg_ParseTuple(args, "|d:compact", &cityblock))
-	return NULL;
+        return NULL;
 
     xy = self->xy;
 
     /* remove bogus vertices */
     for (i = j = 1; i < self->count; i++) {
-	if (fabs(xy[j+j-2]-xy[i+i]) + fabs(xy[j+j-1]-xy[i+i+1]) >= cityblock) {
-	    xy[j+j] = xy[i+i];
-	    xy[j+j+1] = xy[i+i+1];
-	    j++;
-	}
+        if (fabs(xy[j+j-2]-xy[i+i]) + fabs(xy[j+j-1]-xy[i+i+1]) >= cityblock) {
+            xy[j+j] = xy[i+i];
+            xy[j+j+1] = xy[i+i+1];
+            j++;
+        }
     }
 
     i = self->count - j;
@@ -337,7 +328,7 @@ path_getbbox(PyPathObject* self, PyObject* args)
     double x0, y0, x1, y1;
 
     if (!PyArg_ParseTuple(args, ":getbbox"))
-	return NULL;
+        return NULL;
 
     xy = self->xy;
 
@@ -345,14 +336,14 @@ path_getbbox(PyPathObject* self, PyObject* args)
     y0 = y1 = xy[1];
 
     for (i = 1; i < self->count; i++) {
-	if (xy[i+i] < x0)
-	    x0 = xy[i+i];
-	if (xy[i+i] > x1)
-	    x1 = xy[i+i];
-	if (xy[i+i+1] < y0)
-	    y0 = xy[i+i+1];
-	if (xy[i+i+1] > y1)
-	    y1 = xy[i+i+1];
+        if (xy[i+i] < x0)
+            x0 = xy[i+i];
+        if (xy[i+i] > x1)
+            x1 = xy[i+i];
+        if (xy[i+i+1] < y0)
+            y0 = xy[i+i+1];
+        if (xy[i+i+1] > y1)
+            y1 = xy[i+i+1];
     }
 
     return Py_BuildValue("dddd", x0, y0, x1, y1);
@@ -362,8 +353,8 @@ static PyObject*
 path_getitem(PyPathObject* self, int i)
 {
     if (i < 0 || i >= self->count) {
-	PyErr_SetString(PyExc_IndexError, "path index out of range");
-	return NULL;
+        PyErr_SetString(PyExc_IndexError, "path index out of range");
+        return NULL;
     }
 
     return Py_BuildValue("dd", self->xy[i+i], self->xy[i+i+1]);
@@ -377,6 +368,7 @@ path_getslice(PyPathObject* self, Py_ssize_t ilow, Py_ssize_t ihigh)
         ilow = 0;
     else if (ilow >= self->count)
         ilow = self->count;
+
     if (ihigh < 0)
         ihigh = 0;
     if (ihigh < ilow)
@@ -402,22 +394,23 @@ path_map(PyPathObject* self, PyObject* args)
     PyObject* function;
 
     if (!PyArg_ParseTuple(args, "O:map", &function))
-	return NULL;
+        return NULL;
 
     xy = self->xy;
 
     /* apply function to coordinate set */
     for (i = 0; i < self->count; i++) {
-	double x = xy[i+i];
-	double y = xy[i+i+1];
-	PyObject* item = PyObject_CallFunction(function, "dd", x, y);
-	if (!item || !PyArg_ParseTuple(item, "dd", &x, &y)) {
-	    Py_XDECREF(item);
-	    return NULL;
-	}
-	xy[i+i] = x;
-	xy[i+i+1] = y;
-	Py_DECREF(item);
+        double x = xy[i+i];
+        double y = xy[i+i+1];
+        PyObject* item = PyObject_CallFunction(function, "dd", x, y);
+
+        if (!item || !PyArg_ParseTuple(item, "dd", &x, &y)) {
+            Py_XDECREF(item);
+            return NULL;
+        }
+        xy[i+i] = x;
+        xy[i+i+1] = y;
+        Py_DECREF(item);
     }
 
     Py_INCREF(Py_None);
@@ -430,14 +423,12 @@ path_setitem(PyPathObject* self, int i, PyObject* op)
     double* xy;
 
     if (i < 0 || i >= self->count) {
-        PyErr_SetString(PyExc_IndexError,
-                        "path assignment index out of range");
+        PyErr_SetString(PyExc_IndexError, "path assignment index out of range");
         return -1;
     }
 
     if (op == NULL) {
-        PyErr_SetString(PyExc_TypeError,
-                        "cannot delete from path");
+        PyErr_SetString(PyExc_TypeError, "cannot delete from path");
         return -1;
     }
 
@@ -454,10 +445,10 @@ path_tolist(PyPathObject* self, PyObject* args)
 {
     PyObject *list;
     int i;
-
     int flat = 0;
+
     if (!PyArg_ParseTuple(args, "|i:tolist", &flat))
-	return NULL;
+        return NULL;
 
     if (flat) {
         list = PyList_New(self->count*2);
@@ -493,95 +484,112 @@ path_transform(PyPathObject* self, PyObject* args)
     int i;
     double *xy;
     double a, b, c, d, e, f;
-
     double wrap = 0.0;
 
-    if (!PyArg_ParseTuple(args, "(dddddd)|d:transform",
-			  &a, &b, &c, &d, &e, &f,
-			  &wrap))
-	return NULL;
+    if (!PyArg_ParseTuple(args, "(dddddd)|d:transform", &a, &b, &c, &d, &e, &f,
+              &wrap))
+        return NULL;
 
     xy = self->xy;
 
     /* transform the coordinate set */
     if (b == 0.0 && d == 0.0)
-	/* scaling */
-	for (i = 0; i < self->count; i++) {
-	    xy[i+i]   = a*xy[i+i]+c;
-	    xy[i+i+1] = e*xy[i+i+1]+f;
-	}
+        /* scaling */
+        for (i = 0; i < self->count; i++) {
+            xy[i+i]   = a*xy[i+i]+c;
+            xy[i+i+1] = e*xy[i+i+1]+f;
+        }
     else
-	/* affine transform */
-	for (i = 0; i < self->count; i++) {
-	    double x = xy[i+i];
-	    double y = xy[i+i+1];
-	    xy[i+i]   = a*x+b*y+c;
-	    xy[i+i+1] = d*x+e*y+f;
-	}
+        /* affine transform */
+        for (i = 0; i < self->count; i++) {
+            double x = xy[i+i];
+            double y = xy[i+i+1];
+            xy[i+i]   = a*x+b*y+c;
+            xy[i+i+1] = d*x+e*y+f;
+        }
 
     /* special treatment of geographical map data */
     if (wrap != 0.0)
-	for (i = 0; i < self->count; i++)
-	    xy[i+i] = fmod(xy[i+i], wrap);
+        for (i = 0; i < self->count; i++)
+            xy[i+i] = fmod(xy[i+i], wrap);
 
     Py_INCREF(Py_None);
     return Py_None;
 }
 
 static struct PyMethodDef methods[] = {
-    {"getbbox", (PyCFunction)path_getbbox, 1},
-    {"tolist", (PyCFunction)path_tolist, 1},
-    {"clip_polygon", (PyCFunction)path_clip_polygon, 1},
-    {"clip_polyline", (PyCFunction)path_clip_polyline, 1},
-    {"compact", (PyCFunction)path_compact, 1},
-    {"map", (PyCFunction)path_map, 1},
-    {"transform", (PyCFunction)path_transform, 1},
-    {NULL, NULL} /* sentinel */
+    {"getbbox", (PyCFunction)path_getbbox, METH_VARARGS,
+        "FIXME: getbbox doc string"},
+    {"tolist", (PyCFunction)path_tolist, METH_VARARGS,
+        "FIXME: tolist doc string"},
+    {"clip_polygon", (PyCFunction)path_clip_polygon, METH_VARARGS,
+        "FIXME: clip_polygon doc string"},
+    {"clip_polyline", (PyCFunction)path_clip_polyline, METH_VARARGS,
+        "FIXME: clip_polyline doc string"},
+    {"compact", (PyCFunction)path_compact, METH_VARARGS,
+        "FIXME: compact doc string"},
+    {"map", (PyCFunction)path_map, METH_VARARGS,
+        "FIXME: map doc string"},
+    {"transform", (PyCFunction)path_transform, METH_VARARGS,
+        "FIXME: transform doc string"},
+    {NULL, NULL, NULL, NULL} /* sentinel */
 };
 
 static PyObject*  
-path_getattr(PyPathObject* self, char* name)
+path_getattro(PyPathObject* self, PyObject* name)
 {
     PyObject* res;
 
-    res = Py_FindMethod(methods, (PyObject*) self, name);
+    res = PyObject_GenericGetAttr((PyObject*)self, name);
     if (res)
-	return res;
+        return res;
 
     PyErr_Clear();
 
     if (strcmp(name, "id") == 0)
-	return Py_BuildValue("l", (long) self->xy);
+        return Py_BuildValue("l", (long) self->xy);
 
     PyErr_SetString(PyExc_AttributeError, name);
     return NULL;
 }
 
 static PySequenceMethods path_as_sequence = {
-	(lenfunc)path_len, /*sq_length*/
-	(binaryfunc)0, /*sq_concat*/
-	(ssizeargfunc)0, /*sq_repeat*/
-	(ssizeargfunc)path_getitem, /*sq_item*/
-	(ssizessizeargfunc)path_getslice, /*sq_slice*/
-	(ssizeobjargproc)path_setitem, /*sq_ass_item*/
-	(ssizessizeobjargproc)0, /*sq_ass_slice*/
+    (lenfunc)path_len,                   /*sq_length*/
+    (binaryfunc)0,                       /*sq_concat*/
+    (ssizeargfunc)0,                     /*sq_repeat*/
+    (ssizeargfunc)path_getitem,          /*sq_item*/
+    (ssizessizeargfunc)path_getslice,    /*sq_slice*/
+    (ssizeobjargproc)path_setitem,       /*sq_ass_item*/
+    (ssizessizeobjargproc)0,             /*sq_ass_slice*/
 };
 
 statichere PyTypeObject PyPathType = {
-	PyObject_HEAD_INIT(NULL)
-	0,				/*ob_size*/
-	"Path",				/*tp_name*/
-	sizeof(PyPathObject),		/*tp_size*/
-	0,				/*tp_itemsize*/
-	/* methods */
-	(destructor)path_dealloc,	/*tp_dealloc*/
-	0,				/*tp_print*/
-	(getattrfunc)path_getattr,	/*tp_getattr*/
-	0,				/*tp_setattr*/
-	0,				/*tp_compare*/
-	0,				/*tp_repr*/
-	0,                              /*tp_as_number */
-	&path_as_sequence,              /*tp_as_sequence */
-	0,                              /*tp_as_mapping */
-	0,                              /*tp_hash*/
+    PyVarObject_HEAD_INIT(NULL, 0)
+    "Path",                        /* tp_name */
+    sizeof(PyPathObject),          /* tp_basicsize */
+    0,                             /* tp_itemsize */
+    (destructor)path_dealloc,      /* tp_dealloc */
+    0,                             /* tp_print */
+    0,                             /* tp_getattr */
+    0,                             /* tp_setattr */
+    0,                             /* tp_reserved */
+    0,                             /* tp_repr */
+    0,                             /* tp_as_number */
+    &path_as_sequence,             /* tp_as_sequence */
+    0,                             /* tp_as_mapping */
+    0,                             /* tp_hash */
+    0,                             /* tp_call */
+    0,                             /* tp_str */
+    (getattrfunc)path_getattro,    /* tp_getattro */
+    0,                             /* tp_setattro */
+    0,                             /* tp_as_buffer */
+    0,                             /* tp_flags */
+    0,                             /* tp_doc */
+    0,                             /* tp_traverse */
+    0,                             /* tp_clear */
+    0,                             /* tp_richcompare */
+    0,                             /* tp_weaklistoffset */
+    0,                             /* tp_iter */
+    0,                             /* tp_iternext */
+    methods                        /* tp_methods */
 };

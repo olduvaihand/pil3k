@@ -198,7 +198,7 @@ _tostring(ImagingDisplayObject* display, PyObject* args)
     if (!PyArg_ParseTuple(args, ":tostring"))
         return NULL;
 
-    return PyString_FromStringAndSize(
+    return PyBytes_FromStringAndSize(
         display->dib->bits, display->dib->ysize * display->dib->linesize
         );
 }
@@ -246,7 +246,7 @@ _getattro(ImagingDisplayObject* self, PyObject* name)
 statichere PyTypeObject ImagingDisplayType = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "ImagingDisplay",                /* tp_name */
-    sizeof(ImagingDisplayObject),    /* tp_size */
+    sizeof(ImagingDisplayObject),    /* tp_basicsize */
     0,                               /* tp_itemsize */
     (destructor)_delete,             /* tp_dealloc */
     0,                               /* tp_print */
@@ -260,7 +260,7 @@ statichere PyTypeObject ImagingDisplayType = {
     0,                               /* tp_hash */
     0,                               /* tp_call */
     0,                               /* tp_str */
-    _getattro,                       /* tp_getattro */
+    (getattrofunc)_getattro,         /* tp_getattro */
     0,                               /* tp_setattro */
     0,                               /* tp_as_buffer */
     0,                               /* tp_flags */
@@ -337,7 +337,7 @@ PyImaging_GrabScreenWin32(PyObject* self, PyObject* args)
 
     /* step 3: extract bits from bitmap */
 
-    buffer = PyString_FromStringAndSize(NULL, height * ((width*3 + 3) & -4));
+    buffer = PyBytes_FromStringAndSize(NULL, height * ((width*3 + 3) & -4));
     if (!buffer)
         return NULL;
 
@@ -346,8 +346,8 @@ PyImaging_GrabScreenWin32(PyObject* self, PyObject* args)
     core.bcHeight = height;
     core.bcPlanes = 1;
     core.bcBitCount = 24;
-    if (!GetDIBits(screen_copy, bitmap, 0, height, PyString_AS_STRING(buffer),
-                   (BITMAPINFO*) &core, DIB_RGB_COLORS))
+    if (!GetDIBits(screen_copy, bitmap, 0, height, PyBytes_AS_STRING(buffer),
+           (BITMAPINFO*) &core, DIB_RGB_COLORS))
         goto error;
 
     DeleteObject(bitmap);
@@ -536,7 +536,7 @@ PyImaging_GrabClipboardWin32(PyObject* self, PyObject* args)
         size = wcslen(data) * 2;
 #endif
 
-    result = PyString_FromStringAndSize(data, size);
+    result = PyBytes_FromStringAndSize(data, size);
 
     GlobalUnlock(handle);
 
@@ -828,7 +828,7 @@ PyImaging_DrawWmf(PyObject* self, PyObject* args)
 
     GdiFlush();
 
-    buffer = PyString_FromStringAndSize(ptr, height * ((width*3 + 3) & -4));
+    buffer = PyBytes_FromStringAndSize(ptr, height * ((width*3 + 3) & -4));
 
 error:
     DeleteEnhMetaFile(meta);

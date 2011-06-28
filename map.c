@@ -20,11 +20,6 @@
 
 #include "Python.h"
 
-#if PY_VERSION_HEX < 0x01060000
-#define PyObject_New PyObject_NEW
-#define PyObject_Del PyMem_DEL
-#endif
-
 #include "Imaging.h"
 
 #ifdef WIN32
@@ -64,7 +59,7 @@ PyImaging_MapperNew(const char* filename, int readonly)
 
     mapper = PyObject_New(ImagingMapperObject, &ImagingMapperType);
     if (mapper == NULL)
-	return NULL;
+       return NULL;
 
     mapper->base = NULL;
     mapper->size = mapper->offset = 0;
@@ -74,13 +69,8 @@ PyImaging_MapperNew(const char* filename, int readonly)
     mapper->hMap  = (HANDLE)-1;
 
     /* FIXME: currently supports readonly mappings only */
-    mapper->hFile = CreateFile(
-        filename,
-        GENERIC_READ,
-        FILE_SHARE_READ,
-        NULL, OPEN_EXISTING,
-        FILE_ATTRIBUTE_NORMAL,
-        NULL);
+    mapper->hFile = CreateFile(filename, GENERIC_READ, FILE_SHARE_READ, NULL,
+            OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     if (mapper->hFile == (HANDLE)-1) {
         PyErr_SetString(PyExc_IOError, "cannot open file");
         PyObject_Del(mapper);
@@ -92,17 +82,13 @@ PyImaging_MapperNew(const char* filename, int readonly)
         PAGE_READONLY,
         0, 0, NULL);
     if (mapper->hMap == (HANDLE)-1) {
-	CloseHandle(mapper->hFile);
+        CloseHandle(mapper->hFile);
         PyErr_SetString(PyExc_IOError, "cannot map file");
         PyObject_Del(mapper);
         return NULL;
     }
 
-    mapper->base = (char*) MapViewOfFile(
-        mapper->hMap,
-        FILE_MAP_READ,
-        0, 0, 0);
-
+    mapper->base = (char*) MapViewOfFile(mapper->hMap, FILE_MAP_READ, 0, 0, 0);
     mapper->size = GetFileSize(mapper->hFile, 0);
 #endif
 
@@ -114,14 +100,18 @@ mapping_dealloc(ImagingMapperObject* mapper)
 {
 #ifdef WIN32
     if (mapper->base != 0)
-	UnmapViewOfFile(mapper->base);
+        UnmapViewOfFile(mapper->base);
+
     if (mapper->hMap != (HANDLE)-1)
-	CloseHandle(mapper->hMap);
+        CloseHandle(mapper->hMap);
+
     if (mapper->hFile != (HANDLE)-1)
-	CloseHandle(mapper->hFile);
+        CloseHandle(mapper->hFile);
+
     mapper->base = 0;
     mapper->hMap = mapper->hFile = (HANDLE)-1;
 #endif
+
     PyObject_Del(mapper);
 }
 
@@ -132,23 +122,24 @@ static PyObject*
 mapping_read(ImagingMapperObject* mapper, PyObject* args)
 {
     PyObject* buf;
-
     int size = -1;
+
     if (!PyArg_ParseTuple(args, "|i", &size))
-	return NULL;
+        return NULL;
 
     /* check size */
     if (size < 0 || mapper->offset + size > mapper->size)
         size = mapper->size - mapper->offset;
+
     if (size < 0)
         size = 0;
 
-    buf = PyString_FromStringAndSize(NULL, size);
+    buf = PyBytes_FromStringAndSize(NULL, size);
     if (!buf)
-	return NULL;
+        return NULL;
 
     if (size > 0) {
-        memcpy(PyString_AsString(buf), mapper->base + mapper->offset, size);
+        memcpy(PyBytes_AsString(buf), mapper->base + mapper->offset, size);
         mapper->offset += size;
     }
 
@@ -160,8 +151,9 @@ mapping_seek(ImagingMapperObject* mapper, PyObject* args)
 {
     int offset;
     int whence = 0;
+
     if (!PyArg_ParseTuple(args, "i|i", &offset, &whence))
-	return NULL;
+        return NULL;
 
     switch (whence) {
         case 0: /* SEEK_SET */
@@ -198,15 +190,15 @@ mapping_readimage(ImagingMapperObject* mapper, PyObject* args)
 {
     int y, size;
     Imaging im;
-
     char* mode;
     int xsize;
     int ysize;
     int stride;
     int orientation;
+
     if (!PyArg_ParseTuple(args, "s(ii)ii", &mode, &xsize, &ysize,
                           &stride, &orientation))
-	return NULL;
+        return NULL;
 
     if (stride <= 0) {
         /* FIXME: maybe we should call ImagingNewPrologue instead */
@@ -249,41 +241,54 @@ mapping_readimage(ImagingMapperObject* mapper, PyObject* args)
 
 static struct PyMethodDef methods[] = {
     /* standard file interface */
-    {"read", (PyCFunction)mapping_read, 1},
-    {"seek", (PyCFunction)mapping_seek, 1},
+    {"read", (PyCFunction)mapping_read, METH_VARARGS,
+        "FIXME: read doc string"},
+    {"seek", (PyCFunction)mapping_seek, METH_VARARGS,
+        "FIXME: seek doc string"},
     /* extensions */
-    {"readimage", (PyCFunction)mapping_readimage, 1},
-    {NULL, NULL} /* sentinel */
+    {"readimage", (PyCFunction)mapping_readimage, METH_VARARGS,
+        "FIXME: readimage doc string"},
+    {NULL, NULL, NULL, NULL}    /* sentinel */
 };
 
-static PyObject*  
-mapping_getattr(ImagingMapperObject* self, char* name)
-{
-    return Py_FindMethod(methods, (PyObject*) self, name);
-}
-
 statichere PyTypeObject ImagingMapperType = {
-	PyObject_HEAD_INIT(NULL)
-	0,				/*ob_size*/
-	"ImagingMapper",		/*tp_name*/
-	sizeof(ImagingMapperObject),	/*tp_size*/
-	0,				/*tp_itemsize*/
-	/* methods */
-	(destructor)mapping_dealloc,	/*tp_dealloc*/
-	0,				/*tp_print*/
-	(getattrfunc)mapping_getattr,	/*tp_getattr*/
-	0,				/*tp_setattr*/
-	0,				/*tp_compare*/
-	0,				/*tp_repr*/
-	0,                              /*tp_hash*/
+    PyVarObject_HEAD_INIT(NULL, 0)
+    "ImagingMapper",                /* tp_name */
+    sizeof(ImagingMapperObject),    /* tp_basicsize */
+    0,                              /* tp_itemsize */
+    (destructor)mapping_dealloc,    /* tp_dealloc */
+    0,                              /* tp_print */
+    0,                              /* tp_getattr */
+    0,                              /* tp_setattr */
+    0,                              /* tp_reserved */
+    0,                              /* tp_repr */
+    0,                              /* tp_as_number */
+    0,                              /* tp_as_sequence */
+    0,                              /* tp_as_mapping */
+    0,                              /* tp_hash */
+    0,                              /* tp_call */
+    0,                              /* tp_str */
+    PyObject_GenericGetAttr,        /* tp_getattro */
+    0,                              /* tp_setattro */
+    0,                              /* tp_as_buffer */
+    0,                              /* tp_flags */
+    0,                              /* tp_doc */
+    0,                              /* tp_traverse */
+    0,                              /* tp_clear */
+    0,                              /* tp_richcompare */
+    0,                              /* tp_weaklistoffset */
+    0,                              /* tp_iter */
+    0,                              /* tp_iternext */
+    methods                         /* tp_methods */
 };
 
 PyObject* 
 PyImaging_Mapper(PyObject* self, PyObject* args)
 {
     char* filename;
+
     if (!PyArg_ParseTuple(args, "s", &filename))
-	return NULL;
+    return NULL;
 
     return (PyObject*) PyImaging_MapperNew(filename, 1);
 }
@@ -311,7 +316,6 @@ PyImaging_MapBuffer(PyObject* self, PyObject* args)
     Imaging im;
     char* ptr;
     int bytes;
-
     PyObject* target;
     char* mode;
     char* codec;
@@ -322,8 +326,8 @@ PyImaging_MapBuffer(PyObject* self, PyObject* args)
     int ystep;
 
     if (!PyArg_ParseTuple(args, "O(ii)sOi(sii)", &target, &xsize, &ysize,
-                          &codec, &bbox, &offset, &mode, &stride, &ystep))
-	return NULL;
+            &codec, &bbox, &offset, &mode, &stride, &ystep))
+        return NULL;
 
     if (!PyImaging_CheckBuffer(target)) {
         PyErr_SetString(PyExc_TypeError, "expected string or buffer");
@@ -352,9 +356,8 @@ PyImaging_MapBuffer(PyObject* self, PyObject* args)
         return NULL;
     }
 
-    im = ImagingNewPrologueSubtype(
-        mode, xsize, ysize, sizeof(ImagingBufferInstance)
-        );
+    im = ImagingNewPrologueSubtype(mode, xsize, ysize,
+             sizeof(ImagingBufferInstance));
     if (!im)
         return NULL;
 
@@ -376,4 +379,3 @@ PyImaging_MapBuffer(PyObject* self, PyObject* args)
 
     return PyImagingNew(im);
 }
-

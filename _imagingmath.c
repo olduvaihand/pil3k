@@ -227,58 +227,73 @@ install(PyObject *d, char* name, void* value)
     Py_XDECREF(v);
 }
 
-DL_EXPORT(void)
-init_imagingmath(void)
+static struct PyModuleDef moduledef = {
+    PyModuleDef_HEAD_INIT,
+    "_imagingmath",                      /* m_name */
+    "FIXME: _imagingmath doc string",    /* m_doc */
+    -1,                                  /* m_size */
+    _functions,                          /* m_methods */
+    NULL,                                /* m_reload */
+    NULL,                                /* m_traverse */
+    NULL,                                /* m_clear */
+    NULL                                 /* m_free */
+};
+
+DL_EXPORT(PyObject*)
+PyInit__imagingmath(PyObject*)
 {
-    PyObject* m;
-    PyObject* d;
+    PyObject* module = PyModule_Create(&moduledef);
+    PyObject* dict;
 
-    m = Py_InitModule("_imagingmath", _functions);
-    d = PyModule_GetDict(m);
+    if (module == NULL)
+        return NULL;
 
-    install(d, "abs_I", abs_I);
-    install(d, "neg_I", neg_I);
-    install(d, "add_I", add_I);
-    install(d, "sub_I", sub_I);
-    install(d, "diff_I", diff_I);
-    install(d, "mul_I", mul_I);
-    install(d, "div_I", div_I);
-    install(d, "mod_I", mod_I);
-    install(d, "min_I", min_I);
-    install(d, "max_I", max_I);
-    install(d, "pow_I", pow_I);
+    dict = PyModule_GetDict(module);
 
-    install(d, "invert_I", invert_I);
-    install(d, "and_I", and_I);
-    install(d, "or_I", or_I);
-    install(d, "xor_I", xor_I);
-    install(d, "lshift_I", lshift_I);
-    install(d, "rshift_I", rshift_I);
+    install(dict, "abs_I", abs_I);
+    install(dict, "neg_I", neg_I);
+    install(dict, "add_I", add_I);
+    install(dict, "sub_I", sub_I);
+    install(dict, "diff_I", diff_I);
+    install(dict, "mul_I", mul_I);
+    install(dict, "div_I", div_I);
+    install(dict, "mod_I", mod_I);
+    install(dict, "min_I", min_I);
+    install(dict, "max_I", max_I);
+    install(dict, "pow_I", pow_I);
 
-    install(d, "eq_I", eq_I);
-    install(d, "ne_I", ne_I);
-    install(d, "lt_I", lt_I);
-    install(d, "le_I", le_I);
-    install(d, "gt_I", gt_I);
-    install(d, "ge_I", ge_I);
+    install(dict, "invert_I", invert_I);
+    install(dict, "and_I", and_I);
+    install(dict, "or_I", or_I);
+    install(dict, "xor_I", xor_I);
+    install(dict, "lshift_I", lshift_I);
+    install(dict, "rshift_I", rshift_I);
 
-    install(d, "abs_F", abs_F);
-    install(d, "neg_F", neg_F);
-    install(d, "add_F", add_F);
-    install(d, "sub_F", sub_F);
-    install(d, "diff_F", diff_F);
-    install(d, "mul_F", mul_F);
-    install(d, "div_F", div_F);
-    install(d, "mod_F", mod_F);
-    install(d, "min_F", min_F);
-    install(d, "max_F", max_F);
-    install(d, "pow_F", pow_F);
+    install(dict, "eq_I", eq_I);
+    install(dict, "ne_I", ne_I);
+    install(dict, "lt_I", lt_I);
+    install(dict, "le_I", le_I);
+    install(dict, "gt_I", gt_I);
+    install(dict, "ge_I", ge_I);
 
-    install(d, "eq_F", eq_F);
-    install(d, "ne_F", ne_F);
-    install(d, "lt_F", lt_F);
-    install(d, "le_F", le_F);
-    install(d, "gt_F", gt_F);
-    install(d, "ge_F", ge_F);
+    install(dict, "abs_F", abs_F);
+    install(dict, "neg_F", neg_F);
+    install(dict, "add_F", add_F);
+    install(dict, "sub_F", sub_F);
+    install(dict, "diff_F", diff_F);
+    install(dict, "mul_F", mul_F);
+    install(dict, "div_F", div_F);
+    install(dict, "mod_F", mod_F);
+    install(dict, "min_F", min_F);
+    install(dict, "max_F", max_F);
+    install(dict, "pow_F", pow_F);
 
+    install(dict, "eq_F", eq_F);
+    install(dict, "ne_F", ne_F);
+    install(dict, "lt_F", lt_F);
+    install(dict, "le_F", le_F);
+    install(dict, "gt_F", gt_F);
+    install(dict, "ge_F", ge_F);
+
+    return module;
 }
