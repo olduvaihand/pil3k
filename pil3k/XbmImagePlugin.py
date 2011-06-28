@@ -71,13 +71,13 @@ def _save(im, fp, filename):
     if im.mode != "1":
         raise IOError("cannot write mode {0} as XBM".format(im.mode))
 
-    fp.write("#define im_width %d\n" % im.size[0])
-    fp.write("#define im_height %d\n" % im.size[1])
+    fp.write("#define im_width {0}\n".format(im.size[0]))
+    fp.write("#define im_height {0}\n".format(im.size[1]))
 
     hotspot = im.encoderinfo.get("hotspot")
     if hotspot:
-        fp.write("#define im_x_hot %d\n" % hotspot[0])
-        fp.write("#define im_y_hot %d\n" % hotspot[1])
+        fp.write("#define im_x_hot {0}\n".format(hotspot[0]))
+        fp.write("#define im_y_hot {0}\n".format(hotspot[1]))
 
     fp.write("static char im_bits[] = {\n")
 
