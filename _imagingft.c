@@ -35,22 +35,6 @@
 #include <freetype/freetype.h>
 #endif
 
-#if PY_VERSION_HEX < 0x01060000
-#define PyObject_New PyObject_NEW
-#define PyObject_Del PyMem_DEL
-#endif
-
-#if PY_VERSION_HEX >= 0x01060000
-#if PY_VERSION_HEX  < 0x02020000 || defined(Py_USING_UNICODE)
-/* defining this enables unicode support (default under 1.6a1 and later) */
-#define HAVE_UNICODE
-#endif
-#endif
-
-#if !defined(Py_RETURN_NONE)
-#define Py_RETURN_NONE return Py_INCREF(Py_None), Py_None
-#endif
-
 #if !defined(FT_LOAD_TARGET_MONO)
 #define FT_LOAD_TARGET_MONO  FT_LOAD_MONOCHROME
 #endif
@@ -109,7 +93,6 @@ getfont(PyObject* self_, PyObject* args, PyObject* kw)
 
     FontObject* self;
     int error;
-
     char* filename;
     int size;
     int index = 0;
@@ -118,22 +101,13 @@ getfont(PyObject* self_, PyObject* args, PyObject* kw)
         "filename", "size", "index", "encoding", NULL
     };
 
-#if defined(HAVE_UNICODE) && PY_VERSION_HEX >= 0x02020000
     if (!PyArg_ParseTupleAndKeywords(args, kw, "eti|is", kwlist,
                                      Py_FileSystemDefaultEncoding, &filename,
                                      &size, &index, &encoding))
         return NULL;
-#else
-    if (!PyArg_ParseTupleAndKeywords(args, kw, "si|is", kwlist,
-                                     &filename, &size, &index, &encoding))
-        return NULL;
-#endif
 
     if (!library) {
-        PyErr_SetString(
-            PyExc_IOError,
-            "failed to initialize FreeType library"
-            );
+        PyErr_SetString(PyExc_IOError, "failed to initialize FreeType library");
         return NULL;
     }
 
@@ -285,12 +259,12 @@ font_render(FontObject* self, PyObject* args)
     FT_GlyphSlot glyph;
     FT_Bool kerning = FT_HAS_KERNING(self->face);
     FT_UInt last_index = 0;
-
     /* render string into given buffer (the buffer *must* have
        the right size, or this will crash) */
     PyObject* string;
     long id;
     int mask = 0;
+
     if (!PyArg_ParseTuple(args, "Ol|i:render", &string, &id, &mask))
         return NULL;
 
@@ -389,14 +363,17 @@ font_dealloc(FontObject* self)
 }
 
 static PyMethodDef font_methods[] = {
-    {"render", (PyCFunction) font_render, METH_VARARGS},
-    {"getsize", (PyCFunction) font_getsize, METH_VARARGS},
-    {"getabc", (PyCFunction) font_getabc, METH_VARARGS},
-    {NULL, NULL}
+    {"render", (PyCFunction)font_render, METH_VARARGS,
+        "FIXME: font_render doc string"},
+    {"getsize", (PyCFunction)font_getsize, METH_VARARGS,
+        "FIXME: font_getsize doc string"},
+    {"getabc", (PyCFunction)font_getabc, METH_VARARGS,
+        "FIXME: font_getabc doc string"},
+    {NULL, NULL, NULL, NULL}    /* Sentinel */
 };
 
 static PyObject*  
-font_getattr(FontObject* self, PyObject* name)
+font_getattro(FontObject* self, PyObject* name)
 {
     PyObject* res;
 
@@ -432,17 +409,29 @@ font_getattr(FontObject* self, PyObject* name)
 }
 
 statichere PyTypeObject Font_Type = {
-    PyObject_HEAD_INIT(NULL)
-    0, "Font", sizeof(FontObject), 0,
-    /* methods */
-    (destructor)font_dealloc, /* tp_dealloc */
-    0, /* tp_print */
-    (getattrfunc)font_getattr, /* tp_getattr */
+    PyVarObject_HEAD_INIT(NULL, 0)
+    "Font",                                  /* tp_name */
+    sizeof(FontObject),                      /* tp_basicsize */
+    0,                                       /* tp_itemsize */
+    (destructor)font_dealloc,                /* tp_dealloc */
+    0,                                       /* tp_print */
+    0,                                       /* tp_getattr */
+    0,                                       /* tp_setattr */
+    0,                                       /* tp_reserved */
+    0,                                       /* tp_repr */
+    0,                                       /* tp_as_number */
+    0,                                       /* tp_as_sequence */
+    0,                                       /* tp_as_mapping */
+    0,                                       /* tp_hash */
+    0,                                       /* tp_call */
+    0,                                       /* tp_str */
+    (getattrofunc)font_getattro,             /* tp_getattro */
 };
 
 static PyMethodDef _functions[] = {
-    {"getfont", (PyCFunction) getfont, METH_VARARGS|METH_KEYWORDS},
-    {NULL, NULL}
+    {"getfont", (PyCFunction)getfont, METH_VARARGS|METH_KEYWORDS,
+        "FIXME: getfont doc string"},
+    {NULL, NULL, NULL, NULL}   /* Sentinel */
 };
 
 static struct PyModuleDef moduledef = {
@@ -450,7 +439,7 @@ static struct PyModuleDef moduledef = {
     "_imagingft",           /* m_name */
     "FIXME: doc string",    /* m_doc */
     -1,                     /* m_size */
-    functions,              /* m_methods */
+    _functions,              /* m_methods */
     NULL,                   /* m_reload */
     NULL,                   /* m_traverse */
     NULL,                   /* m_clear */
