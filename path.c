@@ -56,6 +56,7 @@ alloc_array(int count)
         PyErr_NoMemory();
         return NULL;
     }
+
     xy = malloc(2 * count * sizeof(double) + 1);
     if (!xy)
         PyErr_NoMemory();
@@ -107,7 +108,7 @@ PyPath_Flatten(PyObject* data, double **pxy)
 
     if (PyPath_Check(data)) {
         /* This was another path object. */
-        PyPathObject *path = (PyPathObject*) data;
+        PyPathObject *path = (PyPathObject*)data;
         xy = alloc_array(path->count);
         if (!xy)
             return -1;
@@ -119,7 +120,7 @@ PyPath_Flatten(PyObject* data, double **pxy)
     if (PyImaging_CheckBuffer(data)) {
         /* Assume the buffer contains floats */
         float* ptr;
-        int n = PyImaging_ReadBuffer(data, (const void**) &ptr);
+        int n = PyImaging_ReadBuffer(data, (const void**)&ptr);
 
         n /= 2 * sizeof(float);
         xy = alloc_array(n);
@@ -261,7 +262,7 @@ PyPath_Create(PyObject* self, PyObject* args)
             return NULL;
     }
 
-    return (PyObject*) path_new(count, xy, 0);
+    return (PyObject*)path_new(count, xy, 0);
 }
 
 
@@ -277,7 +278,6 @@ path_compact(PyPathObject* self, PyObject* args)
        given distance */
     int i, j;
     double *xy;
-
     double cityblock = 2.0;
 
     if (!PyArg_ParseTuple(args, "|d:compact", &cityblock))
@@ -371,12 +371,13 @@ path_getslice(PyPathObject* self, Py_ssize_t ilow, Py_ssize_t ihigh)
 
     if (ihigh < 0)
         ihigh = 0;
+
     if (ihigh < ilow)
         ihigh = ilow;
     else if (ihigh > self->count)
         ihigh = self->count;
     
-    return (PyObject*) path_new(ihigh - ilow, self->xy + ilow * 2, 1);
+    return (PyObject*)path_new(ihigh - ilow, self->xy + ilow * 2, 1);
 }
 
 static Py_ssize_t
@@ -413,8 +414,7 @@ path_map(PyPathObject* self, PyObject* args)
         Py_DECREF(item);
     }
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static int
@@ -504,6 +504,7 @@ path_transform(PyPathObject* self, PyObject* args)
         for (i = 0; i < self->count; i++) {
             double x = xy[i+i];
             double y = xy[i+i+1];
+
             xy[i+i]   = a*x+b*y+c;
             xy[i+i+1] = d*x+e*y+f;
         }
@@ -513,8 +514,7 @@ path_transform(PyPathObject* self, PyObject* args)
         for (i = 0; i < self->count; i++)
             xy[i+i] = fmod(xy[i+i], wrap);
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static struct PyMethodDef methods[] = {
@@ -532,7 +532,7 @@ static struct PyMethodDef methods[] = {
         "FIXME: map doc string"},
     {"transform", (PyCFunction)path_transform, METH_VARARGS,
         "FIXME: transform doc string"},
-    {NULL, NULL, NULL, NULL} /* sentinel */
+    {NULL, NULL, 0, NULL} /* sentinel */
 };
 
 static PyObject*  
