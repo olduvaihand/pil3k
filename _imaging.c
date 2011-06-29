@@ -3305,7 +3305,7 @@ static PyMethodDef functions[] = {
         "FIXME: PyOutline_Create doc string"},
 #endif
 
-    {NULL, NULL, NULL, NULL} /* sentinel */
+    {NULL, NULL, 0, NULL} /* sentinel */
 };
 
 static struct PyModuleDef moduledef = {
@@ -3320,8 +3320,8 @@ static struct PyModuleDef moduledef = {
     NULL                    /* m_free */
 };
 
-PyObject*
-init_imaging(PyObject*)
+PyMODINIT_FUNC
+PyInit__imaging(PyObject*)
 {
     PyObject* module = PyModule_Create(&moduledef);
     PyObject* dict;
@@ -3330,14 +3330,22 @@ init_imaging(PyObject*)
         return NULL;
 
     /* Patch object type */
-    Imaging_Type.ob_type = &PyType_Type;
+    Imaging_Type.tp_new = &PyType_GenericNew;
+    if (PyType_Ready(&Imaging_Type) < 0)
+        return NULL;
 
 #ifdef WITH_IMAGEDRAW
-    ImagingFont_Type.ob_type = &PyType_Type;
-    ImagingDraw_Type.ob_type = &PyType_Type;
+    ImagingFont_Type.tp_new = &PyType_GenericNew;
+    if (PyType_Ready(&ImagingFont_Type) < 0)
+        return NULL;
+
+    ImagingDraw_Type.tp_new = &PyType_GenericNew;
+    if (PyType_Ready(&ImagingDraw_Type) < 0)
+        return NULL;
 #endif
 
-    PixelAccess_Type.ob_type = &PyType_Type;
+    PixelAccess_Type.tp_new = &PyType_GenericNew;
+    if (PyType_Ready(&PixelAccess_Type) < 0)
 
     ImagingAccessInit();
 
