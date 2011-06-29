@@ -368,7 +368,7 @@ static PyMethodDef font_methods[] = {
         "FIXME: font_getsize doc string"},
     {"getabc", (PyCFunction)font_getabc, METH_VARARGS,
         "FIXME: font_getabc doc string"},
-    {NULL, NULL, 0, NULL}    /* Sentinel */
+    {NULL, NULL, 0, NULL}    /* sentinel */
 };
 
 static PyObject*  
@@ -430,7 +430,7 @@ statichere PyTypeObject Font_Type = {
 static PyMethodDef _functions[] = {
     {"getfont", (PyCFunction)getfont, METH_VARARGS|METH_KEYWORDS,
         "FIXME: getfont doc string"},
-    {NULL, NULL, NULL, NULL}   /* Sentinel */
+    {NULL, NULL, 0, NULL}   /* sentinel */
 };
 
 static struct PyModuleDef moduledef = {
@@ -438,15 +438,15 @@ static struct PyModuleDef moduledef = {
     "_imagingft",           /* m_name */
     "FIXME: doc string",    /* m_doc */
     -1,                     /* m_size */
-    _functions,              /* m_methods */
+    _functions,             /* m_methods */
     NULL,                   /* m_reload */
     NULL,                   /* m_traverse */
     NULL,                   /* m_clear */
     NULL                    /* m_free */
 };
 
-PyObject*
-init_imaging(PyObject*)
+PyMODINIT_FUNC
+PyInit__imagingft(PyObject*)
 {
     PyObject* module = PyModule_Create(&moduledef);
     PyObject* dict;
@@ -458,7 +458,9 @@ init_imaging(PyObject*)
     int major, minor, patch;
 
     /* Patch object type */
-    Font_Type.ob_type = &PyType_Type;
+    Font_Type.tp_new = PyType_GenericNew;
+    if (PyType_Ready(&Font_Type) < 0)
+        return NULL;
 
     dict = PyModule_GetDict(module);
 
