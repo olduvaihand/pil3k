@@ -59,7 +59,7 @@ ImagingOutline
 PyOutline_AsOutline(PyObject* outline)
 {
     if (PyOutline_Check(outline))
-        return ((OutlineObject*) outline)->outline;
+        return ((OutlineObject*)outline)->outline;
 
     return NULL;
 }
@@ -74,7 +74,7 @@ PyOutline_Create(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args, ":outline"))
         return NULL;
 
-    return (PyObject*) _outline_new();
+    return (PyObject*)_outline_new();
 }
 
 
@@ -139,6 +139,7 @@ static PyObject*
 _outline_transform(OutlineObject* self, PyObject* args)
 {
     double a[6];
+
     if (!PyArg_ParseTuple(args, "(dddddd)", a+0, a+1, a+2, a+3, a+4, a+5))
         return NULL;
 
@@ -159,7 +160,7 @@ static struct PyMethodDef _outline_methods[] = {
         "FIXME: close doc string"},
     {"transform", (PyCFunction)_outline_transform, METH_VARARGS,
         "FIXME: transform doc string"},
-    {NULL, NULL, NULL, NULL}    /* sentinel */
+    {NULL, NULL, 0, NULL}    /* sentinel */
 };
 
 statichere PyTypeObject OutlineType = {
