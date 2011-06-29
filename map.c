@@ -168,8 +168,7 @@ mapping_seek(ImagingMapperObject* mapper, PyObject* args)
         break;
     }
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 /* -------------------------------------------------------------------- */
