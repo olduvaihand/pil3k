@@ -45,7 +45,7 @@
 #undef FTERRORS_H
 #undef __FTERRORS_H__
 
-#define FT_ERRORDEF( e, v, s )  { e, s },
+#define FT_ERRORDEF( e, v, s ) { e, s },
 #define FT_ERROR_START_LIST  {
 #define FT_ERROR_END_LIST    { 0, 0 } };
 
@@ -102,8 +102,7 @@ getfont(PyObject* self_, PyObject* args, PyObject* kw)
     };
 
     if (!PyArg_ParseTupleAndKeywords(args, kw, "eti|is", kwlist,
-                                     Py_FileSystemDefaultEncoding, &filename,
-                                     &size, &index, &encoding))
+           Py_FileSystemDefaultEncoding, &filename, &size, &index, &encoding))
         return NULL;
 
     if (!library) {
@@ -120,7 +119,7 @@ getfont(PyObject* self_, PyObject* args, PyObject* kw)
     if (!error)
         error = FT_Set_Pixel_Sizes(self->face, 0, size);
 
-    if (!error && encoding && strlen((char*) encoding) == 4) {
+    if (!error && encoding && strlen((char*)encoding) == 4) {
         FT_Encoding encoding_tag = FT_MAKE_TAG(
             encoding[0], encoding[1], encoding[2], encoding[3]
             );
@@ -132,7 +131,7 @@ getfont(PyObject* self_, PyObject* args, PyObject* kw)
         return geterror(error);
     }
 
-    return (PyObject*) self;
+    return (PyObject*)self;
 }
     
 static int
@@ -273,7 +272,7 @@ font_render(FontObject* self, PyObject* args)
         return NULL;
     }
 
-    im = (Imaging) id;
+    im = (Imaging)id;
 
     load_flags = FT_LOAD_RENDER;
     if (mask)
@@ -296,7 +295,7 @@ font_render(FontObject* self, PyObject* args)
         if (mask) {
             /* use monochrome mask (on palette images, etc) */
             int xx, x0, x1;
-            source = (unsigned char*) glyph->bitmap.buffer;
+            source = (unsigned char*)glyph->bitmap.buffer;
             ascender = PIXEL(self->face->size->metrics.ascender);
             xx = x + glyph->bitmap_left;
             x0 = 0;
@@ -325,7 +324,7 @@ font_render(FontObject* self, PyObject* args)
         } else {
             /* use antialiased rendering */
             int xx, x0, x1;
-            source = (unsigned char*) glyph->bitmap.buffer;
+            source = (unsigned char*)glyph->bitmap.buffer;
             ascender = PIXEL(self->face->size->metrics.ascender);
             xx = x + glyph->bitmap_left;
             x0 = 0;
@@ -369,7 +368,7 @@ static PyMethodDef font_methods[] = {
         "FIXME: font_getsize doc string"},
     {"getabc", (PyCFunction)font_getabc, METH_VARARGS,
         "FIXME: font_getabc doc string"},
-    {NULL, NULL, NULL, NULL}    /* Sentinel */
+    {NULL, NULL, 0, NULL}    /* Sentinel */
 };
 
 static PyObject*  
@@ -377,7 +376,7 @@ font_getattro(FontObject* self, PyObject* name)
 {
     PyObject* res;
 
-    res = PyObject_GenericGetAttr((PyObject*) self, name);
+    res = PyObject_GenericGetAttr((PyObject*)self, name);
 
     if (res)
         return res;
