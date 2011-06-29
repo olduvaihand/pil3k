@@ -24,19 +24,18 @@
 #define MIN_INT32 -2147483648.0
 
 #if defined(_MSC_VER) && _MSC_VER < 1500
-/* python 2.1/2.2/2.3 = VC98 = VER 1200 */
-/* python 2.4/2.5 = VS.NET 2003 = VER 1310 */
-/* python 2.6 = VS 9.0 = VER 1500 */
-#define powf(a, b) ((float) pow((double) (a), (double) (b)))
+#define powf(a, b) ((float)pow((double)(a), (double)(b)))
 #endif
 
 #define UNOP(name, op, type)\
-void name(Imaging out, Imaging im1)\
+void\
+name(Imaging out, Imaging im1)\
 {\
     int x, y;\
+    \
     for (y = 0; y < out->ysize; y++) {\
-        type* p0 = (type*) out->image[y];\
-        type* p1 = (type*) im1->image[y];\
+        type* p0 = (type*)out->image[y];\
+        type* p1 = (type*)im1->image[y];\
         for (x = 0; x < out->xsize; x++) {\
             *p0 = op(type, *p1);\
             p0++; p1++;\
@@ -45,13 +44,15 @@ void name(Imaging out, Imaging im1)\
 }
 
 #define BINOP(name, op, type)\
-void name(Imaging out, Imaging im1, Imaging im2)\
+void\
+name(Imaging out, Imaging im1, Imaging im2)\
 {\
     int x, y;\
+    \
     for (y = 0; y < out->ysize; y++) {\
-        type* p0 = (type*) out->image[y];\
-        type* p1 = (type*) im1->image[y];\
-        type* p2 = (type*) im2->image[y];\
+        type* p0 = (type*)out->image[y];\
+        type* p1 = (type*)im1->image[y];\
+        type* p2 = (type*)im2->image[y];\
         for (x = 0; x < out->xsize; x++) {\
             *p0 = op(type, *p1, *p2);\
             p0++; p1++; p2++;\
@@ -95,13 +96,16 @@ void name(Imaging out, Imaging im1, Imaging im2)\
 static int powi(int x, int y)
 {
     double v = pow(x, y) + 0.5;
+
     if (errno == EDOM)
         return 0;
+
     if (v < MIN_INT32)
         v = MIN_INT32;
     else if (v > MAX_INT32)
         v = MAX_INT32;
-    return (int) v;
+
+    return (int)v;
 }
 
 #define POW_I(type, v1, v2) powi(v1, v2)
@@ -172,15 +176,15 @@ _unop(PyObject* self, PyObject* args)
     Imaging out;
     Imaging im1;
     void (*unop)(Imaging, Imaging);
-
     long op, i0, i1;
+
     if (!PyArg_ParseTuple(args, "lll", &op, &i0, &i1))
         return NULL;
 
-    out = (Imaging) i0;
-    im1 = (Imaging) i1;
+    out = (Imaging)i0;
+    im1 = (Imaging)i1;
 
-    unop = (void*) op;
+    unop = (void*)op;
     
     unop(out, im1);
 
@@ -195,16 +199,16 @@ _binop(PyObject* self, PyObject* args)
     Imaging im1;
     Imaging im2;
     void (*binop)(Imaging, Imaging, Imaging);
-
     long op, i0, i1, i2;
+
     if (!PyArg_ParseTuple(args, "llll", &op, &i0, &i1, &i2))
         return NULL;
 
-    out = (Imaging) i0;
-    im1 = (Imaging) i1;
-    im2 = (Imaging) i2;
+    out = (Imaging)i0;
+    im1 = (Imaging)i1;
+    im2 = (Imaging)i2;
 
-    binop = (void*) op;
+    binop = (void*)op;
     
     binop(out, im1, im2);
 
@@ -213,15 +217,16 @@ _binop(PyObject* self, PyObject* args)
 }
 
 static PyMethodDef _functions[] = {
-    {"unop", _unop, 1},
-    {"binop", _binop, 1},
-    {NULL, NULL}
+    {"unop", _unop, METH_VARARGS, "FIXME: unop doc string"},
+    {"binop", _binop, METH_VARARGS, "FIXME: binop doc string"},
+    {NULL, NULL, 0, NULL}    /* sentinel */
 };
 
 static void
 install(PyObject *d, char* name, void* value)
 {
-    PyObject *v = PyLong_FromLong((long) value);
+    PyObject *v = PyLong_FromLong((long)value);
+
     if (!v || PyDict_SetItemString(d, name, v))
         PyErr_Clear();
     Py_XDECREF(v);
@@ -239,8 +244,8 @@ static struct PyModuleDef moduledef = {
     NULL                                 /* m_free */
 };
 
-DL_EXPORT(PyObject*)
-PyInit__imagingmath(PyObject*)
+PyMODINIT_FUNC
+PyInit__imagingmath(void)
 {
     PyObject* module = PyModule_Create(&moduledef);
     PyObject* dict;
