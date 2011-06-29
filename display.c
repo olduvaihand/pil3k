@@ -521,8 +521,7 @@ PyImaging_GrabClipboardWin32(PyObject* self, PyObject* args)
         /* FIXME: add CF_HDROP support to allow cut-and-paste from
            the explorer */
         CloseClipboard();
-        Py_INCREF(Py_None);
-        return Py_None;
+        Py_RETURN_NONE;
     }
 
     size = GlobalSize(handle);
