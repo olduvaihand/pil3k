@@ -188,8 +188,7 @@ _unop(PyObject* self, PyObject* args)
     
     unop(out, im1);
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyObject *
@@ -212,8 +211,7 @@ _binop(PyObject* self, PyObject* args)
     
     binop(out, im1, im2);
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyMethodDef _functions[] = {
