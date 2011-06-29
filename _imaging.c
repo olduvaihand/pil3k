@@ -462,8 +462,7 @@ getpixel(Imaging im, ImagingAccess access, int x, int y)
     }
 
     /* unknown type */
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static char*
@@ -706,16 +705,15 @@ _convert2(ImagingObject* self, PyObject* args)
 {
     ImagingObject* imagep1;
     ImagingObject* imagep2;
-    if (!PyArg_ParseTuple(args, "O!O!",
-              &Imaging_Type, &imagep1,
+
+    if (!PyArg_ParseTuple(args, "O!O!", &Imaging_Type, &imagep1,
               &Imaging_Type, &imagep2))
-    return NULL;
+        return NULL;
 
     if (!ImagingConvert2(imagep1->image, imagep2->image))
         return NULL;
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyObject* 
@@ -756,8 +754,7 @@ _copy2(ImagingObject* self, PyObject* args)
     if (!ImagingCopy2(imagep1->image, imagep2->image))
         return NULL;
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyObject* 
@@ -806,9 +803,8 @@ _filter(ImagingObject* self, PyObject* args)
         return ImagingError_ValueError("bad kernel size");
     }
 
-    imOut = PyImagingNew(
-        ImagingFilter(self->image, xsize, ysize, kerneldata, offset, divisor)
-        );
+    imOut = PyImagingNew(ImagingFilter(self->image, xsize, ysize, kerneldata,
+                offset, divisor));
 
     free(kerneldata);
 
@@ -914,8 +910,8 @@ _getpixel(ImagingObject* self, PyObject* args)
     int x, y;
 
     if (PyTuple_GET_SIZE(args) != 1) {
-        PyErr_SetString(PyExc_TypeError,
-            "argument 1 must be sequence of length 2");
+        PyErr_SetString(PyExc_TypeError, "argument 1 must be sequence of "\
+                "length 2");
         return NULL;
     }
 
@@ -925,8 +921,7 @@ _getpixel(ImagingObject* self, PyObject* args)
         return NULL;
 
     if (self->access == NULL) {
-        Py_INCREF(Py_None);
-        return Py_None;
+        Py_RETURN_NONE;
     }
 
     return getpixel(self->image, self->access, x, y);
@@ -1055,8 +1050,7 @@ _paste(ImagingObject* self, PyObject* args)
     if (status < 0)
         return NULL;
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -1278,8 +1272,7 @@ _putdata(ImagingObject* self, PyObject* args)
         }
     }
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 #ifdef WITH_QUANTIZE
@@ -1336,8 +1329,7 @@ _putpalette(ImagingObject* self, PyObject* args)
 
     unpack(self->image->palette->palette, palette, palettesize * 8 / bits);
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyObject* 
@@ -1362,8 +1354,7 @@ _putpalettealpha(ImagingObject* self, PyObject* args)
     strcpy(self->image->palette->mode, "RGBA");
     self->image->palette->palette[index*4+3] = (UINT8)alpha;
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyObject* 
@@ -1390,8 +1381,7 @@ _putpixel(ImagingObject* self, PyObject* args)
     if (self->access)
         self->access->put_pixel(im, x, y, ink);
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 #ifdef WITH_RANKFILTER
@@ -1512,8 +1502,7 @@ im_setmode(ImagingObject* self, PyObject* args)
         ImagingAccessDelete(im, self->access);
     self->access = ImagingAccessNew(im);
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyObject* 
@@ -1630,8 +1619,7 @@ _transform2(ImagingObject* self, PyObject* args)
     if (!imOut)
         return NULL;
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyObject* 
@@ -1721,8 +1709,7 @@ _getbbox(ImagingObject* self, PyObject* args)
     int bbox[4];
 
     if (!ImagingGetBBox(self->image, bbox)) {
-        Py_INCREF(Py_None);
-        return Py_None;
+        Py_RETURN_NONE;
     }
 
     return Py_BuildValue("iiii", bbox[0], bbox[1], bbox[2], bbox[3]);
@@ -1744,8 +1731,7 @@ _getcolors(ImagingObject* self, PyObject* args)
         return NULL;
 
     if (colors > maxcolors) {
-        out = Py_None;
-        Py_INCREF(out);
+        Py_RETURN_NONE;
     } else {
         out = PyList_New(colors);
         for (i = 0; i < colors; i++) {
@@ -1785,8 +1771,7 @@ _getextrema(ImagingObject* self, PyObject* args)
             return Py_BuildValue("dd", extrema.f[0], extrema.f[1]);
         }
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyObject* 
@@ -1842,8 +1827,7 @@ _fillband(ImagingObject* self, PyObject* args)
     if (!ImagingFillBand(self->image, band, color))
         return NULL;
     
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyObject* 
@@ -1858,8 +1842,7 @@ _putband(ImagingObject* self, PyObject* args)
     if (!ImagingPutBand(self->image, imagep->image, band))
         return NULL;
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 /* -------------------------------------------------------------------- */
@@ -2164,7 +2147,7 @@ static struct PyMethodDef _font_methods[] = {
         "FIXME: getmask doc string"},
     {"getsize", (PyCFunction)_font_getsize, METH_VARARGS,
         "FIXME: getsize doc string"},
-    {NULL, NULL, NULL, NULL}    /* sentinel */
+    {NULL, NULL, 0, NULL}    /* sentinel */
 };
 
 /* -------------------------------------------------------------------- */
@@ -2235,8 +2218,7 @@ _draw_arc(ImagingDrawObject* self, PyObject* args)
                        &ink, op) < 0)
         return NULL;
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyObject* 
@@ -2255,8 +2237,8 @@ _draw_bitmap(ImagingDrawObject* self, PyObject* args)
     if (n < 0)
         return NULL;
     if (n != 1) {
-        PyErr_SetString(PyExc_TypeError,
-            "coordinate list must contain exactly 1 coordinate");
+        PyErr_SetString(PyExc_TypeError, "coordinate list must contain "\
+                "exactly 1 coordinate");
         return NULL;
     }
 
@@ -2268,8 +2250,7 @@ _draw_bitmap(ImagingDrawObject* self, PyObject* args)
     if (n < 0)
         return NULL;
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyObject* 
@@ -2287,8 +2268,7 @@ _draw_chord(ImagingDrawObject* self, PyObject* args)
                 fill, self->blend) < 0)
         return NULL;
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyObject* 
@@ -2307,8 +2287,8 @@ _draw_ellipse(ImagingDrawObject* self, PyObject* args)
     if (n < 0)
         return NULL;
     if (n != 2) {
-        PyErr_SetString(PyExc_TypeError,
-            "coordinate list must contain exactly 2 coordinates");
+        PyErr_SetString(PyExc_TypeError, "coordinate list must contain "\
+                "exactly 2 coordinates");
         return NULL;
     }
 
@@ -2320,8 +2300,7 @@ _draw_ellipse(ImagingDrawObject* self, PyObject* args)
     if (n < 0)
         return NULL;
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyObject* 
@@ -2337,8 +2316,7 @@ _draw_line(ImagingDrawObject* self, PyObject* args)
                 self->blend) < 0)
         return NULL;
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyObject* 
@@ -2383,8 +2361,7 @@ _draw_lines(ImagingDrawObject* self, PyObject* args)
 
     free(xy);
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyObject* 
@@ -2399,8 +2376,7 @@ _draw_point(ImagingDrawObject* self, PyObject* args)
     if (ImagingDrawPoint(self->image->image, x, y, &ink, self->blend) < 0)
         return NULL;
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyObject* 
@@ -2429,8 +2405,7 @@ _draw_points(ImagingDrawObject* self, PyObject* args)
 
     free(xy);
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 #ifdef    WITH_ARROW
@@ -2459,8 +2434,7 @@ _draw_outline(ImagingDrawObject* self, PyObject* args)
                 self->blend) < 0)
         return NULL;
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 #endif
@@ -2480,8 +2454,7 @@ _draw_pieslice(ImagingDrawObject* self, PyObject* args)
                 &ink, fill, self->blend) < 0)
         return NULL;
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyObject* 
@@ -2501,8 +2474,8 @@ _draw_polygon(ImagingDrawObject* self, PyObject* args)
     if (n < 0)
         return NULL;
     if (n < 2) {
-        PyErr_SetString(PyExc_TypeError,
-            "coordinate list must contain at least 2 coordinates");
+        PyErr_SetString(PyExc_TypeError, "coordinate list must contain at "\
+                "least 2 coordinates");
         return NULL;
     }
 
@@ -2524,8 +2497,7 @@ _draw_polygon(ImagingDrawObject* self, PyObject* args)
 
     free(ixy);
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static PyObject* 
@@ -2557,8 +2529,7 @@ _draw_rectangle(ImagingDrawObject* self, PyObject* args)
     if (n < 0)
         return NULL;
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static struct PyMethodDef _draw_methods[] = {
@@ -2593,7 +2564,7 @@ static struct PyMethodDef _draw_methods[] = {
     {"draw_ink", (PyCFunction)_draw_ink, METH_VARARGS,
         "FIXME: draw_ink doc string"},
 #endif
-    {NULL, NULL, NULL, NULL} /* sentinel */
+    {NULL, NULL, 0, NULL} /* sentinel */
 };
 
 #endif
@@ -2647,7 +2618,7 @@ pixel_access_setitem(PixelAccessObject *self, PyObject *xy, PyObject *color)
     int x, y;
 
     if (self->readonly) {
-        (void) ImagingError_ValueError(readonly);
+        (void)ImagingError_ValueError(readonly);
         return -1;
     }
 
@@ -2738,7 +2709,7 @@ _crc32(PyObject* self, PyObject* args)
 
     crc = ((UINT32)(hi & 0xFFFF) << 16) + (lo & 0xFFFF);
 
-    crc = ImagingCRC32(crc, (unsigned char *)buffer, bytes);
+    crc = ImagingCRC32(crc, (unsigned char*)buffer, bytes);
 
     return Py_BuildValue("ii", (crc >> 16) & 0xFFFF, crc & 0xFFFF);
 }
@@ -2769,8 +2740,7 @@ _getcodecstatus(PyObject* self, PyObject* args)
         msg = "out of memory";
         break;
     default:
-        Py_INCREF(Py_None);
-        return Py_None;
+        Py_RETURN_NONE;
     }
 
     return PyUnicode_FromString(msg);
@@ -2794,8 +2764,7 @@ _save_ppm(ImagingObject* self, PyObject* args)
     if (!ImagingSavePPM(self->image, filename))
         return NULL;
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 #endif
@@ -2955,7 +2924,7 @@ static struct PyMethodDef methods[] = {
         "FIXME: save_ppm doc string"},
 #endif
 
-    {NULL, NULL, NULL, NULL} /* sentinel */
+    {NULL, NULL, 0, NULL} /* sentinel */
 };
 
 
@@ -2970,14 +2939,19 @@ _getattro(ImagingObject* self, PyObject* name)
     if (res)
         return res;
     PyErr_Clear();
+
     if (strcmp(name, "mode") == 0)
         return PyUnicode_FromString(self->image->mode);
+
     if (strcmp(name, "size") == 0)
         return Py_BuildValue("ii", self->image->xsize, self->image->ysize);
+
     if (strcmp(name, "bands") == 0)
         return PyLong_FromLong(self->image->bands);
+
     if (strcmp(name, "id") == 0)
         return PyLong_FromLong((long)self->image);
+
     if (strcmp(name, "ptr") == 0)
         return PyCObject_FromVoidPtrAndDesc(self->image, IMAGING_MAGIC, NULL);
 
