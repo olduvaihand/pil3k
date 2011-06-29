@@ -88,9 +88,8 @@ _draw(ImagingDisplayObject* display, PyObject* args)
     int dst[4];
     int src[4];
 
-    if (!PyArg_ParseTuple(args, "i(iiii)(iiii)", &hdc,
-                          dst+0, dst+1, dst+2, dst+3,
-                          src+0, src+1, src+2, src+3))
+    if (!PyArg_ParseTuple(args, "i(iiii)(iiii)", &hdc, dst+0, dst+1, dst+2,
+                dst+3, src+0, src+1, src+2, src+3))
         return NULL;
 
     ImagingDrawDIB(display->dib, hdc, dst, src);
@@ -111,6 +110,7 @@ _paste(ImagingDisplayObject* display, PyObject* args)
     xy[0] = xy[1] = xy[2] = xy[3] = 0;
     if (!PyArg_ParseTuple(args, "O|(iiii)", &op, xy+0, xy+1, xy+2, xy+3))
         return NULL;
+
     im = PyImaging_AsImaging(op);
     if (!im)
         return NULL;
@@ -147,15 +147,15 @@ _getdc(ImagingDisplayObject* display, PyObject* args)
     HDC dc;
 
     if (!PyArg_ParseTuple(args, "i", &window))
-    return NULL;
+        return NULL;
 
-    dc = GetDC((HWND) window);
+    dc = GetDC((HWND)window);
     if (!dc) {
         PyErr_SetString(PyExc_IOError, "cannot create dc");
         return NULL;
     }
 
-    return Py_BuildValue("i", (int) dc);
+    return Py_BuildValue("i", (int)dc);
 }
 
 static PyObject*
@@ -166,7 +166,7 @@ _releasedc(ImagingDisplayObject* display, PyObject* args)
     if (!PyArg_ParseTuple(args, "ii", &window, &dc))
         return NULL;
 
-    ReleaseDC((HWND) window, (HDC) dc);
+    ReleaseDC((HWND)window, (HDC)dc);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -228,7 +228,7 @@ _getattro(ImagingDisplayObject* self, PyObject* name)
 {
     PyObject* res;
 
-    res = PyObject_GenericGetAttr((PyObject*) self, name);
+    res = PyObject_GenericGetAttr((PyObject*)self, name);
     if (res)
         return res;
 
@@ -288,7 +288,7 @@ PyImaging_DisplayWin32(PyObject* self, PyObject* args)
     if (display == NULL)
         return NULL;
 
-    return (PyObject*) display;
+    return (PyObject*)display;
 }
 
 PyObject*
@@ -347,7 +347,7 @@ PyImaging_GrabScreenWin32(PyObject* self, PyObject* args)
     core.bcPlanes = 1;
     core.bcBitCount = 24;
     if (!GetDIBits(screen_copy, bitmap, 0, height, PyBytes_AS_STRING(buffer),
-           (BITMAPINFO*) &core, DIB_RGB_COLORS))
+           (BITMAPINFO*)&core, DIB_RGB_COLORS))
         goto error;
 
     DeleteObject(bitmap);
@@ -367,7 +367,7 @@ error:
 
 static BOOL CALLBACK list_windows_callback(HWND hwnd, LPARAM lParam)
 {
-    PyObject* window_list = (PyObject*) lParam;
+    PyObject* window_list = (PyObject*)lParam;
     PyObject* item;
     PyObject* title;
     PyObject* encoded_title;
@@ -395,7 +395,7 @@ static BOOL CALLBACK list_windows_callback(HWND hwnd, LPARAM lParam)
     GetClientRect(hwnd, &inner);
     GetWindowRect(hwnd, &outer);
 
-    item = Py_BuildValue("lN(iiii)(iiii)", (long) hwnd, title,
+    item = Py_BuildValue("lN(iiii)(iiii)", (long)hwnd, title,
                inner.left, inner.top, inner.right, inner.bottom,
                outer.left, outer.top, outer.right, outer.bottom);
     if (!item)
@@ -420,7 +420,7 @@ PyImaging_ListWindowsWin32(PyObject* self, PyObject* args)
     if (!window_list)
         return NULL;
 
-    EnumWindows(list_windows_callback, (LPARAM) window_list);
+    EnumWindows(list_windows_callback, (LPARAM)window_list);
 
     if (PyErr_Occurred()) {
         Py_DECREF(window_list);
@@ -568,7 +568,7 @@ callback_error(const char* handler)
 
     if (sys_stderr) {
         PyFile_WriteString("*** ImageWin: error in ", sys_stderr);
-        PyFile_WriteString((char*) handler, sys_stderr);
+        PyFile_WriteString((char*)handler, sys_stderr);
         PyFile_WriteString(":\n", sys_stderr);
     }
 
@@ -598,7 +598,7 @@ windowCallback(HWND wnd, UINT message, WPARAM wParam, LPARAM lParam)
         /* fall through... */
     case WM_PAINT:
     case WM_SIZE:
-        callback = (PyObject*) GetWindowLong(wnd, 0);
+        callback = (PyObject*)GetWindowLong(wnd, 0);
         if (callback) {
             threadstate = (PyThreadState*)
                 GetWindowLong(wnd, sizeof(PyObject*));
@@ -626,14 +626,14 @@ windowCallback(HWND wnd, UINT message, WPARAM wParam, LPARAM lParam)
         else
             callback_error("window damage callback");
 
-        result = PyObject_CallFunction(callback, "siiiii", "clear", (int) dc,
+        result = PyObject_CallFunction(callback, "siiiii", "clear", (int)dc,
                      0, 0, rect.right-rect.left, rect.bottom-rect.top);
         if (result)
             Py_DECREF(result);
         else
             callback_error("window clear callback");
 
-        result = PyObject_CallFunction(callback, "siiiii", "repair", (int) dc,
+        result = PyObject_CallFunction(callback, "siiiii", "repair", (int)dc,
                      0, 0, rect.right-rect.left, rect.bottom-rect.top);
         if (result)
             Py_DECREF(result);
@@ -721,15 +721,15 @@ PyImaging_CreateWindowWin32(PyObject* self, PyObject* args)
 
     /* register window callback */
     Py_INCREF(callback);
-    SetWindowLong(wnd, 0, (LONG) callback);
-    SetWindowLong(wnd, sizeof(callback), (LONG) PyThreadState_Get());
+    SetWindowLong(wnd, 0, (LONG)callback);
+    SetWindowLong(wnd, sizeof(callback), (LONG)PyThreadState_Get());
 
     Py_BEGIN_ALLOW_THREADS
     ShowWindow(wnd, SW_SHOWNORMAL);
     SetForegroundWindow(wnd); /* to make sure it's visible */
     Py_END_ALLOW_THREADS
 
-    return Py_BuildValue("l", (long) wnd);
+    return Py_BuildValue("l", (long)wnd);
 }
 
 PyObject*
@@ -801,9 +801,8 @@ PyImaging_DrawWmf(PyObject* self, PyObject* args)
 
     dc = CreateCompatibleDC(NULL);
 
-    bitmap = CreateDIBSection(
-        dc, (BITMAPINFO*) &core, DIB_RGB_COLORS, &ptr, NULL, 0
-        );
+    bitmap = CreateDIBSection(dc, (BITMAPINFO*)&core, DIB_RGB_COLORS, &ptr,
+            NULL, 0);
 
     if (!bitmap) {
         PyErr_SetString(PyExc_IOError, "cannot create bitmap");
