@@ -34,9 +34,9 @@ static PyObject*
 _tkinit(PyObject* self, PyObject* args)
 {
     Tcl_Interp* interp;
-
     long arg;
     int is_interp;
+
     if (!PyArg_ParseTuple(args, "li", &arg, &is_interp))
         return NULL;
 
@@ -60,7 +60,7 @@ _tkinit(PyObject* self, PyObject* args)
 static PyMethodDef functions[] = {
     /* Tkinter interface stuff */
     {"tkinit", (PyCFunction)_tkinit, METH_VARARGS, "FIXME: tkinit doc string"},
-    {NULL, NULL, NULL, NULL}    /* sentinel */
+    {NULL, NULL, 0, NULL}    /* sentinel */
 };
 
 static struct PyModuleDef moduledef = {
@@ -75,7 +75,7 @@ static struct PyModuleDef moduledef = {
     NULL                    /* m_free */
 }
 
-DL_EXPORT(PyObject*)
+PyMODINIT_FUNC
 PyInit__imagingtk(void)
 {
     PyObject* module = PyModule_Create(&moduledef);
