@@ -93,7 +93,7 @@ cms_profile_new(cmsHPROFILE profile)
 
     self->profile = profile;
 
-    return (PyObject*) self;
+    return (PyObject*)self;
 }
 
 static PyObject*
@@ -138,7 +138,7 @@ cms_profile_fromstring(PyObject* self, PyObject* args)
 static void
 cms_profile_dealloc(CmsProfileObject* self)
 {
-    (void) cmsCloseProfile(self->profile);
+    (void)cmsCloseProfile(self->profile);
     PyObject_Del(self);
 }
 
@@ -169,7 +169,7 @@ cms_transform_new(cmsHTRANSFORM transform, char* mode_in, char* mode_out)
     strcpy(self->mode_in, mode_in);
     strcpy(self->mode_out, mode_out);
 
-    return (PyObject*) self;
+    return (PyObject*)self;
 }
 
 static void
@@ -395,8 +395,8 @@ cms_transform_apply(CmsTransformObject *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "ll:apply", &idIn, &idOut))
         return NULL;
 
-    im = (Imaging) idIn;
-    imOut = (Imaging) idOut;
+    im = (Imaging)idIn;
+    imOut = (Imaging)idOut;
 
     cmsErrorAction(LCMS_ERROR_IGNORE);
 
@@ -488,11 +488,11 @@ cms_get_display_profile_win32(PyObject* self, PyObject* args)
     filename_size = sizeof(filename);
 
     if (is_dc) {
-        ok = GetICMProfile((HDC) handle, &filename_size, filename);
+        ok = GetICMProfile((HDC)handle, &filename_size, filename);
     } else {
-        HDC dc = GetDC((HWND) handle);
+        HDC dc = GetDC((HWND)handle);
         ok = GetICMProfile(dc, &filename_size, filename);
-        ReleaseDC((HWND) handle, dc);
+        ReleaseDC((HWND)handle, dc);
     }
 
     if (ok)
@@ -526,13 +526,13 @@ static PyMethodDef pyCMSdll_methods[] = {
         METH_VARARGS, "FIXME: get_display_profile_win32 doc string"},
 #endif
 
-    {NULL, NULL, NULL, NULL}    /* sentinel */
+    {NULL, NULL, 0, NULL}    /* sentinel */
 };
 
 static struct PyMethodDef cms_profile_methods[] = {
-    {"is_intent_supported", (PyCFunction) cms_profile_is_intent_supported,
+    {"is_intent_supported", (PyCFunction)cms_profile_is_intent_supported,
         METH_VARARGS, "FIXME: is_intent_supported doc string"},
-    {NULL, NULL, NULL, NULL}    /* sentinel */
+    {NULL, NULL, 0, NULL}    /* sentinel */
 };
 
 static PyObject*  
@@ -557,7 +557,7 @@ cms_profile_getattro(CmsProfileObject* self, PyObject* name)
                 findICmode(cmsGetColorSpace(self->profile)));
     /* FIXME: add more properties (creation_datetime etc) */
 
-    return PyObject_GenericGetAttr((PyObject*) self, name);
+    return PyObject_GenericGetAttr((PyObject*)self, name);
 }
 
 statichere PyTypeObject CmsProfile_Type = {
@@ -565,7 +565,7 @@ statichere PyTypeObject CmsProfile_Type = {
     "CmsProfile",                          /* tp_name */
     sizeof(CmsProfileObject),              /* tp_basicsize */
     0,                                     /* tp_itemsize */
-    (destructor) cms_profile_dealloc,      /* tp_dealloc */
+    (destructor)cms_profile_dealloc,       /* tp_dealloc */
     0,                                     /* tp_print */
     0,                                     /* tp_getattr */
     0,                                     /* tp_setattr */
@@ -598,7 +598,7 @@ PyImaging_DisplayWin32(PyObject* self, PyObject* args)
 };
 
 static struct PyMethodDef cms_transform_methods[] = {
-    {"apply", (PyCFunction) cms_transform_apply, METH_VARARGS,
+    {"apply", (PyCFunction)cms_transform_apply, METH_VARARGS,
         "FIXME: apply doc string"},
     {NULL, NULL, NULL, NULL}    /* sentinel */
 };
@@ -615,7 +615,7 @@ cms_transform_getattro(CmsTransformObject* self, PyObject* name)
     if (!strcmp(encoded_name, "outputMode"))
         return PyUnicode_FromFormat("%s", self->mode_out);
 
-    return PyObject_GenericGetAttr((PyObject*) self, name);
+    return PyObject_GenericGetAttr((PyObject*)self, name);
 }
 
 statichere PyTypeObject CmsTransform_Type = {
@@ -623,7 +623,7 @@ statichere PyTypeObject CmsTransform_Type = {
     "CmsTransform",                          /* tp_name */
     sizeof(CmsTransformObject),              /* tp_basicsize */
     0,                                       /* tp_itemsize */
-    (destructor) cms_transform_dealloc,      /* tp_dealloc */
+    (destructor)cms_transform_dealloc,       /* tp_dealloc */
     0,                                       /* tp_print */
     0,                                       /* tp_getattr */
     0,                                       /* tp_setattr */
