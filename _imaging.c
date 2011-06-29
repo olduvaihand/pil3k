@@ -353,13 +353,13 @@ getlist(PyObject* arg, int* length, const char* wrong_length, int type)
         if (PyList_Check(arg)) {
             for (i = 0; i < n; i++) {
                 PyObject *op = PyList_GET_ITEM(arg, i);
-                int temp = PyInt_AsLong(op);
+                int temp = PyLong_AsLong(op);
                 ((UINT8*)list)[i] = CLIP(temp);
             }
         } else {
             for (i = 0; i < n; i++) {
                 PyObject *op = PySequence_GetItem(arg, i);
-                int temp = PyInt_AsLong(op);
+                int temp = PyLong_AsLong(op);
                 Py_XDECREF(op);
                 ((UINT8*)list)[i] = CLIP(temp);
             }
@@ -369,13 +369,13 @@ getlist(PyObject* arg, int* length, const char* wrong_length, int type)
         if (PyList_Check(arg)) {
             for (i = 0; i < n; i++) {
                 PyObject *op = PyList_GET_ITEM(arg, i);
-                int temp = PyInt_AsLong(op);
+                int temp = PyLong_AsLong(op);
                 ((INT32*)list)[i] = temp;
             }
         } else {
             for (i = 0; i < n; i++) {
                 PyObject *op = PySequence_GetItem(arg, i);
-                int temp = PyInt_AsLong(op);
+                int temp = PyLong_AsLong(op);
                 Py_XDECREF(op);
                 ((INT32*)list)[i] = temp;
             }
@@ -444,7 +444,7 @@ getpixel(Imaging im, ImagingAccess access, int x, int y)
     case IMAGING_TYPE_UINT8:
         switch (im->bands) {
         case 1:
-            return PyInt_FromLong(pixel.b[0]);
+            return PyLong_FromLong(pixel.b[0]);
         case 2:
             return Py_BuildValue("ii", pixel.b[0], pixel.b[1]);
         case 3:
@@ -454,12 +454,12 @@ getpixel(Imaging im, ImagingAccess access, int x, int y)
         }
         break;
     case IMAGING_TYPE_INT32:
-        return PyInt_FromLong(pixel.i);
+        return PyLong_FromLong(pixel.i);
     case IMAGING_TYPE_FLOAT32:
         return PyFloat_FromDouble(pixel.f);
     case IMAGING_TYPE_SPECIAL:
         if (strncmp(im->mode, "I;16", 4) == 0)
-            return PyInt_FromLong(pixel.h);
+            return PyLong_FromLong(pixel.h);
         break;
     }
 
@@ -482,15 +482,15 @@ getink(PyObject* color, Imaging im, char* ink)
         /* unsigned integer */
         if (im->bands == 1) {
             /* unsigned integer, single layer */
-            r = PyInt_AsLong(color);
+            r = PyLong_AsLong(color);
             if (r == -1 && PyErr_Occurred())
                 return NULL;
             ink[0] = CLIP(r);
             ink[1] = ink[2] = ink[3] = 0;
         } else {
             a = 255;
-            if (PyInt_Check(color)) {
-                r = PyInt_AS_LONG(color);
+            if (PyLong_Check(color)) {
+                r = PyLong_AS_LONG(color);
                 /* compatibility: ABGR */
                 a = (UINT8) (r >> 24);
                 b = (UINT8) (r >> 16);
@@ -514,7 +514,7 @@ getink(PyObject* color, Imaging im, char* ink)
         return ink;
     case IMAGING_TYPE_INT32:
         /* signed integer */
-        r = PyInt_AsLong(color);
+        r = PyLong_AsLong(color);
         if (r == -1 && PyErr_Occurred())
             return NULL;
         *(INT32*) ink = r;
@@ -528,7 +528,7 @@ getink(PyObject* color, Imaging im, char* ink)
         return ink;
     case IMAGING_TYPE_SPECIAL:
         if (strncmp(im->mode, "I;16", 4) == 0) {
-            r = PyInt_AsLong(color);
+            r = PyLong_AsLong(color);
             if (r == -1 && PyErr_Occurred())
                 return NULL;
             ink[0] = (UINT8) r;
@@ -620,7 +620,7 @@ _getcount(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args, ":getcount"))
         return NULL;
 
-    return PyInt_FromLong(ImagingNewCount);
+    return PyLong_FromLong(ImagingNewCount);
 }
 
 static PyObject* 
@@ -883,16 +883,16 @@ _getxy(PyObject* xy, int* x, int *y)
         goto badarg;
         
     value = PyTuple_GET_ITEM(xy, 0);
-    if (PyInt_Check(value))
-        *x = PyInt_AS_LONG(value);
+    if (PyLong_Check(value))
+        *x = PyLong_AS_LONG(value);
     else if (PyFloat_Check(value))
         *x = (int) PyFloat_AS_DOUBLE(value);
     else
         goto badval;
 
     value = PyTuple_GET_ITEM(xy, 1);
-    if (PyInt_Check(value))
-        *y = PyInt_AS_LONG(value);
+    if (PyLong_Check(value))
+        *y = PyLong_AS_LONG(value);
     else if (PyFloat_Check(value))
         *y = (int) PyFloat_AS_DOUBLE(value);
     else
@@ -992,7 +992,7 @@ _histogram(ImagingObject* self, PyObject* args)
     list = PyList_New(h->bands * 256);
     for (i = 0; i < h->bands * 256; i++) {
         PyObject* item;
-        item = PyInt_FromLong(h->histogram[i]);
+        item = PyLong_FromLong(h->histogram[i]);
         if (item == NULL) {
             Py_DECREF(list);
             list = NULL;
@@ -1200,14 +1200,14 @@ _putdata(ImagingObject* self, PyObject* args)
                 if (PyList_Check(data)) {
                     for (i = x = y = 0; i < n; i++) {
                         PyObject *op = PyList_GET_ITEM(data, i);
-                        image->image8[y][x] = (UINT8) CLIP(PyInt_AsLong(op));
+                        image->image8[y][x] = (UINT8) CLIP(PyLong_AsLong(op));
                         if (++x >= (int) image->xsize)
                             x = 0, y++;
                     }
                 } else {
                     for (i = x = y = 0; i < n; i++) {
                         PyObject *op = PySequence_GetItem(data, i);
-                        image->image8[y][x] = (UINT8) CLIP(PyInt_AsLong(op));
+                        image->image8[y][x] = (UINT8) CLIP(PyLong_AsLong(op));
                         Py_XDECREF(op);
                         if (++x >= (int) image->xsize)
                             x = 0, y++;
@@ -1714,7 +1714,7 @@ _unsharp_mask(ImagingObject* self, PyObject* args)
 static PyObject* 
 _isblock(ImagingObject* self, PyObject* args)
 {
-    return PyInt_FromLong((long) self->image->block);
+    return PyLong_FromLong((long) self->image->block);
 }
 
 static PyObject* 
@@ -2223,7 +2223,7 @@ _draw_ink(ImagingDrawObject* self, PyObject* args)
     if (!getink(color, self->image->image, (char*) &ink))
         return NULL;
 
-    return PyInt_FromLong((int) ink);
+    return PyLong_FromLong((int) ink);
 }
 
 static PyObject* 
@@ -2919,9 +2919,9 @@ _getattro(ImagingObject* self, PyObject* name)
     if (strcmp(name, "size") == 0)
         return Py_BuildValue("ii", self->image->xsize, self->image->ysize);
     if (strcmp(name, "bands") == 0)
-        return PyInt_FromLong(self->image->bands);
+        return PyLong_FromLong(self->image->bands);
     if (strcmp(name, "id") == 0)
-        return PyInt_FromLong((long) self->image);
+        return PyLong_FromLong((long) self->image);
     if (strcmp(name, "ptr") == 0)
         return PyCObject_FromVoidPtrAndDesc(self->image, IMAGING_MAGIC, NULL);
 
