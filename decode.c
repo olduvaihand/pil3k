@@ -70,10 +70,10 @@ PyImaging_DecoderNew(int contextsize)
 
     /* Allocate decoder context */
     if (contextsize > 0) {
-        context = (void*) calloc(1, contextsize);
+        context = (void*)calloc(1, contextsize);
         if (!context) {
             Py_DECREF(decoder);
-            (void) PyErr_NoMemory();
+            (void)PyErr_NoMemory();
             return NULL;
         }
     } else
@@ -147,8 +147,8 @@ _setimage(ImagingDecoderObject* decoder, PyObject* args)
         state->ysize = y1 - y0;
     }
 
-    if (state->xsize <= 0 || state->xsize + state->xoff > (int) im->xsize ||
-          state->ysize <= 0 || state->ysize + state->yoff > (int) im->ysize) {
+    if (state->xsize <= 0 || state->xsize + state->xoff > (int)im->xsize ||
+          state->ysize <= 0 || state->ysize + state->yoff > (int)im->ysize) {
         PyErr_SetString(PyExc_ValueError, "tile cannot extend outside image");
         return NULL;
     }
@@ -157,7 +157,7 @@ _setimage(ImagingDecoderObject* decoder, PyObject* args)
     if (state->bits > 0) {
         if (!state->bytes)
             state->bytes = (state->bits * state->xsize+7)/8;
-        state->buffer = (UINT8*) malloc(state->bytes);
+        state->buffer = (UINT8*)malloc(state->bytes);
         if (!state->buffer)
             return PyErr_NoMemory();
     }
@@ -271,7 +271,7 @@ PyImaging_BitDecoderNew(PyObject* self, PyObject* args)
     ((BITSTATE*)decoder->state.context)->fill = fill;
     ((BITSTATE*)decoder->state.context)->sign = sign;
 
-    return (PyObject*) decoder;
+    return (PyObject*)decoder;
 }
 
 
@@ -290,7 +290,7 @@ PyImaging_FliDecoderNew(PyObject* self, PyObject* args)
 
     decoder->decode = ImagingFliDecode;
 
-    return (PyObject*) decoder;
+    return (PyObject*)decoder;
 }
 
 
@@ -323,7 +323,7 @@ PyImaging_GifDecoderNew(PyObject* self, PyObject* args)
     ((GIFDECODERSTATE*)decoder->state.context)->bits = bits;
     ((GIFDECODERSTATE*)decoder->state.context)->interlace = interlace;
 
-    return (PyObject*) decoder;
+    return (PyObject*)decoder;
 }
 
 
@@ -350,7 +350,7 @@ PyImaging_HexDecoderNew(PyObject* self, PyObject* args)
 
     decoder->decode = ImagingHexDecode;
 
-    return (PyObject*) decoder;
+    return (PyObject*)decoder;
 }
 
 
@@ -380,7 +380,7 @@ PyImaging_TiffLzwDecoderNew(PyObject* self, PyObject* args)
 
     ((LZWSTATE*)decoder->state.context)->filter = filter;
 
-    return (PyObject*) decoder;
+    return (PyObject*)decoder;
 }
 
 
@@ -402,7 +402,7 @@ PyImaging_MspDecoderNew(PyObject* self, PyObject* args)
 
     decoder->decode = ImagingMspDecode;
 
-    return (PyObject*) decoder;
+    return (PyObject*)decoder;
 }
 
 
@@ -429,7 +429,7 @@ PyImaging_PackbitsDecoderNew(PyObject* self, PyObject* args)
 
     decoder->decode = ImagingPackbitsDecode;
 
-    return (PyObject*) decoder;
+    return (PyObject*)decoder;
 }
 
 
@@ -452,7 +452,7 @@ PyImaging_PcdDecoderNew(PyObject* self, PyObject* args)
 
     decoder->decode = ImagingPcdDecode;
 
-    return (PyObject*) decoder;
+    return (PyObject*)decoder;
 }
 
 
@@ -482,7 +482,7 @@ PyImaging_PcxDecoderNew(PyObject* self, PyObject* args)
 
     decoder->decode = ImagingPcxDecode;
 
-    return (PyObject*) decoder;
+    return (PyObject*)decoder;
 }
 
 
@@ -515,7 +515,7 @@ PyImaging_RawDecoderNew(PyObject* self, PyObject* args)
 
     ((RAWSTATE*)decoder->state.context)->stride = stride;
 
-    return (PyObject*) decoder;
+    return (PyObject*)decoder;
 }
 
 
@@ -542,7 +542,7 @@ PyImaging_SunRleDecoderNew(PyObject* self, PyObject* args)
 
     decoder->decode = ImagingSunRleDecode;
 
-    return (PyObject*) decoder;
+    return (PyObject*)decoder;
 }
 
 
@@ -574,7 +574,7 @@ PyImaging_TgaRleDecoderNew(PyObject* self, PyObject* args)
     decoder->state.ystep = ystep;
     decoder->state.count = depth / 8;
 
-    return (PyObject*) decoder;
+    return (PyObject*)decoder;
 }
 
 
@@ -596,7 +596,7 @@ PyImaging_XbmDecoderNew(PyObject* self, PyObject* args)
 
     decoder->decode = ImagingXbmDecode;
 
-    return (PyObject*) decoder;
+    return (PyObject*)decoder;
 }
 
 
@@ -630,7 +630,7 @@ PyImaging_ZipDecoderNew(PyObject* self, PyObject* args)
 
     ((ZIPSTATE*)decoder->state.context)->interlaced = interlaced;
 
-    return (PyObject*) decoder;
+    return (PyObject*)decoder;
 }
 #endif
 
@@ -688,6 +688,6 @@ PyImaging_JpegDecoderNew(PyObject* self, PyObject* args)
     ((JPEGSTATE*)decoder->state.context)->scale = scale;
     ((JPEGSTATE*)decoder->state.context)->draft = draft;
 
-    return (PyObject*) decoder;
+    return (PyObject*)decoder;
 }
 #endif
