@@ -127,6 +127,7 @@ _setimage(ImagingDecoderObject* decoder, PyObject* args)
     /* FIXME: should publish the ImagingType descriptor */
     if (!PyArg_ParseTuple(args, "O|(iiii)", &op, &x0, &y0, &x1, &y1))
         return NULL;
+
     im = PyImaging_AsImaging(op);
     if (!im)
         return NULL;
@@ -643,15 +644,15 @@ PyImaging_ZipDecoderNew(PyObject* self, PyObject* args)
 /* We better define this decoder last in this file, so the following
    undef's won't mess things up for the Imaging library proper. */
 
-#undef    HAVE_PROTOTYPES
-#undef    HAVE_STDDEF_H
-#undef    HAVE_STDLIB_H
-#undef    UINT8
-#undef    UINT16
-#undef    UINT32
-#undef    INT8
-#undef    INT16
-#undef    INT32
+#undef HAVE_PROTOTYPES
+#undef HAVE_STDDEF_H
+#undef HAVE_STDLIB_H
+#undef UINT8
+#undef UINT16
+#undef UINT32
+#undef INT8
+#undef INT16
+#undef INT32
 
 #include "Jpeg.h"
 
