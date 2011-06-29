@@ -164,22 +164,12 @@ getfont(PyObject* self_, PyObject* args, PyObject* kw)
 static int
 font_getchar(PyObject* string, int index, FT_ULong* char_out)
 {
-#if defined(HAVE_UNICODE)
     if (PyUnicode_Check(string)) {
         Py_UNICODE* p = PyUnicode_AS_UNICODE(string);
         int size = PyUnicode_GET_SIZE(string);
         if (index >= size)
             return 0;
         *char_out = p[index];
-        return 1;
-    }
-#endif
-    if (PyString_Check(string)) {
-        unsigned char* p = (unsigned char*) PyString_AS_STRING(string);
-        int size = PyString_GET_SIZE(string);
-        if (index >= size)
-            return 0;
-        *char_out = (unsigned char) p[index];
         return 1;
     }
     return 0;
@@ -201,11 +191,7 @@ font_getsize(FontObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args, "O:getsize", &string))
         return NULL;
 
-#if defined(HAVE_UNICODE)
-    if (!PyUnicode_Check(string) && !PyString_Check(string)) {
-#else
-    if (!PyString_Check(string)) {
-#endif
+    if (!PyUnicode_Check(string)) {
         PyErr_SetString(PyExc_TypeError, "expected string");
         return NULL;
     }
@@ -247,11 +233,8 @@ font_getsize(FontObject* self, PyObject* args)
             x -= offset;
     }
 
-    return Py_BuildValue(
-        "(ii)(ii)",
-        PIXEL(x), PIXEL(self->face->size->metrics.height),
-        PIXEL(xoffset), 0
-        );
+    return Py_BuildValue("(ii)(ii)", PIXEL(x),
+            PIXEL(self->face->size->metrics.height), PIXEL(xoffset), 0);
 }
 
 static PyObject*
@@ -267,11 +250,7 @@ font_getabc(FontObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args, "O:getabc", &string))
         return NULL;
 
-#if defined(HAVE_UNICODE)
-    if (!PyUnicode_Check(string) && !PyString_Check(string)) {
-#else
-    if (!PyString_Check(string)) {
-#endif
+    if (!PyUnicode_Check(string)) {
         PyErr_SetString(PyExc_TypeError, "expected string");
         return NULL;
     }
@@ -315,11 +294,7 @@ font_render(FontObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args, "Ol|i:render", &string, &id, &mask))
         return NULL;
 
-#if defined(HAVE_UNICODE)
-    if (!PyUnicode_Check(string) && !PyString_Check(string)) {
-#else
-    if (!PyString_Check(string)) {
-#endif
+    if (!PyUnicode_Check(string)) {
         PyErr_SetString(PyExc_TypeError, "expected string");
         return NULL;
     }
@@ -421,11 +396,11 @@ static PyMethodDef font_methods[] = {
 };
 
 static PyObject*  
-font_getattr(FontObject* self, char* name)
+font_getattr(FontObject* self, PyObject* name)
 {
     PyObject* res;
 
-    res = Py_FindMethod(font_methods, (PyObject*) self, name);
+    res = PyObject_GenericGetAttr((PyObject*) self, name);
 
     if (res)
         return res;
@@ -435,12 +410,12 @@ font_getattr(FontObject* self, char* name)
     /* attributes */
     if (!strcmp(name, "family")) {
         if (self->face->family_name)
-            return PyString_FromString(self->face->family_name);
+            return PyUnicode_FromString(self->face->family_name);
         Py_RETURN_NONE;
     }
     if (!strcmp(name, "style")) {
         if (self->face->style_name)
-            return PyString_FromString(self->face->style_name);
+            return PyUnicode_FromString(self->face->style_name);
         Py_RETURN_NONE;
     }
     if (!strcmp(name, "ascent"))
@@ -470,33 +445,42 @@ static PyMethodDef _functions[] = {
     {NULL, NULL}
 };
 
-DL_EXPORT(void)
-init_imagingft(void)
+static struct PyModuleDef moduledef = {
+    PyModuleDef_HEAD_INIT,
+    "_imagingft",           /* m_name */
+    "FIXME: doc string",    /* m_doc */
+    -1,                     /* m_size */
+    functions,              /* m_methods */
+    NULL,                   /* m_reload */
+    NULL,                   /* m_traverse */
+    NULL,                   /* m_clear */
+    NULL                    /* m_free */
+};
+
+PyObject*
+init_imaging(PyObject*)
 {
-    PyObject* m;
-    PyObject* d;
-    PyObject* v;
+    PyObject* module = PyModule_Create(&moduledef);
+    PyObject* dict;
+    PyObject* value;
+
+    if (module == NULL)
+        return NULL;
+
     int major, minor, patch;
 
     /* Patch object type */
     Font_Type.ob_type = &PyType_Type;
 
-    m = Py_InitModule("_imagingft", _functions);
-    d = PyModule_GetDict(m);
+    dict = PyModule_GetDict(module);
 
     if (FT_Init_FreeType(&library))
         return; /* leave it uninitalized */
 
     FT_Library_Version(library, &major, &minor, &patch);
 
-#if PY_VERSION_HEX >= 0x02020000
-    v = PyString_FromFormat("%d.%d.%d", major, minor, patch);
-#else
-    {
-        char buffer[100];
-        sprintf(buffer, "%d.%d.%d", major, minor, patch);
-        v = PyString_FromString(buffer);
-    }
-#endif
-    PyDict_SetItemString(d, "freetype2_version", v);
+    value = PyUnicode_FromFormat("%d.%d.%d", major, minor, patch);
+    PyDict_SetItemString(dict, "freetype2_version", value);
+
+    return module;
 }
