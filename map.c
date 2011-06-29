@@ -77,10 +77,8 @@ PyImaging_MapperNew(const char* filename, int readonly)
         return NULL;
     }
 
-    mapper->hMap = CreateFileMapping(
-        mapper->hFile, NULL,
-        PAGE_READONLY,
-        0, 0, NULL);
+    mapper->hMap = CreateFileMapping(mapper->hFile, NULL, PAGE_READONLY, 0, 0,
+            NULL);
     if (mapper->hMap == (HANDLE)-1) {
         CloseHandle(mapper->hFile);
         PyErr_SetString(PyExc_IOError, "cannot map file");
@@ -88,7 +86,7 @@ PyImaging_MapperNew(const char* filename, int readonly)
         return NULL;
     }
 
-    mapper->base = (char*) MapViewOfFile(mapper->hMap, FILE_MAP_READ, 0, 0, 0);
+    mapper->base = (char*)MapViewOfFile(mapper->hMap, FILE_MAP_READ, 0, 0, 0);
     mapper->size = GetFileSize(mapper->hFile, 0);
 #endif
 
@@ -156,18 +154,18 @@ mapping_seek(ImagingMapperObject* mapper, PyObject* args)
         return NULL;
 
     switch (whence) {
-        case 0: /* SEEK_SET */
-            mapper->offset = offset;
-            break;
-        case 1: /* SEEK_CUR */
-            mapper->offset += offset;
-            break;
-        case 2: /* SEEK_END */
-            mapper->offset = mapper->size + offset;
-            break;
-        default:
-            /* FIXME: raise ValueError? */
-            break;
+    case 0: /* SEEK_SET */
+        mapper->offset = offset;
+        break;
+    case 1: /* SEEK_CUR */
+        mapper->offset += offset;
+        break;
+    case 2: /* SEEK_END */
+        mapper->offset = mapper->size + offset;
+        break;
+    default:
+        /* FIXME: raise ValueError? */
+        break;
     }
 
     Py_INCREF(Py_None);
@@ -248,7 +246,7 @@ static struct PyMethodDef methods[] = {
     /* extensions */
     {"readimage", (PyCFunction)mapping_readimage, METH_VARARGS,
         "FIXME: readimage doc string"},
-    {NULL, NULL, NULL, NULL}    /* sentinel */
+    {NULL, NULL, 0, NULL}    /* sentinel */
 };
 
 statichere PyTypeObject ImagingMapperType = {
@@ -288,9 +286,9 @@ PyImaging_Mapper(PyObject* self, PyObject* args)
     char* filename;
 
     if (!PyArg_ParseTuple(args, "s", &filename))
-    return NULL;
+        return NULL;
 
-    return (PyObject*) PyImaging_MapperNew(filename, 1);
+    return (PyObject*)PyImaging_MapperNew(filename, 1);
 }
 
 /* -------------------------------------------------------------------- */
@@ -304,7 +302,7 @@ typedef struct ImagingBufferInstance {
 static void
 mapping_destroy_buffer(Imaging im)
 {
-    ImagingBufferInstance* buffer = (ImagingBufferInstance*) im;
+    ImagingBufferInstance* buffer = (ImagingBufferInstance*)im;
     
     Py_XDECREF(buffer->target);
 }
@@ -346,7 +344,7 @@ PyImaging_MapBuffer(PyObject* self, PyObject* args)
     size = ysize * stride;
 
     /* check buffer size */
-    bytes = PyImaging_ReadBuffer(target, (const void**) &ptr);
+    bytes = PyImaging_ReadBuffer(target, (const void**)&ptr);
     if (bytes < 0) {
         PyErr_SetString(PyExc_ValueError, "buffer has negative size");
         return NULL;
@@ -372,10 +370,10 @@ PyImaging_MapBuffer(PyObject* self, PyObject* args)
     im->destroy = mapping_destroy_buffer;
 
     Py_INCREF(target);
-    ((ImagingBufferInstance*) im)->target = target;
+    ((ImagingBufferInstance*)im)->target = target;
 
     if (!ImagingNewEpilogue(im))
         return NULL;
 
-    return PyImagingNew(im);
+    return (PyObject*)PyImagingNew(im);
 }
