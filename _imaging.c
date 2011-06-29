@@ -3111,98 +3111,145 @@ extern PyObject* PyImaging_MapBuffer(PyObject* self, PyObject* args);
 static PyMethodDef functions[] = {
 
     /* Object factories */
-    {"blend", (PyCFunction)_blend, 1},
-    {"fill", (PyCFunction)_fill, 1},
-    {"new", (PyCFunction)_new, 1},
+    {"blend", (PyCFunction)_blend, METH_VARARGS, "FIXME: _blend doc string"},
+    {"fill", (PyCFunction)_fill, METH_VARARGS, "FIXME: _fill doc string"},
+    {"new", (PyCFunction)_new, METH_VARARGS, "FIXME: _new doc string"},
 
-    {"getcount", (PyCFunction)_getcount, 1},
+    {"getcount", (PyCFunction)_getcount, METH_VARARGS,
+        "FIXME: _getcount doc string"},
 
     /* Functions */
-    {"convert", (PyCFunction)_convert2, 1},
-    {"copy", (PyCFunction)_copy2, 1},
+    {"convert", (PyCFunction)_convert2, METH_VARARGS,
+        "FIXME: _convert2 doc string"},
+    {"copy", (PyCFunction)_copy2, METH_VARARGS, "FIXME: _copy2 doc string"},
 
     /* Codecs */
-    {"bit_decoder", (PyCFunction)PyImaging_BitDecoderNew, 1},
-    {"eps_encoder", (PyCFunction)PyImaging_EpsEncoderNew, 1},
-    {"fli_decoder", (PyCFunction)PyImaging_FliDecoderNew, 1},
-    {"gif_decoder", (PyCFunction)PyImaging_GifDecoderNew, 1},
-    {"gif_encoder", (PyCFunction)PyImaging_GifEncoderNew, 1},
-    {"hex_decoder", (PyCFunction)PyImaging_HexDecoderNew, 1},
-    {"hex_encoder", (PyCFunction)PyImaging_EpsEncoderNew, 1}, /* EPS=HEX! */
+    {"bit_decoder", (PyCFunction)PyImaging_BitDecoderNew, METH_VARARGS,
+        "FIXME: PyImaging_BitDecoderNew doc string"},
+    {"eps_encoder", (PyCFunction)PyImaging_EpsEncoderNew, METH_VARARGS,
+        "FIXME: PyImaging_EpsEncoderNew doc string"},
+    {"fli_decoder", (PyCFunction)PyImaging_FliDecoderNew, METH_VARARGS,
+        "FIXME: PyImaging_FliDecoderNew doc string"},
+    {"gif_decoder", (PyCFunction)PyImaging_GifDecoderNew, METH_VARARGS,
+        "FIXME: PyImaging_GifDecoderNew doc string"},
+    {"gif_encoder", (PyCFunction)PyImaging_GifEncoderNew, METH_VARARGS,
+        "FIXME: PyImaging_GifEncoderNew doc string"},
+    {"hex_decoder", (PyCFunction)PyImaging_HexDecoderNew, METH_VARARGS,
+        "FIXME: PyImaging_HexDecoderNew doc string"},
+    {"hex_encoder", (PyCFunction)PyImaging_EpsEncoderNew, METH_VARARGS,
+        "FIXME: PyImaging_EpsEncoderNew doc string"}, /* EPS=HEX! */
 #ifdef HAVE_LIBJPEG
-    {"jpeg_decoder", (PyCFunction)PyImaging_JpegDecoderNew, 1},
-    {"jpeg_encoder", (PyCFunction)PyImaging_JpegEncoderNew, 1},
+    {"jpeg_decoder", (PyCFunction)PyImaging_JpegDecoderNew, METH_VARARGS,
+        "FIXME: PyImaging_JpegDecoderNew doc string"},
+    {"jpeg_encoder", (PyCFunction)PyImaging_JpegEncoderNew, METH_VARARGS,
+        "FIXME: PyImaging_JpegEncoderNew doc string"},
 #endif
-    {"tiff_lzw_decoder", (PyCFunction)PyImaging_TiffLzwDecoderNew, 1},
-    {"msp_decoder", (PyCFunction)PyImaging_MspDecoderNew, 1},
-    {"packbits_decoder", (PyCFunction)PyImaging_PackbitsDecoderNew, 1},
-    {"pcd_decoder", (PyCFunction)PyImaging_PcdDecoderNew, 1},
-    {"pcx_decoder", (PyCFunction)PyImaging_PcxDecoderNew, 1},
-    {"pcx_encoder", (PyCFunction)PyImaging_PcxEncoderNew, 1},
-    {"raw_decoder", (PyCFunction)PyImaging_RawDecoderNew, 1},
-    {"raw_encoder", (PyCFunction)PyImaging_RawEncoderNew, 1},
-    {"sun_rle_decoder", (PyCFunction)PyImaging_SunRleDecoderNew, 1},
-    {"tga_rle_decoder", (PyCFunction)PyImaging_TgaRleDecoderNew, 1},
-    {"xbm_decoder", (PyCFunction)PyImaging_XbmDecoderNew, 1},
-    {"xbm_encoder", (PyCFunction)PyImaging_XbmEncoderNew, 1},
+    {"tiff_lzw_decoder", (PyCFunction)PyImaging_TiffLzwDecoderNew,
+        METH_VARARGS, "FIXME: PyImaging_TiffLzwDecoderNew doc string"},
+    {"msp_decoder", (PyCFunction)PyImaging_MspDecoderNew, METH_VARARGS,
+        "FIXME: PyImaging_MspDecoderNew doc string"},
+    {"packbits_decoder", (PyCFunction)PyImaging_PackbitsDecoderNew,
+        METH_VARARGS, "FIXME: PyImaging_PackbitsDecoderNew doc string"},
+    {"pcd_decoder", (PyCFunction)PyImaging_PcdDecoderNew, METH_VARARGS,
+        "FIXME: PyImaging_PcdDecoderNew doc string"},
+    {"pcx_decoder", (PyCFunction)PyImaging_PcxDecoderNew, METH_VARARGS,
+        "FIXME: PyImaging_PcxDecoderNew doc string"},
+    {"pcx_encoder", (PyCFunction)PyImaging_PcxEncoderNew, METH_VARARGS,
+        "FIXME: PyImaging_PcxEncoderNew doc string"},
+    {"raw_decoder", (PyCFunction)PyImaging_RawDecoderNew, METH_VARARGS,
+        "FIXME: PyImaging_RawDecoderNew doc string"},
+    {"raw_encoder", (PyCFunction)PyImaging_RawEncoderNew, METH_VARARGS,
+        "FIXME: PyImaging_RawEncoderNew doc string"},
+    {"sun_rle_decoder", (PyCFunction)PyImaging_SunRleDecoderNew, METH_VARARGS,
+        "FIXME: PyImaging_SunRleDecoderNew doc string"},
+    {"tga_rle_decoder", (PyCFunction)PyImaging_TgaRleDecoderNew, METH_VARARGS,
+        "FIXME: PyImaging_TgaRleDecoderNew doc string"},
+    {"xbm_decoder", (PyCFunction)PyImaging_XbmDecoderNew, METH_VARARGS,
+        "FIXME: PyImaging_XbmDecoderNew doc string"},
+    {"xbm_encoder", (PyCFunction)PyImaging_XbmEncoderNew, METH_VARARGS,
+        "FIXME: PyImaging_XbmEncoderNew doc string"},
 #ifdef HAVE_LIBZ
-    {"zip_decoder", (PyCFunction)PyImaging_ZipDecoderNew, 1},
-    {"zip_encoder", (PyCFunction)PyImaging_ZipEncoderNew, 1},
+    {"zip_decoder", (PyCFunction)PyImaging_ZipDecoderNew, METH_VARARGS,
+        "FIXME: PyImaging_ZipDecoderNew doc string"},
+    {"zip_encoder", (PyCFunction)PyImaging_ZipEncoderNew, METH_VARARGS,
+        "FIXME: PyImaging_ZipEncoderNew doc string"},
 #endif
 
     /* Memory mapping */
 #ifdef WITH_MAPPING
 #ifdef WIN32
-    {"map", (PyCFunction)PyImaging_Mapper, 1},
+    {"map", (PyCFunction)PyImaging_Mapper, METH_VARARGS,
+        "FIXME: PyImaging_Mapper doc string"},
 #endif
-    {"map_buffer", (PyCFunction)PyImaging_MapBuffer, 1},
+    {"map_buffer", (PyCFunction)PyImaging_MapBuffer, METH_VARARGS,
+        "FIXME: PyImaging_MapBuffer doc string"},
 #endif
 
     /* Display support */
 #ifdef WIN32
-    {"display", (PyCFunction)PyImaging_DisplayWin32, 1},
-    {"display_mode", (PyCFunction)PyImaging_DisplayModeWin32, 1},
-    {"grabscreen", (PyCFunction)PyImaging_GrabScreenWin32, 1},
-    {"grabclipboard", (PyCFunction)PyImaging_GrabClipboardWin32, 1},
-    {"createwindow", (PyCFunction)PyImaging_CreateWindowWin32, 1},
-    {"eventloop", (PyCFunction)PyImaging_EventLoopWin32, 1},
-    {"listwindows", (PyCFunction)PyImaging_ListWindowsWin32, 1},
-    {"drawwmf", (PyCFunction)PyImaging_DrawWmf, 1},
+    {"display", (PyCFunction)PyImaging_DisplayWin32, METH_VARARGS,
+        "FIXME: PyImaging_DisplayWin32 doc string"},
+    {"display_mode", (PyCFunction)PyImaging_DisplayModeWin32, METH_VARARGS,
+        "FIXME: PyImaging_DisplayModeWin32 doc string"},
+    {"grabscreen", (PyCFunction)PyImaging_GrabScreenWin32, METH_VARARGS,
+        "FIXME: PyImaging_GrabScreenWin32 doc string"},
+    {"grabclipboard", (PyCFunction)PyImaging_GrabClipboardWin32, METH_VARARGS,
+        "FIXME: PyImaging_GrabClipboardWin32 doc string"},
+    {"createwindow", (PyCFunction)PyImaging_CreateWindowWin32, METH_VARARGS,
+        "FIXME: PyImaging_CreateWindowWin32 doc string"},
+    {"eventloop", (PyCFunction)PyImaging_EventLoopWin32, METH_VARARGS,
+        "FIXME: PyImaging_EventLoopWin32 doc string"},
+    {"listwindows", (PyCFunction)PyImaging_ListWindowsWin32, METH_VARARGS,
+        "FIXME: PyImaging_ListWindowsWin32 doc string"},
+    {"drawwmf", (PyCFunction)PyImaging_DrawWmf, METH_VARARGS,
+        "FIXME: PyImaging_DrawWmf doc string"},
 #endif
 
     /* Utilities */
-    {"crc32", (PyCFunction)_crc32, 1},
-    {"getcodecstatus", (PyCFunction)_getcodecstatus, 1},
+    {"crc32", (PyCFunction)_crc32, METH_VARARGS,
+        "FIXME: _crc32 doc string"},
+    {"getcodecstatus", (PyCFunction)_getcodecstatus, METH_VARARGS,
+        "FIXME: _getcodecstatus doc string"},
 
     /* Debugging stuff */
-    {"open_ppm", (PyCFunction)_open_ppm, 1},
+    {"open_ppm", (PyCFunction)_open_ppm, METH_VARARGS,
+        "FIXME: _open_ppm doc string"},
 
     /* Special effects (experimental) */
 #ifdef WITH_EFFECTS
-    {"effect_mandelbrot", (PyCFunction)_effect_mandelbrot, 1},
-    {"effect_noise", (PyCFunction)_effect_noise, 1},
-    {"linear_gradient", (PyCFunction)_linear_gradient, 1},
-    {"radial_gradient", (PyCFunction)_radial_gradient, 1},
-    {"wedge", (PyCFunction)_linear_gradient, 1}, /* Compatibility */
+    {"effect_mandelbrot", (PyCFunction)_effect_mandelbrot, METH_VARARGS,
+        "FIXME: _effect_mandelbrot doc string"},
+    {"effect_noise", (PyCFunction)_effect_noise, METH_VARARGS,
+        "FIXME: _effect_noise doc string"},
+    {"linear_gradient", (PyCFunction)_linear_gradient, METH_VARARGS,
+        "FIXME: _linear_gradient doc string"},
+    {"radial_gradient", (PyCFunction)_radial_gradient, METH_VARARGS,
+        "FIXME: _radial_gradient doc string"},
+    {"wedge", (PyCFunction)_linear_gradient, METH_VARARGS,
+        "FIXME: _linear_gradient doc string"}, /* Compatibility */
 #endif
 
     /* Drawing support stuff */
 #ifdef WITH_IMAGEDRAW
-    {"font", (PyCFunction)_font_new, 1},
-    {"draw", (PyCFunction)_draw_new, 1},
+    {"font", (PyCFunction)_font_new, METH_VARARGS,
+        "FIXME: _font_new doc string"},
+    {"draw", (PyCFunction)_draw_new, METH_VARARGS,
+        "FIXME: _draw_new doc string"},
 #endif
 
     /* Experimental path stuff */
 #ifdef WITH_IMAGEPATH
-    {"path", (PyCFunction)PyPath_Create, 1},
+    {"path", (PyCFunction)PyPath_Create, METH_VARARGS,
+        "FIXME: PyPath_Create doc string"},
 #endif
     
     /* Experimental arrow graphics stuff */
 #ifdef WITH_ARROW
-    {"outline", (PyCFunction)PyOutline_Create, 1},
+    {"outline", (PyCFunction)PyOutline_Create, METH_VARARGS,
+        "FIXME: PyOutline_Create doc string"},
 #endif
 
-    {NULL, NULL} /* sentinel */
+    {NULL, NULL, NULL, NULL} /* sentinel */
 };
 
 static struct PyModuleDef moduledef = {
