@@ -396,13 +396,13 @@ font_getattro(FontObject* self, PyObject* name)
         Py_RETURN_NONE;
     }
     if (!strcmp(name, "ascent"))
-        return PyInt_FromLong(PIXEL(self->face->size->metrics.ascender));
+        return PyLong_FromLong(PIXEL(self->face->size->metrics.ascender));
     if (!strcmp(name, "descent"))
-        return PyInt_FromLong(-PIXEL(self->face->size->metrics.descender));
+        return PyLong_FromLong(-PIXEL(self->face->size->metrics.descender));
 
     if (!strcmp(name, "glyphs"))
         /* number of glyphs provided by this font */
-        return PyInt_FromLong(self->face->num_glyphs);
+        return PyLong_FromLong(self->face->num_glyphs);
 
     PyErr_SetString(PyExc_AttributeError, name);
     return NULL;
