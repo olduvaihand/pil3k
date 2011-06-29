@@ -55,7 +55,9 @@ PyImaging_MapperNew(const char* filename, int readonly)
 {
     ImagingMapperObject *mapper;
 
-    ImagingMapperType.ob_type = &PyType_Type;
+    ImagingMapperType.tp_new = &PyType_GenericNew;
+    if (PyType_Ready(&ImagingMapperType) < 0)
+        return NULL;
 
     mapper = PyObject_New(ImagingMapperObject, &ImagingMapperType);
     if (mapper == NULL)

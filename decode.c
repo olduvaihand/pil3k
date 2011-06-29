@@ -59,7 +59,9 @@ PyImaging_DecoderNew(int contextsize)
     ImagingDecoderObject *decoder;
     void *context;
 
-    ImagingDecoderType.ob_type = &PyType_Type;
+    ImagingDecoderType.tp_new = &PyType_GenericNew;
+    if (PyType_Ready(&ImagingDecoderType) < 0)
+        return NULL;
 
     decoder = PyObject_New(ImagingDecoderObject, &ImagingDecoderType);
     if (decoder == NULL)

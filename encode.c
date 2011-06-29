@@ -52,7 +52,9 @@ PyImaging_EncoderNew(int contextsize)
     ImagingEncoderObject *encoder;
     void *context;
 
-    ImagingEncoderType.ob_type = &PyType_Type;
+    ImagingEncoderType.tp_new = &PyType_GenericNew;
+    if (PyType_Ready(&ImagingEncoderType) < 0)
+        return NULL;
 
     encoder = PyObject_New(ImagingEncoderObject, &ImagingEncoderType);
     if (encoder == NULL)
