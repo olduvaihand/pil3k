@@ -599,7 +599,7 @@ PyImaging_DisplayWin32(PyObject* self, PyObject* args)
 static struct PyMethodDef cms_transform_methods[] = {
     {"apply", (PyCFunction)cms_transform_apply, METH_VARARGS,
         "FIXME: apply doc string"},
-    {NULL, NULL, NULL, NULL}    /* sentinel */
+    {NULL, NULL, 0, NULL}    /* sentinel */
 };
 
 static PyObject*  

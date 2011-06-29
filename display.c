@@ -215,7 +215,7 @@ static struct PyMethodDef methods[] = {
         "FIXME: fromstring doc string"},
     {"tostring", (PyCFunction)_tostring, METH_VARARGS,
         "FIXME: tostring doc string"},
-    {NULL, NULL, NULL, NULL} /* sentinel */
+    {NULL, NULL, 0, NULL} /* sentinel */
 };
 
 static PyObject*  
