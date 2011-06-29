@@ -220,8 +220,7 @@ _setimage(ImagingEncoderObject* encoder, PyObject* args)
     Py_XDECREF(encoder->lock);
     encoder->lock = op;
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static struct PyMethodDef methods[] = {
@@ -231,7 +230,7 @@ static struct PyMethodDef methods[] = {
         "FIXME: encode_to_file doc string"},
     {"setimage", (PyCFunction)_setimage, METH_VARARGS,
         "FIXME: setimage doc string"},
-    {NULL, NULL, NULL, NULL}    /* sentinel */
+    {NULL, NULL, 0, NULL}    /* sentinel */
 };
 
 statichere PyTypeObject ImagingEncoderType = {
