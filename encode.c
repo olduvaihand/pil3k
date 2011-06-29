@@ -63,10 +63,10 @@ PyImaging_EncoderNew(int contextsize)
 
     /* Allocate encoder context */
     if (contextsize > 0) {
-        context = (void*) calloc(1, contextsize);
+        context = (void*)calloc(1, contextsize);
         if (!context) {
             Py_DECREF(encoder);
-            (void) PyErr_NoMemory();
+            (void)PyErr_NoMemory();
             return NULL;
         }
     } else
@@ -97,9 +97,7 @@ _encode(ImagingEncoderObject* encoder, PyObject* args)
     PyObject* buf;
     PyObject* result;
     int status;
-
     /* Encode to a Python string (allocated by this method) */
-
     int bufsize = 16384;
 
     if (!PyArg_ParseTuple(args, "|i", &bufsize))
@@ -110,7 +108,7 @@ _encode(ImagingEncoderObject* encoder, PyObject* args)
         return NULL;
 
     status = encoder->encode(encoder->im, &encoder->state,
-                 (UINT8*) PyBytes_AsString(buf), bufsize);
+                 (UINT8*)PyBytes_AsString(buf), bufsize);
 
     /* adjust string length to avoid slicing in encoder */
     if (_PyBytes_Resize(&buf, (status > 0) ? status : 0) < 0)
@@ -137,7 +135,7 @@ _encode_to_file(ImagingEncoderObject* encoder, PyObject* args)
         return NULL;
 
     /* Allocate an encoder buffer */
-    buf = (UINT8*) malloc(bufsize);
+    buf = (UINT8*)malloc(bufsize);
     if (!buf)
         return PyErr_NoMemory();
 
@@ -211,7 +209,7 @@ _setimage(ImagingEncoderObject* encoder, PyObject* args)
     /* Allocate memory buffer (if bits field is set) */
     if (state->bits > 0) {
         state->bytes = (state->bits * state->xsize+7)/8;
-        state->buffer = (UINT8*) malloc(state->bytes);
+        state->buffer = (UINT8*)malloc(state->bytes);
         if (!state->buffer)
             return PyErr_NoMemory();
     }
@@ -305,7 +303,7 @@ PyImaging_EpsEncoderNew(PyObject* self, PyObject* args)
 
     encoder->encode = ImagingEpsEncode;
 
-    return (PyObject*) encoder;
+    return (PyObject*)encoder;
 }
 
 
@@ -337,7 +335,7 @@ PyImaging_GifEncoderNew(PyObject* self, PyObject* args)
     ((GIFENCODERSTATE*)encoder->state.context)->bits = bits;
     ((GIFENCODERSTATE*)encoder->state.context)->interlace = interlace;
 
-    return (PyObject*) encoder;
+    return (PyObject*)encoder;
 }
 
 
@@ -365,7 +363,7 @@ PyImaging_PcxEncoderNew(PyObject* self, PyObject* args)
 
     encoder->encode = ImagingPcxEncode;
 
-    return (PyObject*) encoder;
+    return (PyObject*)encoder;
 }
 
 
@@ -397,7 +395,7 @@ PyImaging_RawEncoderNew(PyObject* self, PyObject* args)
     encoder->state.ystep = ystep;
     encoder->state.count = stride;
 
-    return (PyObject*) encoder;
+    return (PyObject*)encoder;
 }
 
 
@@ -419,7 +417,7 @@ PyImaging_XbmEncoderNew(PyObject* self, PyObject* args)
 
     encoder->encode = ImagingXbmEncode;
 
-    return (PyObject*) encoder;
+    return (PyObject*)encoder;
 }
 
 
@@ -462,7 +460,7 @@ PyImaging_ZipEncoderNew(PyObject* self, PyObject* args)
     ((ZIPSTATE*)encoder->state.context)->dictionary = dictionary;
     ((ZIPSTATE*)encoder->state.context)->dictionary_size = dictionary_size;
 
-    return (PyObject*) encoder;
+    return (PyObject*)encoder;
 }
 #endif
 
@@ -538,7 +536,7 @@ PyImaging_JpegEncoderNew(PyObject* self, PyObject* args)
     ((JPEGENCODERSTATE*)encoder->state.context)->extra = extra;
     ((JPEGENCODERSTATE*)encoder->state.context)->extra_size = extra_size;
 
-    return (PyObject*) encoder;
+    return (PyObject*)encoder;
 }
 
 #endif
