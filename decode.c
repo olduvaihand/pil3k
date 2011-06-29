@@ -168,8 +168,7 @@ _setimage(ImagingDecoderObject* decoder, PyObject* args)
     Py_XDECREF(decoder->lock);
     decoder->lock = op;
 
-    Py_INCREF(Py_None);
-    return Py_None;
+    Py_RETURN_NONE;
 }
 
 static struct PyMethodDef methods[] = {
@@ -177,7 +176,7 @@ static struct PyMethodDef methods[] = {
         "FIXME: the decode doc string"},
     {"setimage", (PyCFunction)_setimage, METH_VARARGS,
         "FIXME: the setimage doc string"},
-    {NULL, NULL, NULL, NULL}    /* sentinel */
+    {NULL, NULL, 0, NULL}    /* sentinel */
 };
 
 statichere PyTypeObject ImagingDecoderType = {
