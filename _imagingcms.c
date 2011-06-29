@@ -458,9 +458,9 @@ static PyObject *
 cms_profile_is_intent_supported(CmsProfileObject *self, PyObject *args)
 {
     LCMSBOOL result;
-
     int intent;
     int direction;
+
     if (!PyArg_ParseTuple(args, "ii:is_intent_supported", &intent, &direction))
         return NULL;
 
@@ -469,7 +469,7 @@ cms_profile_is_intent_supported(CmsProfileObject *self, PyObject *args)
     /* printf("cmsIsIntentSupported(%p, %d, %d) => %d\n", self->profile,
      * intent, direction, result); */
 
-    return PyInt_FromLong(result != 0);
+    return PyLong_FromLong(result != 0);
 }
 
 #ifdef WIN32
@@ -479,9 +479,9 @@ cms_get_display_profile_win32(PyObject* self, PyObject* args)
     char filename[MAX_PATH];
     DWORD filename_size;
     BOOL ok;
-
     int handle = 0;
     int is_dc = 0;
+
     if (!PyArg_ParseTuple(args, "|ii:get_display_profile", &handle, &is_dc))
         return NULL;
 
