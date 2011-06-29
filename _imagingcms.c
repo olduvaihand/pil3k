@@ -661,8 +661,8 @@ static struct PyModuleDef moduledef = {
     NULL                    /* m_free */
 };
 
-DL_EXPORT(PyObject*)
-init_imagingcms(PyObject*)
+PyMODINIT_FUNC
+PyInit__imagingcms(PyObject*)
 {
     PyObject *module = PyModule_Create(&moduledef);
     PyObject *dict;
@@ -672,8 +672,13 @@ init_imagingcms(PyObject*)
         return NULL;
 
     /* Patch up object types */
-    CmsProfile_Type.ob_type = &PyType_Type;
-    CmsTransform_Type.ob_type = &PyType_Type;
+    CmsProfile_Type.tp_new = PyType_GenericNew;
+    if (PyType_Ready(&CmsProfile_Type) < 0)
+        return NULL;
+
+    CmsTransform_Type.tp_new = PyType_GenericNew;
+    if (PyType_Ready(&CmsTransform_Type) < 0)
+        return NULL;
 
     dict = PyModule_GetDict(module);
 
