@@ -177,7 +177,7 @@ PyImagingNew(Imaging imOut)
     imagep->image = imOut;
     imagep->access = ImagingAccessNew(imOut);
 
-    return (PyObject*) imagep;
+    return (PyObject*)imagep;
 }
 
 static void
@@ -203,7 +203,7 @@ Imaging PyImaging_AsImaging(PyObject *op)
         return NULL;
     }
 
-    return ((ImagingObject *)op)->image;
+    return ((ImagingObject*)op)->image;
 }
 
 
@@ -214,14 +214,14 @@ Imaging PyImaging_AsImaging(PyObject *op)
 void ImagingSectionEnter(ImagingSectionCookie* cookie)
 {
 #ifdef WITH_THREADING
-    *cookie = (PyThreadState *) PyEval_SaveThread();
+    *cookie = (PyThreadState*)PyEval_SaveThread();
 #endif
 }
 
 void ImagingSectionLeave(ImagingSectionCookie* cookie)
 {
 #ifdef WITH_THREADING
-    PyEval_RestoreThread((PyThreadState*) *cookie);
+    PyEval_RestoreThread((PyThreadState*)*cookie);
 #endif
 }
 
@@ -240,7 +240,7 @@ int PyImaging_ReadBuffer(PyObject* buffer, const void** ptr)
     /* must call check_buffer first! */
     Py_ssize_t n = 0;
     PyObject_AsReadBuffer(buffer, ptr, &n);
-    return (int) n;
+    return (int)n;
 }
 
 /* -------------------------------------------------------------------- */
@@ -287,10 +287,8 @@ ImagingError_ModeError(void)
 void *
 ImagingError_ValueError(const char *message)
 {
-    PyErr_SetString(
-        PyExc_ValueError,
-        (message) ? (char*) message : "unrecognized argument value"
-        );
+    PyErr_SetString(PyExc_ValueError,
+        (message) ? (char*)message : "unrecognized argument value");
     return NULL;
 }
 
@@ -386,14 +384,14 @@ getlist(PyObject* arg, int* length, const char* wrong_length, int type)
             for (i = 0; i < n; i++) {
                 PyObject *op = PyList_GET_ITEM(arg, i);
                 double temp = PyFloat_AsDouble(op);
-                ((FLOAT32*)list)[i] = (FLOAT32) temp;
+                ((FLOAT32*)list)[i] = (FLOAT32)temp;
             }
         } else {
             for (i = 0; i < n; i++) {
                 PyObject *op = PySequence_GetItem(arg, i);
                 double temp = PyFloat_AsDouble(op);
                 Py_XDECREF(op);
-                ((FLOAT32*)list)[i] = (FLOAT32) temp;
+                ((FLOAT32*)list)[i] = (FLOAT32)temp;
             }
         }
         break;
@@ -492,10 +490,10 @@ getink(PyObject* color, Imaging im, char* ink)
             if (PyLong_Check(color)) {
                 r = PyLong_AS_LONG(color);
                 /* compatibility: ABGR */
-                a = (UINT8) (r >> 24);
-                b = (UINT8) (r >> 16);
-                g = (UINT8) (r >> 8);
-                r = (UINT8) r;
+                a = (UINT8)(r >> 24);
+                b = (UINT8)(r >> 16);
+                g = (UINT8)(r >> 8);
+                r = (UINT8)r;
             } else {
                 if (im->bands == 2) {
                     if (!PyArg_ParseTuple(color, "i|i", &r, &a))
@@ -517,22 +515,22 @@ getink(PyObject* color, Imaging im, char* ink)
         r = PyLong_AsLong(color);
         if (r == -1 && PyErr_Occurred())
             return NULL;
-        *(INT32*) ink = r;
+        *(INT32*)ink = r;
         return ink;
     case IMAGING_TYPE_FLOAT32:
         /* floating point */
         f = PyFloat_AsDouble(color);
         if (f == -1.0 && PyErr_Occurred())
             return NULL;
-        *(FLOAT32*) ink = (FLOAT32) f;
+        *(FLOAT32*)ink = (FLOAT32)f;
         return ink;
     case IMAGING_TYPE_SPECIAL:
         if (strncmp(im->mode, "I;16", 4) == 0) {
             r = PyLong_AsLong(color);
             if (r == -1 && PyErr_Occurred())
                 return NULL;
-            ink[0] = (UINT8) r;
-            ink[1] = (UINT8) (r >> 8);
+            ink[0] = (UINT8)r;
+            ink[1] = (UINT8)(r >> 8);
             ink[2] = ink[3] = 0;
             return ink;
         }
@@ -671,7 +669,7 @@ _blend(ImagingObject* self, PyObject* args)
     return NULL;
 
     return PyImagingNew(ImagingBlend(imagep1->image, imagep2->image,
-                     (float) alpha));
+                     (float)alpha));
 }
 
 /* -------------------------------------------------------------------- */
@@ -868,7 +866,7 @@ _getpalette(ImagingObject* self, PyObject* args)
     if (!palette)
         return NULL;
 
-    pack((UINT8*) PyBytes_AsString(palette),
+    pack((UINT8*)PyBytes_AsString(palette),
         self->image->palette->palette, palettesize);
 
     return palette;
@@ -886,7 +884,7 @@ _getxy(PyObject* xy, int* x, int *y)
     if (PyLong_Check(value))
         *x = PyLong_AS_LONG(value);
     else if (PyFloat_Check(value))
-        *x = (int) PyFloat_AS_DOUBLE(value);
+        *x = (int)PyFloat_AS_DOUBLE(value);
     else
         goto badval;
 
@@ -894,7 +892,7 @@ _getxy(PyObject* xy, int* x, int *y)
     if (PyLong_Check(value))
         *y = PyLong_AS_LONG(value);
     else if (PyFloat_Check(value))
-        *y = (int) PyFloat_AS_DOUBLE(value);
+        *y = (int)PyFloat_AS_DOUBLE(value);
     else
         goto badval;
 
@@ -973,8 +971,8 @@ _histogram(ImagingObject* self, PyObject* args)
         case IMAGING_TYPE_FLOAT32:
             if (!PyArg_ParseTuple(extremap, "dd", &f0, &f1))
                 return NULL;
-            extrema.f[0] = (FLOAT32) f0;
-            extrema.f[1] = (FLOAT32) f1;
+            extrema.f[0] = (FLOAT32)f0;
+            extrema.f[1] = (FLOAT32)f1;
             break;
         default:
             ep = NULL;
@@ -1083,7 +1081,7 @@ _point(ImagingObject* self, PyObject* args)
         data = getlist(list, &n, wrong_number, TYPE_FLOAT32);
         if (!data)
             return NULL;
-        im = ImagingPoint(self->image, mode, (void*) data);
+        im = ImagingPoint(self->image, mode, (void*)data);
         free(data);
 
     } else if (!strcmp(self->image->mode, "I") && mode && !strcmp(mode, "L")) {
@@ -1095,7 +1093,7 @@ _point(ImagingObject* self, PyObject* args)
         data = getlist(list, &n, wrong_number, TYPE_UINT8);
         if (!data)
             return NULL;
-        im = ImagingPoint(self->image, mode, (void*) data);
+        im = ImagingPoint(self->image, mode, (void*)data);
         free(data);
 
     } else {
@@ -1116,7 +1114,7 @@ _point(ImagingObject* self, PyObject* args)
             return NULL;
 
         if (mode && !strcmp(mode, "I"))
-            im = ImagingPoint(self->image, mode, (void*) data);
+            im = ImagingPoint(self->image, mode, (void*)data);
         else if (mode && bands > 1) {
             for (i = 0; i < 256; i++) {
                 lut[i*4] = CLIP(data[i]);
@@ -1125,12 +1123,12 @@ _point(ImagingObject* self, PyObject* args)
                 if (n > 768)
                     lut[i*4+3] = CLIP(data[i+768]);
             }
-            im = ImagingPoint(self->image, mode, (void*) lut);
+            im = ImagingPoint(self->image, mode, (void*)lut);
         } else {
             /* map individual bands */
             for (i = 0; i < n; i++)
                 lut[i] = CLIP(data[i]);
-            im = ImagingPoint(self->image, mode, (void*) lut);
+            im = ImagingPoint(self->image, mode, (void*)lut);
         }
         free(data);
     }
@@ -1170,7 +1168,7 @@ _putdata(ImagingObject* self, PyObject* args)
     image = self->image;
 
     n = PyObject_Length(data);
-    if (n > (int) (image->xsize * image->ysize)) {
+    if (n > (int)(image->xsize * image->ysize)) {
         PyErr_SetString(PyExc_TypeError, "too many data entries");
         return NULL;
     }
@@ -1178,20 +1176,20 @@ _putdata(ImagingObject* self, PyObject* args)
     if (image->image8) {
         if (PyBytes_Check(data)) {
             unsigned char* p;
-            p = (unsigned char*) PyBytes_AS_STRING((PyBytesObject*) data);
+            p = (unsigned char*)PyBytes_AS_STRING((PyBytesObject*) data);
             if (scale == 1.0 && offset == 0.0)
                 /* Plain string data */
                 for (i = y = 0; i < n; i += image->xsize, y++) {
                     x = n - i;
-                    if (x > (int) image->xsize)
+                    if (x > (int)image->xsize)
                         x = image->xsize;
                     memcpy(image->image8[y], p+i, x);
                 }
             else 
                 /* Scaled and clipped string data */
                 for (i = x = y = 0; i < n; i++) {
-                    image->image8[y][x] = CLIP((int) (p[i] * scale + offset));
-                    if (++x >= (int) image->xsize)
+                    image->image8[y][x] = CLIP((int)(p[i] * scale + offset));
+                    if (++x >= (int)image->xsize)
                         x = 0, y++;
                 }
         } else {
@@ -1201,7 +1199,7 @@ _putdata(ImagingObject* self, PyObject* args)
                     for (i = x = y = 0; i < n; i++) {
                         PyObject *op = PyList_GET_ITEM(data, i);
                         image->image8[y][x] = (UINT8) CLIP(PyLong_AsLong(op));
-                        if (++x >= (int) image->xsize)
+                        if (++x >= (int)image->xsize)
                             x = 0, y++;
                     }
                 } else {
@@ -1209,7 +1207,7 @@ _putdata(ImagingObject* self, PyObject* args)
                         PyObject *op = PySequence_GetItem(data, i);
                         image->image8[y][x] = (UINT8) CLIP(PyLong_AsLong(op));
                         Py_XDECREF(op);
-                        if (++x >= (int) image->xsize)
+                        if (++x >= (int)image->xsize)
                             x = 0, y++;
                     }
                 }
@@ -1219,17 +1217,17 @@ _putdata(ImagingObject* self, PyObject* args)
                     for (i = x = y = 0; i < n; i++) {
                         PyObject *op = PyList_GET_ITEM(data, i);
                         image->image8[y][x] = CLIP(
-                            (int) (PyFloat_AsDouble(op) * scale + offset));
-                        if (++x >= (int) image->xsize)
+                            (int)(PyFloat_AsDouble(op) * scale + offset));
+                        if (++x >= (int)image->xsize)
                             x = 0, y++;
                     }
                 } else {
                     for (i = x = y = 0; i < n; i++) {
                         PyObject *op = PySequence_GetItem(data, i);
                         image->image8[y][x] = CLIP(
-                            (int) (PyFloat_AsDouble(op) * scale + offset));
+                            (int)(PyFloat_AsDouble(op) * scale + offset));
                         Py_XDECREF(op);
-                        if (++x >= (int) image->xsize)
+                        if (++x >= (int)image->xsize)
                             x = 0, y++;
                     }
                 }
@@ -1245,7 +1243,7 @@ _putdata(ImagingObject* self, PyObject* args)
                 IMAGING_PIXEL_INT32(image, x, y) =
                     (INT32) (PyFloat_AsDouble(op) * scale + offset);
                 Py_XDECREF(op);
-                if (++x >= (int) image->xsize)
+                if (++x >= (int)image->xsize)
                     x = 0, y++;
             }
             PyErr_Clear(); /* Avoid weird exceptions */
@@ -1256,7 +1254,7 @@ _putdata(ImagingObject* self, PyObject* args)
                 IMAGING_PIXEL_FLOAT32(image, x, y) =
                     (FLOAT32) (PyFloat_AsDouble(op) * scale + offset);
                 Py_XDECREF(op);
-                if (++x >= (int) image->xsize)
+                if (++x >= (int)image->xsize)
                     x = 0, y++;
             }
             PyErr_Clear(); /* Avoid weird exceptions */
@@ -1270,9 +1268,9 @@ _putdata(ImagingObject* self, PyObject* args)
                     return NULL;
                 }
                 /* FIXME: what about scale and offset? */
-                image->image32[y][x] = *((INT32*) ink);
+                image->image32[y][x] = *((INT32*)ink);
                 Py_XDECREF(op);
-                if (++x >= (int) image->xsize)
+                if (++x >= (int)image->xsize)
                     x = 0, y++;
             }
             PyErr_Clear(); /* Avoid weird exceptions */
@@ -1362,7 +1360,7 @@ _putpalettealpha(ImagingObject* self, PyObject* args)
     }
 
     strcpy(self->image->palette->mode, "RGBA");
-    self->image->palette->palette[index*4+3] = (UINT8) alpha;
+    self->image->palette->palette[index*4+3] = (UINT8)alpha;
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -1424,7 +1422,7 @@ _resize(ImagingObject* self, PyObject* args)
 
     imOut = ImagingNew(imIn->mode, xsize, ysize);
     if (imOut)
-        (void) ImagingResize(imOut, imIn, filter);
+        (void)ImagingResize(imOut, imIn, filter);
     
     return PyImagingNew(imOut);
 }
@@ -1449,28 +1447,28 @@ _rotate(ImagingObject* self, PyObject* args)
     if (filter && imIn->type != IMAGING_TYPE_SPECIAL) {
         /* Rotate with resampling filter */
         imOut = ImagingNew(imIn->mode, imIn->xsize, imIn->ysize);
-        (void) ImagingRotate(imOut, imIn, theta, filter);
+        (void)ImagingRotate(imOut, imIn, theta, filter);
     } else if (theta == 90.0 || theta == 270.0) {
         /* Use fast version */
         imOut = ImagingNew(imIn->mode, imIn->ysize, imIn->xsize);
         if (imOut) {
             if (theta == 90.0)
-                (void) ImagingRotate90(imOut, imIn);
+                (void)ImagingRotate90(imOut, imIn);
             else
-                (void) ImagingRotate270(imOut, imIn);
+                (void)ImagingRotate270(imOut, imIn);
         }
     } else {
         imOut = ImagingNew(imIn->mode, imIn->xsize, imIn->ysize);
         if (imOut) {
             if (theta == 0.0)
                 /* No rotation: simply copy the input image */
-                (void) ImagingCopy2(imOut, imIn);
+                (void)ImagingCopy2(imOut, imIn);
             else if (theta == 180.0)
                 /* Use fast version */
-                (void) ImagingRotate180(imOut, imIn);
+                (void)ImagingRotate180(imOut, imIn);
             else
                 /* Use ordinary version */
-                (void) ImagingRotate(imOut, imIn, theta, 0);
+                (void)ImagingRotate(imOut, imIn, theta, 0);
         }
     }
 
@@ -1503,7 +1501,7 @@ im_setmode(ImagingObject* self, PyObject* args)
         strcpy(im->mode, mode);
         im->bands = modelen;
         if (!strcmp(mode, "RGBA"))
-            (void) ImagingFillBand(im, 3, 255);
+            (void)ImagingFillBand(im, 3, 255);
     } else {
         /* trying doing an in-place conversion */
         if (!ImagingConvertInPlace(im, mode))
@@ -1624,7 +1622,7 @@ _transform2(ImagingObject* self, PyObject* args)
             );
         break;
     default:
-        (void) ImagingError_ValueError("bad transform method");
+        (void)ImagingError_ValueError("bad transform method");
     }
 
     free(a);
@@ -1666,19 +1664,19 @@ _transpose(ImagingObject* self, PyObject* args)
     if (imOut)
         switch (op) {
         case 0:
-            (void) ImagingFlipLeftRight(imOut, imIn);
+            (void)ImagingFlipLeftRight(imOut, imIn);
             break;
         case 1:
-            (void) ImagingFlipTopBottom(imOut, imIn);
+            (void)ImagingFlipTopBottom(imOut, imIn);
             break;
         case 2:
-            (void) ImagingRotate90(imOut, imIn);
+            (void)ImagingRotate90(imOut, imIn);
             break;
         case 3:
-            (void) ImagingRotate180(imOut, imIn);
+            (void)ImagingRotate180(imOut, imIn);
             break;
         case 4:
-            (void) ImagingRotate270(imOut, imIn);
+            (void)ImagingRotate270(imOut, imIn);
             break;
         }
 
@@ -1714,7 +1712,7 @@ _unsharp_mask(ImagingObject* self, PyObject* args)
 static PyObject* 
 _isblock(ImagingObject* self, PyObject* args)
 {
-    return PyLong_FromLong((long) self->image->block);
+    return PyLong_FromLong((long)self->image->block);
 }
 
 static PyObject* 
@@ -1752,9 +1750,8 @@ _getcolors(ImagingObject* self, PyObject* args)
         out = PyList_New(colors);
         for (i = 0; i < colors; i++) {
             ImagingColorItem* v = &items[i];
-            PyObject* item = Py_BuildValue(
-                "iN", v->count, getpixel(self->image, self->access, v->x, v->y)
-                );
+            PyObject* item = Py_BuildValue("iN", v->count,
+                    getpixel(self->image, self->access, v->x, v->y));
             PyList_SetItem(out, i, item);
         }
     }
@@ -1958,8 +1955,8 @@ _chop_subtract(ImagingObject* self, PyObject* args)
     scale = 1.0;
     offset = 0;
 
-    if (!PyArg_ParseTuple(args, "O!|fi", &Imaging_Type, &imagep,
-              &scale, &offset))
+    if (!PyArg_ParseTuple(args, "O!|fi", &Imaging_Type, &imagep, &scale,
+                &offset))
         return NULL;
 
     return PyImagingNew(ImagingChopSubtract(self->image, imagep->image,
@@ -2082,7 +2079,7 @@ _font_new(PyObject* self_, PyObject* args)
     Py_INCREF(imagep);
     self->ref = imagep;
 
-    return (PyObject*) self;
+    return (PyObject*)self;
 }
 
 static void
@@ -2122,7 +2119,7 @@ _font_getmask(ImagingFontObject* self, PyObject* args)
         return NULL;
 
     b = 0;
-    (void) ImagingFill(im, &b);
+    (void)ImagingFill(im, &b);
 
     b = self->baseline;
     for (x = 0; *text; text++) {
@@ -2163,16 +2160,12 @@ _font_getsize(ImagingFontObject* self, PyObject* args)
 }
 
 static struct PyMethodDef _font_methods[] = {
-    {"getmask", (PyCFunction)_font_getmask, 1},
-    {"getsize", (PyCFunction)_font_getsize, 1},
-    {NULL, NULL} /* sentinel */
+    {"getmask", (PyCFunction)_font_getmask, METH_VARARGS,
+        "FIXME: getmask doc string"},
+    {"getsize", (PyCFunction)_font_getsize, METH_VARARGS,
+        "FIXME: getsize doc string"},
+    {NULL, NULL, NULL, NULL}    /* sentinel */
 };
-
-static PyObject*  
-_font_getattro(ImagingFontObject* self, PyObject* name)
-{
-    return PyObject_GenericGetAttr((PyObject*) self, name);
-}
 
 /* -------------------------------------------------------------------- */
 
@@ -2198,7 +2191,7 @@ _draw_new(PyObject* self_, PyObject* args)
 
     self->blend = blend;
 
-    return (PyObject*) self;
+    return (PyObject*)self;
 }
 
 static void
@@ -2220,10 +2213,10 @@ _draw_ink(ImagingDrawObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args, "O|s", &color, &mode))
         return NULL;
 
-    if (!getink(color, self->image->image, (char*) &ink))
+    if (!getink(color, self->image->image, (char*)&ink))
         return NULL;
 
-    return PyLong_FromLong((int) ink);
+    return PyLong_FromLong((int)ink);
 }
 
 static PyObject* 
@@ -2267,7 +2260,7 @@ _draw_bitmap(ImagingDrawObject* self, PyObject* args)
         return NULL;
     }
 
-    n = ImagingDrawBitmap(self->image->image, (int) xy[0], (int) xy[1],
+    n = ImagingDrawBitmap(self->image->image, (int)xy[0], (int)xy[1],
             bitmap->image, &ink, self->blend);
 
     free(xy);
@@ -2319,8 +2312,8 @@ _draw_ellipse(ImagingDrawObject* self, PyObject* args)
         return NULL;
     }
 
-    n = ImagingDrawEllipse(self->image->image, (int) xy[0], (int) xy[1],
-            (int) xy[2], (int) xy[3], &ink, fill, self->blend);
+    n = ImagingDrawEllipse(self->image->image, (int)xy[0], (int)xy[1],
+            (int)xy[2], (int)xy[3], &ink, fill, self->blend);
     
     free(xy);
 
@@ -2368,20 +2361,20 @@ _draw_lines(ImagingDrawObject* self, PyObject* args)
         double *p = NULL;
         for (i = 0; i < n-1; i++) {
             p = &xy[i+i];
-            if (ImagingDrawLine(self->image->image, (int) p[0], (int) p[1],
-                        (int) p[2], (int) p[3], &ink, self->blend) < 0) {
+            if (ImagingDrawLine(self->image->image, (int)p[0], (int)p[1],
+                        (int)p[2], (int)p[3], &ink, self->blend) < 0) {
                 free(xy);
                 return NULL;
             }
         }
         if (p) /* draw last point */
-            ImagingDrawPoint(self->image->image, (int) p[2], (int) p[3], &ink,
+            ImagingDrawPoint(self->image->image, (int)p[2], (int)p[3], &ink,
                     self->blend);
     } else {
         for (i = 0; i < n-1; i++) {
             double *p = &xy[i+i];
-            if (ImagingDrawWideLine(self->image->image, (int) p[0], (int) p[1],
-                       (int) p[2], (int) p[3], &ink, width, self->blend) < 0) {
+            if (ImagingDrawWideLine(self->image->image, (int)p[0], (int)p[1],
+                       (int)p[2], (int)p[3], &ink, width, self->blend) < 0) {
                 free(xy);
                 return NULL;
             }
@@ -2427,7 +2420,7 @@ _draw_points(ImagingDrawObject* self, PyObject* args)
 
     for (i = 0; i < n; i++) {
         double *p = &xy[i+i];
-        if (ImagingDrawPoint(self->image->image, (int) p[0], (int) p[1], &ink,
+        if (ImagingDrawPoint(self->image->image, (int)p[0], (int)p[1], &ink,
                     self->blend) < 0) {
             free(xy);
             return NULL;
@@ -2514,11 +2507,11 @@ _draw_polygon(ImagingDrawObject* self, PyObject* args)
     }
 
     /* Copy list of vertices to array */
-    ixy = (int*) malloc(n * 2 * sizeof(int));
+    ixy = (int*)malloc(n * 2 * sizeof(int));
 
     for (i = 0; i < n; i++) {
-        ixy[i+i] = (int) xy[i+i];
-        ixy[i+i+1] = (int) xy[i+i+1];
+        ixy[i+i] = (int)xy[i+i];
+        ixy[i+i+1] = (int)xy[i+i+1];
     }
 
     free(xy);
@@ -2556,8 +2549,8 @@ _draw_rectangle(ImagingDrawObject* self, PyObject* args)
         return NULL;
     }
 
-    n = ImagingDrawRectangle(self->image->image, (int) xy[0], (int) xy[1],
-        (int) xy[2], (int) xy[3], &ink, fill, self->blend);
+    n = ImagingDrawRectangle(self->image->image, (int)xy[0], (int)xy[1],
+        (int)xy[2], (int)xy[3], &ink, fill, self->blend);
     
     free(xy);
 
@@ -2571,30 +2564,37 @@ _draw_rectangle(ImagingDrawObject* self, PyObject* args)
 static struct PyMethodDef _draw_methods[] = {
 #ifdef WITH_IMAGEDRAW
     /* Graphics (ImageDraw) */
-    {"draw_line", (PyCFunction)_draw_line, 1},
-    {"draw_lines", (PyCFunction)_draw_lines, 1},
+    {"draw_line", (PyCFunction)_draw_line, METH_VARARGS,
+        "FIXME: draw_line doc string"},
+    {"draw_lines", (PyCFunction)_draw_lines, METH_VARARGS,
+        "FIXME: draw_lines doc string"},
 #ifdef WITH_ARROW
-    {"draw_outline", (PyCFunction)_draw_outline, 1},
+    {"draw_outline", (PyCFunction)_draw_outline, METH_VARARGS,
+        "FIXME: draw_outline doc string"},
 #endif
-    {"draw_polygon", (PyCFunction)_draw_polygon, 1},
-    {"draw_rectangle", (PyCFunction)_draw_rectangle, 1},
-    {"draw_point", (PyCFunction)_draw_point, 1},
-    {"draw_points", (PyCFunction)_draw_points, 1},
-    {"draw_arc", (PyCFunction)_draw_arc, 1},
-    {"draw_bitmap", (PyCFunction)_draw_bitmap, 1},
-    {"draw_chord", (PyCFunction)_draw_chord, 1},
-    {"draw_ellipse", (PyCFunction)_draw_ellipse, 1},
-    {"draw_pieslice", (PyCFunction)_draw_pieslice, 1},
-    {"draw_ink", (PyCFunction)_draw_ink, 1},
+    {"draw_polygon", (PyCFunction)_draw_polygon, METH_VARARGS,
+        "FIXME: draw_polygon doc string"},
+    {"draw_rectangle", (PyCFunction)_draw_rectangle, METH_VARARGS,
+        "FIXME: draw_rectangle doc string"},
+    {"draw_point", (PyCFunction)_draw_point, METH_VARARGS,
+        "FIXME: draw_point doc string"},
+    {"draw_points", (PyCFunction)_draw_points, METH_VARARGS,
+        "FIXME: draw_points doc string"},
+    {"draw_arc", (PyCFunction)_draw_arc, METH_VARARGS,
+        "FIXME: draw_arc doc string"},
+    {"draw_bitmap", (PyCFunction)_draw_bitmap, METH_VARARGS,
+        "FIXME: draw_bitmap doc string"},
+    {"draw_chord", (PyCFunction)_draw_chord, METH_VARARGS,
+        "FIXME: draw_chord doc string"},
+    {"draw_ellipse", (PyCFunction)_draw_ellipse, METH_VARARGS,
+        "FIXME: draw_ellipse doc string"},
+    {"draw_pieslice", (PyCFunction)_draw_pieslice, METH_VARARGS,
+        "FIXME: draw_pieslice doc string"},
+    {"draw_ink", (PyCFunction)_draw_ink, METH_VARARGS,
+        "FIXME: draw_ink doc string"},
 #endif
-    {NULL, NULL} /* sentinel */
+    {NULL, NULL, NULL, NULL} /* sentinel */
 };
-
-static PyObject*  
-_draw_getattro(ImagingDrawObject* self, PyObject* name)
-{
-    return Py_FindMethod((PyObject*) self, name);
-}
 
 #endif
 
@@ -2618,7 +2618,7 @@ pixel_access_new(ImagingObject* imagep, PyObject* args)
 
     self->readonly = readonly;
 
-    return (PyObject*) self;
+    return (PyObject*)self;
 }
 
 static void
@@ -2687,10 +2687,9 @@ _effect_mandelbrot(ImagingObject* self, PyObject* args)
     extent[0] = -3; extent[1] = -2.5;
     extent[2] = 2;  extent[3] = 2.5;
 
-    if (!PyArg_ParseTuple(args, "|(ii)(dddd)i", &xsize, &ysize,
-                          &extent[0], &extent[1], &extent[2], &extent[3],
-                          &quality))
-    return NULL;
+    if (!PyArg_ParseTuple(args, "|(ii)(dddd)i", &xsize, &ysize, &extent[0],
+                &extent[1], &extent[2], &extent[3], &quality))
+        return NULL;
 
     return PyImagingNew(ImagingEffectMandelbrot(xsize, ysize, extent, quality));
 }
@@ -2737,7 +2736,7 @@ _crc32(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args, "s#|(ii)", &buffer, &bytes, &hi, &lo))
         return NULL;
 
-    crc = ((UINT32) (hi & 0xFFFF) << 16) + (lo & 0xFFFF);
+    crc = ((UINT32)(hi & 0xFFFF) << 16) + (lo & 0xFFFF);
 
     crc = ImagingCRC32(crc, (unsigned char *)buffer, bytes);
 
@@ -2808,98 +2807,155 @@ _save_ppm(ImagingObject* self, PyObject* args)
 static struct PyMethodDef methods[] = {
 
     /* Put commonly used methods first */
-    {"getpixel", (PyCFunction)_getpixel, 1},
-    {"putpixel", (PyCFunction)_putpixel, 1},
+    {"getpixel", (PyCFunction)_getpixel, METH_VARARGS,
+        "FIXME: getpixel doc string"},
+    {"putpixel", (PyCFunction)_putpixel, METH_VARARGS,
+        "FIXME: putpixel doc string"},
 
-    {"pixel_access", (PyCFunction)pixel_access_new, 1},
+    {"pixel_access", (PyCFunction)pixel_access_new, METH_VARARGS,
+        "FIXME: pixel_access doc string"},
 
     /* Standard processing methods (Image) */
-    {"convert", (PyCFunction)_convert, 1},
-    {"convert2", (PyCFunction)_convert2, 1},
-    {"convert_matrix", (PyCFunction)_convert_matrix, 1},
-    {"copy", (PyCFunction)_copy, 1},
-    {"copy2", (PyCFunction)_copy2, 1},
+    {"convert", (PyCFunction)_convert, METH_VARARGS,
+        "FIXME: convert doc string"},
+    {"convert2", (PyCFunction)_convert2, METH_VARARGS,
+        "FIXME: convert2 doc string"},
+    {"convert_matrix", (PyCFunction)_convert_matrix, METH_VARARGS,
+        "FIXME: convert_matrix doc string"},
+    {"copy", (PyCFunction)_copy, METH_VARARGS,
+        "FIXME: copy doc string"},
+    {"copy2", (PyCFunction)_copy2, METH_VARARGS,
+        "FIXME: copy2 doc string"},
 #ifdef WITH_CRACKCODE
-    {"crackcode", (PyCFunction)_crackcode, 1},
+    {"crackcode", (PyCFunction)_crackcode, METH_VARARGS,
+        "FIXME: crackcode doc string"},
 #endif
-    {"crop", (PyCFunction)_crop, 1},
-    {"expand", (PyCFunction)_expand, 1},
-    {"filter", (PyCFunction)_filter, 1},
-    {"histogram", (PyCFunction)_histogram, 1},
+    {"crop", (PyCFunction)_crop, METH_VARARGS,
+        "FIXME: crop doc string"},
+    {"expand", (PyCFunction)_expand, METH_VARARGS,
+        "FIXME: expand doc string"},
+    {"filter", (PyCFunction)_filter, METH_VARARGS,
+        "FIXME: filter doc string"},
+    {"histogram", (PyCFunction)_histogram, METH_VARARGS,
+        "FIXME: histogram doc string"},
 #ifdef WITH_MODEFILTER
-    {"modefilter", (PyCFunction)_modefilter, 1},
+    {"modefilter", (PyCFunction)_modefilter, METH_VARARGS,
+        "FIXME: modefilter doc string"},
 #endif
-    {"offset", (PyCFunction)_offset, 1},
-    {"paste", (PyCFunction)_paste, 1},
-    {"point", (PyCFunction)_point, 1},
-    {"point_transform", (PyCFunction)_point_transform, 1},
-    {"putdata", (PyCFunction)_putdata, 1},
+    {"offset", (PyCFunction)_offset, METH_VARARGS,
+        "FIXME: offset doc string"},
+    {"paste", (PyCFunction)_paste, METH_VARARGS,
+        "FIXME: paste doc string"},
+    {"point", (PyCFunction)_point, METH_VARARGS,
+        "FIXME: point doc string"},
+    {"point_transform", (PyCFunction)_point_transform, METH_VARARGS,
+        "FIXME: point_transform doc string"},
+    {"putdata", (PyCFunction)_putdata, METH_VARARGS,
+        "FIXME: putdata doc string"},
 #ifdef WITH_QUANTIZE
-    {"quantize", (PyCFunction)_quantize, 1},
+    {"quantize", (PyCFunction)_quantize, METH_VARARGS,
+        "FIXME: quantize doc string"},
 #endif
 #ifdef WITH_RANKFILTER
-    {"rankfilter", (PyCFunction)_rankfilter, 1},
+    {"rankfilter", (PyCFunction)_rankfilter, METH_VARARGS,
+        "FIXME: rankfilter doc string"},
 #endif
-    {"resize", (PyCFunction)_resize, 1},
-    {"rotate", (PyCFunction)_rotate, 1},
-    {"stretch", (PyCFunction)_stretch, 1},
-    {"transpose", (PyCFunction)_transpose, 1},
-    {"transform2", (PyCFunction)_transform2, 1},
+    {"resize", (PyCFunction)_resize, METH_VARARGS,
+        "FIXME: resize doc string"},
+    {"rotate", (PyCFunction)_rotate, METH_VARARGS,
+        "FIXME: rotate doc string"},
+    {"stretch", (PyCFunction)_stretch, METH_VARARGS,
+        "FIXME: stretch doc string"},
+    {"transpose", (PyCFunction)_transpose, METH_VARARGS,
+        "FIXME: transpose doc string"},
+    {"transform2", (PyCFunction)_transform2, METH_VARARGS,
+        "FIXME: transform2 doc string"},
 
-    {"isblock", (PyCFunction)_isblock, 1},
+    {"isblock", (PyCFunction)_isblock, METH_VARARGS,
+        "FIXME: isblock doc string"},
 
-    {"getbbox", (PyCFunction)_getbbox, 1},
-    {"getcolors", (PyCFunction)_getcolors, 1},
-    {"getextrema", (PyCFunction)_getextrema, 1},
-    {"getprojection", (PyCFunction)_getprojection, 1},
+    {"getbbox", (PyCFunction)_getbbox, METH_VARARGS,
+        "FIXME: getbbox doc string"},
+    {"getcolors", (PyCFunction)_getcolors, METH_VARARGS,
+        "FIXME: getcolors doc string"},
+    {"getextrema", (PyCFunction)_getextrema, METH_VARARGS,
+        "FIXME: getextrema doc string"},
+    {"getprojection", (PyCFunction)_getprojection, METH_VARARGS,
+        "FIXME: getprojection doc string"},
 
-    {"getband", (PyCFunction)_getband, 1},
-    {"putband", (PyCFunction)_putband, 1},
-    {"fillband", (PyCFunction)_fillband, 1},
+    {"getband", (PyCFunction)_getband, METH_VARARGS,
+        "FIXME: getband doc string"},
+    {"putband", (PyCFunction)_putband, METH_VARARGS,
+        "FIXME: putband doc string"},
+    {"fillband", (PyCFunction)_fillband, METH_VARARGS,
+        "FIXME: fillband doc string"},
 
-    {"setmode", (PyCFunction)im_setmode, 1},
+    {"setmode", (PyCFunction)im_setmode, METH_VARARGS,
+        "FIXME: im_setmode doc string"},
     
-    {"getpalette", (PyCFunction)_getpalette, 1},
-    {"putpalette", (PyCFunction)_putpalette, 1},
-    {"putpalettealpha", (PyCFunction)_putpalettealpha, 1},
+    {"getpalette", (PyCFunction)_getpalette, METH_VARARGS,
+        "FIXME: getpalette doc string"},
+    {"putpalette", (PyCFunction)_putpalette, METH_VARARGS,
+        "FIXME: putpalette doc string"},
+    {"putpalettealpha", (PyCFunction)_putpalettealpha, METH_VARARGS,
+        "FIXME: putpalettealpha doc string"},
 
 #ifdef WITH_IMAGECHOPS
     /* Channel operations (ImageChops) */
-    {"chop_invert", (PyCFunction)_chop_invert, 1},
-    {"chop_lighter", (PyCFunction)_chop_lighter, 1},
-    {"chop_darker", (PyCFunction)_chop_darker, 1},
-    {"chop_difference", (PyCFunction)_chop_difference, 1},
-    {"chop_multiply", (PyCFunction)_chop_multiply, 1},
-    {"chop_screen", (PyCFunction)_chop_screen, 1},
-    {"chop_add", (PyCFunction)_chop_add, 1},
-    {"chop_subtract", (PyCFunction)_chop_subtract, 1},
-    {"chop_add_modulo", (PyCFunction)_chop_add_modulo, 1},
-    {"chop_subtract_modulo", (PyCFunction)_chop_subtract_modulo, 1},
-    {"chop_and", (PyCFunction)_chop_and, 1},
-    {"chop_or", (PyCFunction)_chop_or, 1},
-    {"chop_xor", (PyCFunction)_chop_xor, 1},
+    {"chop_invert", (PyCFunction)_chop_invert, METH_VARARGS,
+        "FIXME: chop_invert doc string"},
+    {"chop_lighter", (PyCFunction)_chop_lighter, METH_VARARGS,
+        "FIXME: chop_lighter doc string"},
+    {"chop_darker", (PyCFunction)_chop_darker, METH_VARARGS,
+        "FIXME: chop_darker doc string"},
+    {"chop_difference", (PyCFunction)_chop_difference, METH_VARARGS,
+        "FIXME: chop_difference doc string"},
+    {"chop_multiply", (PyCFunction)_chop_multiply, METH_VARARGS,
+        "FIXME: chop_multiply doc string"},
+    {"chop_screen", (PyCFunction)_chop_screen, METH_VARARGS,
+        "FIXME: chop_screen doc string"},
+    {"chop_add", (PyCFunction)_chop_add, METH_VARARGS,
+        "FIXME: chop_add doc string"},
+    {"chop_subtract", (PyCFunction)_chop_subtract, METH_VARARGS,
+        "FIXME: chop_subtract doc string"},
+    {"chop_add_modulo", (PyCFunction)_chop_add_modulo, METH_VARARGS,
+        "FIXME: chop_add_modulo doc string"},
+    {"chop_subtract_modulo", (PyCFunction)_chop_subtract_modulo, METH_VARARGS,
+        "FIXME: chop_subtract_modulo doc string"},
+    {"chop_and", (PyCFunction)_chop_and, METH_VARARGS,
+        "FIXME: chop_and doc string"},
+    {"chop_or", (PyCFunction)_chop_or, METH_VARARGS,
+        "FIXME: chop_or doc string"},
+    {"chop_xor", (PyCFunction)_chop_xor, METH_VARARGS,
+        "FIXME: chop_xor doc string"},
 #endif
 
 #ifdef WITH_UNSHARPMASK
     /* Kevin Cazabon's unsharpmask extension */
-    {"gaussian_blur", (PyCFunction)_gaussian_blur, 1},
-    {"unsharp_mask", (PyCFunction)_unsharp_mask, 1},
+    {"gaussian_blur", (PyCFunction)_gaussian_blur, METH_VARARGS,
+        "FIXME: gaussian_blur doc string"},
+    {"unsharp_mask", (PyCFunction)_unsharp_mask, METH_VARARGS,
+        "FIXME: unsharp_mask doc string"},
 #endif
 
 #ifdef WITH_EFFECTS
     /* Special effects */
-    {"effect_spread", (PyCFunction)_effect_spread, 1},
+    {"effect_spread", (PyCFunction)_effect_spread, METH_VARARGS,
+        "FIXME: effect_spread doc string"},
 #endif
 
     /* Misc. */
-    {"new_array", (PyCFunction)_new_array, 1},
-    {"new_block", (PyCFunction)_new_block, 1},
+    {"new_array", (PyCFunction)_new_array, METH_VARARGS,
+        "FIXME: new_array doc string"},
+    {"new_block", (PyCFunction)_new_block, METH_VARARGS,
+        "FIXME: new_block doc string"},
 
 #ifdef WITH_DEBUG
-    {"save_ppm", (PyCFunction)_save_ppm, 1},
+    {"save_ppm", (PyCFunction)_save_ppm, METH_VARARGS,
+        "FIXME: save_ppm doc string"},
 #endif
 
-    {NULL, NULL} /* sentinel */
+    {NULL, NULL, NULL, NULL} /* sentinel */
 };
 
 
@@ -2910,7 +2966,7 @@ _getattro(ImagingObject* self, PyObject* name)
 {
     PyObject* res;
 
-    res = PyObject_GenericGetAttr((PyObject*) self, name);
+    res = PyObject_GenericGetAttr((PyObject*)self, name);
     if (res)
         return res;
     PyErr_Clear();
@@ -2921,7 +2977,7 @@ _getattro(ImagingObject* self, PyObject* name)
     if (strcmp(name, "bands") == 0)
         return PyLong_FromLong(self->image->bands);
     if (strcmp(name, "id") == 0)
-        return PyLong_FromLong((long) self->image);
+        return PyLong_FromLong((long)self->image);
     if (strcmp(name, "ptr") == 0)
         return PyCObject_FromVoidPtrAndDesc(self->image, IMAGING_MAGIC, NULL);
 
@@ -2956,13 +3012,13 @@ image_item(ImagingObject *self, Py_ssize_t i)
 }
 
 static PySequenceMethods image_as_sequence = {
-    (inquiry) image_length,         /*sq_length*/
-    (binaryfunc) NULL,              /*sq_concat*/
-    (ssizeargfunc) NULL,            /*sq_repeat*/
-    (ssizeargfunc) image_item,      /*sq_item*/
-    (ssizessizeargfunc) NULL,       /*sq_slice*/
-    (ssizeobjargproc) NULL,         /*sq_ass_item*/
-    (ssizessizeobjargproc) NULL,    /*sq_ass_slice*/
+    (inquiry)image_length,         /*sq_length*/
+    (binaryfunc)NULL,              /*sq_concat*/
+    (ssizeargfunc)NULL,            /*sq_repeat*/
+    (ssizeargfunc)image_item,      /*sq_item*/
+    (ssizessizeargfunc)NULL,       /*sq_slice*/
+    (ssizeobjargproc)NULL,         /*sq_ass_item*/
+    (ssizessizeobjargproc)NULL,    /*sq_ass_slice*/
 };
 
 
@@ -3007,7 +3063,7 @@ statichere PyTypeObject ImagingFont_Type = {
     0,                                       /* tp_hash */
     0,                                       /* tp_call */
     0,                                       /* tp_str */
-    (getattrofunc)_font_getattro,            /* tp_getattro */
+    PyObject_GenericGetAttr,                 /* tp_getattro */
 };
 
 statichere PyTypeObject ImagingDraw_Type = {
@@ -3027,15 +3083,15 @@ statichere PyTypeObject ImagingDraw_Type = {
     0,                                       /* tp_hash */
     0,                                       /* tp_call */
     0,                                       /* tp_str */
-    (getattrofunc)_draw_getattro,            /* tp_getattro */
+    PyObject_GenericGetAttr,                 /* tp_getattro */
 };
 
 #endif
 
 static PyMappingMethods pixel_access_as_mapping = {
-    (inquiry) NULL,                          /*mp_length*/
-    (binaryfunc) pixel_access_getitem,       /*mp_subscript*/
-    (objobjargproc) pixel_access_setitem,    /*mp_ass_subscript*/
+    (inquiry)NULL,                          /*mp_length*/
+    (binaryfunc)pixel_access_getitem,       /*mp_subscript*/
+    (objobjargproc)pixel_access_setitem,    /*mp_ass_subscript*/
 };
 
 /* type description */
