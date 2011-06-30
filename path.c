@@ -382,6 +382,41 @@ path_getslice(PyPathObject* self, Py_ssize_t ilow, Py_ssize_t ihigh)
     return (PyObject*)path_new(ihigh - ilow, self->xy + ilow * 2, 1);
 }
 
+static PyObject*
+path_subscript(PyPathObject* self, PyObject* item) {
+    if (PyIndex_Check(item)) {
+        Py_ssize_t i;
+
+        i = PyNumber_AsSsize_t(item, PyExc_IndexError);
+
+        if (i == -1 && PyErr_Occurred())
+            return NULL;
+
+        return path_getitem(self, i);
+    }
+    if (PySlice_Check(item)) {
+        int len = 4;
+        Py_ssize_t start, stop, step, slicelen;
+
+        if (PySlice_GetIndicesEx((PySliceObject*)item, len, &start, &stop,
+                    &step, &slicelen) < 0)
+            return NULL;
+
+        if (slicelen <= 0)
+            return PyTuple_New(0);
+        else if (step == 1)
+            return path_getslice(self, start, stop);
+        else {
+            PyErr_SetString(PyExc_TypeError, "slice steps not supported");
+            return NULL;
+        }
+
+    PyErr_Format(PyExc_TypeError, "Path indices must be integers, not "\
+                "%.200s", Py_TYPE(item)->tp_name);
+    return NULL;
+}
+
+
 static Py_ssize_t
 path_len(PyPathObject* self)
 {
@@ -566,12 +601,19 @@ path_getattro(PyPathObject* self, PyObject* name)
 
 static PySequenceMethods path_as_sequence = {
     (lenfunc)path_len,                   /*sq_length*/
-    (binaryfunc)0,                       /*sq_concat*/
-    (ssizeargfunc)0,                     /*sq_repeat*/
+    0,                                   /*sq_concat*/
+    0,                                   /*sq_repeat*/
     (ssizeargfunc)path_getitem,          /*sq_item*/
-    (ssizessizeargfunc)path_getslice,    /*sq_slice*/
     (ssizeobjargproc)path_setitem,       /*sq_ass_item*/
-    (ssizessizeobjargproc)0,             /*sq_ass_slice*/
+    0,                                   /*sq_contains */
+    0,                                   /*sq_inplace_concat */
+    0,                                   /*sq_inplace_repeat */
+};
+
+static PyMappingMethods path_as_mapping = {
+    (lenfunc)path_len,                   /* mp_length */
+    (binaryfunc)path_subscript,          /* mp_subscript */
+    0                                    /* mp_ass_subscript */
 };
 
 statichere PyTypeObject PyPathType = {
@@ -587,7 +629,7 @@ statichere PyTypeObject PyPathType = {
     0,                             /* tp_repr */
     0,                             /* tp_as_number */
     &path_as_sequence,             /* tp_as_sequence */
-    0,                             /* tp_as_mapping */
+    &path_as_mapping,              /* tp_as_mapping */
     0,                             /* tp_hash */
     0,                             /* tp_call */
     0,                             /* tp_str */
