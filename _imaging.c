@@ -113,7 +113,7 @@ typedef struct {
     ImagingAccess access;
 } ImagingObject;
 
-staticforward PyTypeObject Imaging_Type;
+static PyTypeObject Imaging_Type;
 
 #ifdef WITH_IMAGEDRAW
 
@@ -135,7 +135,7 @@ typedef struct {
     Glyph glyphs[256];
 } ImagingFontObject;
 
-staticforward PyTypeObject ImagingFont_Type;
+static PyTypeObject ImagingFont_Type;
 
 typedef struct {
     PyObject_HEAD
@@ -144,7 +144,7 @@ typedef struct {
     int blend;
 } ImagingDrawObject;
 
-staticforward PyTypeObject ImagingDraw_Type;
+static PyTypeObject ImagingDraw_Type;
 
 #endif
 
@@ -154,7 +154,7 @@ typedef struct {
     int readonly;
 } PixelAccessObject;
 
-staticforward PyTypeObject PixelAccess_Type;
+static PyTypeObject PixelAccess_Type;
 
 PyObject* 
 PyImagingNew(Imaging imOut)
