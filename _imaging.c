@@ -3011,13 +3011,14 @@ image_item(ImagingObject *self, Py_ssize_t i)
 }
 
 static PySequenceMethods image_as_sequence = {
-    (inquiry)image_length,         /*sq_length*/
-    (binaryfunc)NULL,              /*sq_concat*/
-    (ssizeargfunc)NULL,            /*sq_repeat*/
+    (lenfunc)image_length,         /*sq_length*/
+    0,                             /*sq_concat*/
+    0,                             /*sq_repeat*/
     (ssizeargfunc)image_item,      /*sq_item*/
-    (ssizessizeargfunc)NULL,       /*sq_slice*/
-    (ssizeobjargproc)NULL,         /*sq_ass_item*/
-    (ssizessizeobjargproc)NULL,    /*sq_ass_slice*/
+    0,                             /*sq_ass_item*/
+    0,                             /*sq_contains*/
+    0,                             /*sq_inplace_concat*/
+    0,                             /*sq_inplace_repeat*/
 };
 
 
@@ -3088,7 +3089,7 @@ statichere PyTypeObject ImagingDraw_Type = {
 #endif
 
 static PyMappingMethods pixel_access_as_mapping = {
-    (inquiry)NULL,                          /*mp_length*/
+    0,                                      /*mp_length*/
     (binaryfunc)pixel_access_getitem,       /*mp_subscript*/
     (objobjargproc)pixel_access_setitem,    /*mp_ass_subscript*/
 };
