@@ -2950,13 +2950,16 @@ _getattro(ImagingObject* self, PyObject* name)
     PyObject* res;
     char* name_string;
 
+    if (!PyUnicode_Check(name))
+        return NULL;
+
     res = PyObject_GenericGetAttr((PyObject*)self, name);
     if (res)
         return res;
     PyErr_Clear();
 
     name_string = PyBytes_AsString(
-            PyUnicode_EncodeASCII(name, (Py_ssize_t)PyUnicode_GetSize(name),
+            PyUnicode_EncodeASCII((Py_UNICODE)name, (Py_ssize_t)PyUnicode_GetSize(name),
                 "ignore"));
 
     if (strcmp(name_string, "mode") == 0)
