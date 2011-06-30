@@ -140,6 +140,7 @@ font_getchar(PyObject* string, int index, FT_ULong* char_out)
     if (PyUnicode_Check(string)) {
         Py_UNICODE* p = PyUnicode_AS_UNICODE(string);
         int size = PyUnicode_GET_SIZE(string);
+
         if (index >= size)
             return 0;
         *char_out = p[index];
@@ -216,10 +217,9 @@ font_getabc(FontObject* self, PyObject* args)
     FT_ULong ch;
     FT_Face face;
     double a, b, c;
-
     /* calculate ABC values for a given string */
-
     PyObject* string;
+
     if (!PyArg_ParseTuple(args, "O:getabc", &string))
         return NULL;
 
@@ -230,6 +230,7 @@ font_getabc(FontObject* self, PyObject* args)
 
     if (font_getchar(string, 0, &ch)) {
         int index, error;
+
         face = self->face;
         index = FT_Get_Char_Index(face, ch);
         error = FT_Load_Glyph(face, index, FT_LOAD_DEFAULT);
