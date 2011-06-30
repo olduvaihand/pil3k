@@ -32,7 +32,7 @@ typedef struct {
 
 staticforward PyTypeObject OutlineType;
 
-#define PyOutline_Check(op) ((op)->ob_type == &OutlineType)
+#define PyOutline_Check(op) (Py_TYPE(op) == &OutlineType)
 
 static OutlineObject*
 _outline_new(void)
