@@ -51,7 +51,7 @@ typedef struct {
     PyObject* lock;
 } ImagingDecoderObject;
 
-staticforward PyTypeObject ImagingDecoderType;
+static PyTypeObject ImagingDecoderType;
 
 static ImagingDecoderObject*
 PyImaging_DecoderNew(int contextsize)
