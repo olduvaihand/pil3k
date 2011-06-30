@@ -352,12 +352,14 @@ getlist(PyObject* arg, int* length, const char* wrong_length, int type)
             for (i = 0; i < n; i++) {
                 PyObject *op = PyList_GET_ITEM(arg, i);
                 int temp = PyLong_AsLong(op);
+
                 ((UINT8*)list)[i] = CLIP(temp);
             }
         } else {
             for (i = 0; i < n; i++) {
                 PyObject *op = PySequence_GetItem(arg, i);
                 int temp = PyLong_AsLong(op);
+
                 Py_XDECREF(op);
                 ((UINT8*)list)[i] = CLIP(temp);
             }
@@ -368,12 +370,14 @@ getlist(PyObject* arg, int* length, const char* wrong_length, int type)
             for (i = 0; i < n; i++) {
                 PyObject *op = PyList_GET_ITEM(arg, i);
                 int temp = PyLong_AsLong(op);
+
                 ((INT32*)list)[i] = temp;
             }
         } else {
             for (i = 0; i < n; i++) {
                 PyObject *op = PySequence_GetItem(arg, i);
                 int temp = PyLong_AsLong(op);
+
                 Py_XDECREF(op);
                 ((INT32*)list)[i] = temp;
             }
@@ -384,12 +388,14 @@ getlist(PyObject* arg, int* length, const char* wrong_length, int type)
             for (i = 0; i < n; i++) {
                 PyObject *op = PyList_GET_ITEM(arg, i);
                 double temp = PyFloat_AsDouble(op);
+
                 ((FLOAT32*)list)[i] = (FLOAT32)temp;
             }
         } else {
             for (i = 0; i < n; i++) {
                 PyObject *op = PySequence_GetItem(arg, i);
                 double temp = PyFloat_AsDouble(op);
+
                 Py_XDECREF(op);
                 ((FLOAT32*)list)[i] = (FLOAT32)temp;
             }
@@ -400,12 +406,14 @@ getlist(PyObject* arg, int* length, const char* wrong_length, int type)
             for (i = 0; i < n; i++) {
                 PyObject *op = PyList_GET_ITEM(arg, i);
                 double temp = PyFloat_AsDouble(op);
+
                 ((double*)list)[i] = temp;
             }
         } else {
             for (i = 0; i < n; i++) {
                 PyObject *op = PySequence_GetItem(arg, i);
                 double temp = PyFloat_AsDouble(op);
+                
                 Py_XDECREF(op);
                 ((double*)list)[i] = temp;
             }
