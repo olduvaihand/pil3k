@@ -398,7 +398,7 @@ path_subscript(PyPathObject* self, PyObject* item) {
         int len = 4;
         Py_ssize_t start, stop, step, slicelen;
 
-        if (PySlice_GetIndicesEx((PySliceObject*)item, len, &start, &stop,
+        if (PySlice_GetIndicesEx((PyObject*)item, len, &start, &stop,
                     &step, &slicelen) < 0)
             return NULL;
 
@@ -410,6 +410,7 @@ path_subscript(PyPathObject* self, PyObject* item) {
             PyErr_SetString(PyExc_TypeError, "slice steps not supported");
             return NULL;
         }
+    }
 
     PyErr_Format(PyExc_TypeError, "Path indices must be integers, not "\
                 "%.200s", Py_TYPE(item)->tp_name);
@@ -586,7 +587,7 @@ path_getattro(PyPathObject* self, PyObject* name)
         return res;
 
     name_string = PyBytes_AsString(
-            PyUnicode_EncodeASCII((Py_UNICODE)name,
+            PyUnicode_EncodeASCII((Py_UNICODE*)name,
                 (Py_ssize_t)PyUnicode_GetSize(name), "strict")
             );
 
