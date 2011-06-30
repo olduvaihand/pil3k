@@ -3052,7 +3052,7 @@ static PyTypeObject Imaging_Type = {
     0,                                       /* tp_weaklistoffset */
     0,                                       /* tp_iter */
     0,                                       /* tp_iternext */
-    (PyMethodDef)methods                     /* tp_methods */
+    methods,                                 /* tp_methods */
 };
 
 #ifdef WITH_IMAGEDRAW
@@ -3085,7 +3085,7 @@ static PyTypeObject ImagingFont_Type = {
     0,                                       /* tp_weaklistoffset */
     0,                                       /* tp_iter */
     0,                                       /* tp_iternext */
-    (PyMethodDef)_font_methods               /* tp_methods */
+    _font_methods                            /* tp_methods */
 };
 
 static PyTypeObject ImagingDraw_Type = {
@@ -3116,7 +3116,7 @@ static PyTypeObject ImagingDraw_Type = {
     0,                                       /* tp_weaklistoffset */
     0,                                       /* tp_iter */
     0,                                       /* tp_iternext */
-    (PyMethodDef)_draw_methods               /* tp_methods */
+    _draw_methods                            /* tp_methods */
 };
 
 #endif
