@@ -2948,6 +2948,7 @@ static PyObject*
 _getattro(ImagingObject* self, PyObject* name)
 {
     PyObject* res;
+    PyObject* name_bytes;
     char* name_string;
 
     if (!PyUnicode_Check(name))
@@ -2958,9 +2959,11 @@ _getattro(ImagingObject* self, PyObject* name)
         return res;
     PyErr_Clear();
 
-    name_string = PyBytes_AsString(
-            PyUnicode_EncodeASCII((Py_UNICODE)name, (Py_ssize_t)PyUnicode_GetSize(name),
-                "ignore"));
+    if (!(name_bytes = PyUnicode_EncodeASCII((Py_UNICODE*)name,
+                           (Py_ssize_t)PyUnicode_GetSize(name), "strict")))
+        return NULL;
+
+    name_string = PyBytes_AsString(name_bytes);
 
     if (strcmp(name_string, "mode") == 0)
         return PyUnicode_FromString(self->image->mode);
