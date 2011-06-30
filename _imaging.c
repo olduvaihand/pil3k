@@ -2977,8 +2977,8 @@ _getattro(ImagingObject* self, PyObject* name)
     if (strcmp(name_string, "id") == 0)
         return PyLong_FromLong((long)self->image);
 
-    if (strcmp(name_string, "ptr") == 0)
-        return PyCObject_FromVoidPtrAndDesc(self->image, IMAGING_MAGIC, NULL);
+    //if (strcmp(name_string, "ptr") == 0)
+    //    return PyCObject_FromVoidPtrAndDesc(self->image, IMAGING_MAGIC, NULL);
 
     PyErr_SetString(PyExc_AttributeError, name_string);
     return NULL;
@@ -3320,7 +3320,7 @@ static struct PyModuleDef moduledef = {
 };
 
 PyMODINIT_FUNC
-PyInit__imaging(PyObject*)
+PyInit__imaging(void)
 {
     PyObject* module = PyModule_Create(&moduledef);
     PyObject* dict;

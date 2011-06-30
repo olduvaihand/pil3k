@@ -463,7 +463,7 @@ static struct PyModuleDef moduledef = {
 };
 
 PyMODINIT_FUNC
-PyInit__imagingft(PyObject*)
+PyInit__imagingft(void)
 {
     PyObject* module = PyModule_Create(&moduledef);
     PyObject* dict;

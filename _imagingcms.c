@@ -672,7 +672,7 @@ static struct PyModuleDef moduledef = {
 };
 
 PyMODINIT_FUNC
-PyInit__imagingcms(PyObject*)
+PyInit__imagingcms(void)
 {
     PyObject *module = PyModule_Create(&moduledef);
     PyObject *dict;
