@@ -194,7 +194,7 @@ _dealloc(ImagingObject* imagep)
     PyObject_Del(imagep);
 }
 
-#define PyImaging_Check(op) ((op)->ob_type == &Imaging_Type)
+#define PyImaging_Check(op) (Py_TYPE(op) == &Imaging_Type)
 
 Imaging PyImaging_AsImaging(PyObject *op)
 {
@@ -1170,6 +1170,7 @@ _putdata(ImagingObject* self, PyObject* args)
     if (image->image8) {
         if (PyBytes_Check(data)) {
             unsigned char* p;
+
             p = (unsigned char*)PyBytes_AS_STRING((PyBytesObject*) data);
             if (scale == 1.0 && offset == 0.0)
                 /* Plain string data */
