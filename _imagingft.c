@@ -158,10 +158,9 @@ font_getsize(FontObject* self, PyObject* args)
     int xoffset;
     FT_Bool kerning = FT_HAS_KERNING(self->face);
     FT_UInt last_index = 0;
-
     /* calculate size and bearing for a given string */
-
     PyObject* string;
+
     if (!PyArg_ParseTuple(args, "O:getsize", &string))
         return NULL;
 
@@ -175,6 +174,7 @@ font_getsize(FontObject* self, PyObject* args)
 
     for (x = i = 0; font_getchar(string, i, &ch); i++) {
         int index, error;
+
         face = self->face;
         index = FT_Get_Char_Index(face, ch);
         if (kerning && last_index && index) {
@@ -194,6 +194,7 @@ font_getsize(FontObject* self, PyObject* args)
 
     if (face) {
         int offset;
+
         /* left bearing */
         if (xoffset < 0)
             x -= xoffset;
@@ -296,6 +297,7 @@ font_render(FontObject* self, PyObject* args)
         if (mask) {
             /* use monochrome mask (on palette images, etc) */
             int xx, x0, x1;
+
             source = (unsigned char*)glyph->bitmap.buffer;
             ascender = PIXEL(self->face->size->metrics.ascender);
             xx = x + glyph->bitmap_left;
@@ -307,10 +309,12 @@ font_render(FontObject* self, PyObject* args)
                 x1 = im->xsize - xx;
             for (y = 0; y < glyph->bitmap.rows; y++) {
                 int yy = y + ascender - glyph->bitmap_top;
+
                 if (yy >= 0 && yy < im->ysize) {
                     /* blend this glyph into the buffer */
                     unsigned char *target = im->image8[yy] + xx;
                     int i, j, m = 128;
+
                     for (i = j = 0; j < x1; j++) {
                         if (j >= x0 && (source[i] & m))
                             target[j] = 255;
@@ -325,6 +329,7 @@ font_render(FontObject* self, PyObject* args)
         } else {
             /* use antialiased rendering */
             int xx, x0, x1;
+
             source = (unsigned char*)glyph->bitmap.buffer;
             ascender = PIXEL(self->face->size->metrics.ascender);
             xx = x + glyph->bitmap_left;
@@ -336,10 +341,12 @@ font_render(FontObject* self, PyObject* args)
                 x1 = im->xsize - xx;
             for (y = 0; y < glyph->bitmap.rows; y++) {
                 int yy = y + ascender - glyph->bitmap_top;
+
                 if (yy >= 0 && yy < im->ysize) {
                     /* blend this glyph into the buffer */
                     int i;
                     unsigned char *target = im->image8[yy] + xx;
+
                     for (i = x0; i < x1; i++) {
                         if (target[i] < source[i])
                             target[i] = source[i];
@@ -452,11 +459,10 @@ PyInit__imagingft(PyObject*)
     PyObject* module = PyModule_Create(&moduledef);
     PyObject* dict;
     PyObject* value;
+    int major, minor, patch;
 
     if (module == NULL)
         return NULL;
-
-    int major, minor, patch;
 
     /* Patch object type */
     Font_Type.tp_new = PyType_GenericNew;
