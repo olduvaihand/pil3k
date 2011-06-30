@@ -2948,28 +2948,33 @@ static PyObject*
 _getattro(ImagingObject* self, PyObject* name)
 {
     PyObject* res;
+    char* name_string;
 
     res = PyObject_GenericGetAttr((PyObject*)self, name);
     if (res)
         return res;
     PyErr_Clear();
 
-    if (strcmp(name, "mode") == 0)
+    name_string = PyBytes_AsString(
+            PyUnicode_EncodeASCII(name, (Py_ssize_t)PyUnicode_GetSize(name),
+                "ignore"));
+
+    if (strcmp(name_string, "mode") == 0)
         return PyUnicode_FromString(self->image->mode);
 
-    if (strcmp(name, "size") == 0)
+    if (strcmp(name_string, "size") == 0)
         return Py_BuildValue("ii", self->image->xsize, self->image->ysize);
 
-    if (strcmp(name, "bands") == 0)
+    if (strcmp(name_string, "bands") == 0)
         return PyLong_FromLong(self->image->bands);
 
-    if (strcmp(name, "id") == 0)
+    if (strcmp(name_string, "id") == 0)
         return PyLong_FromLong((long)self->image);
 
-    if (strcmp(name, "ptr") == 0)
+    if (strcmp(name_string, "ptr") == 0)
         return PyCObject_FromVoidPtrAndDesc(self->image, IMAGING_MAGIC, NULL);
 
-    PyErr_SetString(PyExc_AttributeError, name);
+    PyErr_SetString(PyExc_AttributeError, name_string);
     return NULL;
 }
 
