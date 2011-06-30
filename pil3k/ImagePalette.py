@@ -17,6 +17,7 @@
 #
 
 import array
+
 from . import Image
 from . import ImageColor
 
@@ -152,6 +153,7 @@ def load(filename):
     if not lut:
         try:
             from . import GimpPaletteFile
+
             fp.seek(0)
             p = GimpPaletteFile.GimpPaletteFile(fp)
             lut = p.getpalette()
@@ -161,6 +163,7 @@ def load(filename):
     if not lut:
         try:
             from . import GimpGradientFile
+
             fp.seek(0)
             p = GimpGradientFile.GimpGradientFile(fp)
             lut = p.getpalette()
@@ -170,6 +173,7 @@ def load(filename):
     if not lut:
         try:
             from . import PaletteFile
+
             fp.seek(0)
             p = PaletteFile.PaletteFile(fp)
             lut = p.getpalette()

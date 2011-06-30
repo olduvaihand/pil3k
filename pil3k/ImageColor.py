@@ -18,6 +18,7 @@
 #
 
 from . import Image
+
 import re
 
 ##
@@ -253,3 +254,4 @@ colormap = {
     "yellow": "#ffff00",
     "yellowgreen": "#9acd32",
 }
+
