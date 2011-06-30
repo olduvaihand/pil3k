@@ -634,7 +634,7 @@ static PyTypeObject PyPathType = {
     0,                             /* tp_hash */
     0,                             /* tp_call */
     0,                             /* tp_str */
-    (getattrfunc)path_getattro,    /* tp_getattro */
+    (getattrofunc)path_getattro,   /* tp_getattro */
     0,                             /* tp_setattro */
     0,                             /* tp_as_buffer */
     0,                             /* tp_flags */
