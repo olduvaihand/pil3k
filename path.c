@@ -45,7 +45,7 @@ typedef struct {
     int index; /* temporary use, e.g. in decimate */
 } PyPathObject;
 
-staticforward PyTypeObject PyPathType;
+static PyTypeObject PyPathType;
 
 static double*
 alloc_array(int count)

@@ -48,7 +48,7 @@ typedef struct {
 #endif
 } ImagingMapperObject;
 
-staticforward PyTypeObject ImagingMapperType;
+static PyTypeObject ImagingMapperType;
 
 ImagingMapperObject*
 PyImaging_MapperNew(const char* filename, int readonly)

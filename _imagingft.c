@@ -66,7 +66,7 @@ typedef struct {
     FT_Face face;
 } FontObject;
 
-staticforward PyTypeObject Font_Type;
+static PyTypeObject Font_Type;
 
 /* round a 26.6 pixel coordinate to the nearest larger integer */
 #define PIXEL(x) ((((x)+63) & -64)>>6)
