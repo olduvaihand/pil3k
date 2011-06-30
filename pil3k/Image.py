@@ -66,31 +66,22 @@ except ImportError as v:
             RuntimeWarning
             )
 
-import ImageMode
-import ImagePalette
+from . import ImageMode
+from . import ImagePalette
 
-import os, string, sys
+import os
+import string
+import sys
 
 # type stuff
-from types import IntType, StringType, TupleType
-
-try:
-    UnicodeStringType = type(unicode(""))
-    ##
-    # (Internal) Checks if an object is a string.  If the current
-    # Python version supports Unicode, this checks for both 8-bit
-    # and Unicode strings.
-    def isStringType(t):
-        return isinstance(t, StringType) or isinstance(t, UnicodeStringType)
-except NameError:
-    def isStringType(t):
-        return isinstance(t, StringType)
+def isStringType(t):
+    return isinstance(t, str)
 
 ##
 # (Internal) Checks if an object is a tuple.
 
 def isTupleType(t):
-    return isinstance(t, TupleType)
+    return isinstance(t, tuple)
 
 ##
 # (Internal) Checks if an object is an image object.
@@ -1340,12 +1331,11 @@ class Image(object):
         if expand:
             import math
             angle = -angle * math.pi / 180
-            matrix = [
-                 math.cos(angle), math.sin(angle), 0.0,
-                -math.sin(angle), math.cos(angle), 0.0
-                 ]
-            def transform(x, y, (a, b, c, d, e, f)=matrix):
-                return a*x + b*y + c, d*x + e*y + f
+            a, b, c = math.cos(angle), math.sin(angle), 0.0
+            d, e, f = -math.sin(angle), math.cos(angle), 0.0
+
+            matrix = [a, b, c, d, e, f]
+            transform = lambda x, y: a*x + b*y + c, d*x + e*y + f
 
             # calculate output size
             w, h = self.size
