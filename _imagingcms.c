@@ -78,7 +78,7 @@ typedef struct {
     cmsHPROFILE profile;
 } CmsProfileObject;
 
-staticforward PyTypeObject CmsProfile_Type;
+static PyTypeObject CmsProfile_Type;
 
 #define CmsProfile_Check(op) (Py_TYPE(op) == &CmsProfile_Type)
 
@@ -151,7 +151,7 @@ typedef struct {
     cmsHTRANSFORM transform;
 } CmsTransformObject;
 
-staticforward PyTypeObject CmsTransform_Type;
+static PyTypeObject CmsTransform_Type;
 
 #define CmsTransform_Check(op) (Py_TYPE(op) == &CmsTransform_Type)
 
