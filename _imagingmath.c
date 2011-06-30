@@ -28,7 +28,7 @@
 #endif
 
 #define UNOP(name, op, type)\
-void\
+void \
 name(Imaging out, Imaging im1)\
 {\
     int x, y;\
@@ -44,7 +44,7 @@ name(Imaging out, Imaging im1)\
 }
 
 #define BINOP(name, op, type)\
-void\
+void \
 name(Imaging out, Imaging im1, Imaging im2)\
 {\
     int x, y;\
