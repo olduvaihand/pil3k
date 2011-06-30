@@ -189,7 +189,7 @@ try:
     byteorder = sys.byteorder
 except AttributeError:
     import struct
-    if struct.unpack("h", "\0\1")[0] == 1:
+    if struct.unpack("h", b"\0\1")[0] == 1:
         byteorder = "big"
     else:
         byteorder = "little"
