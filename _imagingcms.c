@@ -80,7 +80,7 @@ typedef struct {
 
 staticforward PyTypeObject CmsProfile_Type;
 
-#define CmsProfile_Check(op) ((op)->ob_type == &CmsProfile_Type)
+#define CmsProfile_Check(op) (Py_TYPE(op) == &CmsProfile_Type)
 
 static PyObject*
 cms_profile_new(cmsHPROFILE profile)
@@ -100,8 +100,8 @@ static PyObject*
 cms_profile_open(PyObject* self, PyObject* args)
 {
     cmsHPROFILE hProfile;
-
     char* sProfile;
+
     if (!PyArg_ParseTuple(args, "s:profile_open", &sProfile))
         return NULL;
 
@@ -120,9 +120,9 @@ static PyObject*
 cms_profile_fromstring(PyObject* self, PyObject* args)
 {
     cmsHPROFILE hProfile;
-
     char* pProfile;
     int nProfile;
+
     if (!PyArg_ParseTuple(args, "s#:profile_fromstring", &pProfile, &nProfile))
         return NULL;
 
@@ -153,7 +153,7 @@ typedef struct {
 
 staticforward PyTypeObject CmsTransform_Type;
 
-#define CmsTransform_Check(op) ((op)->ob_type == &CmsTransform_Type)
+#define CmsTransform_Check(op) (Py_TYPE(op) == &CmsTransform_Type)
 
 static PyObject*
 cms_transform_new(cmsHTRANSFORM transform, char* mode_in, char* mode_out)
@@ -389,7 +389,6 @@ cms_transform_apply(CmsTransformObject *self, PyObject *args)
     long idOut;
     Imaging im;
     Imaging imOut;
-
     int result;
 
     if (!PyArg_ParseTuple(args, "ll:apply", &idIn, &idOut))
