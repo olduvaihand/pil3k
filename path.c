@@ -71,6 +71,7 @@ path_new(Py_ssize_t count, double* xy, int duplicate)
     if (duplicate) {
         /* duplicate path */
         double* p = alloc_array(count);
+
         if (!p)
             return NULL;
         memcpy(p, xy, count * 2 * sizeof(double));
@@ -98,7 +99,7 @@ path_dealloc(PyPathObject* path)
 /* Helpers                                */
 /* -------------------------------------------------------------------- */
 
-#define PyPath_Check(op) ((op)->ob_type == &PyPathType)
+#define PyPath_Check(op) (Py_TYPE(op) == &PyPathType)
 
 int
 PyPath_Flatten(PyObject* data, double **pxy)
@@ -109,6 +110,7 @@ PyPath_Flatten(PyObject* data, double **pxy)
     if (PyPath_Check(data)) {
         /* This was another path object. */
         PyPathObject *path = (PyPathObject*)data;
+  
         xy = alloc_array(path->count);
         if (!xy)
             return -1;
