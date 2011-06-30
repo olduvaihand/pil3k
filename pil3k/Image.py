@@ -69,6 +69,8 @@ except ImportError as v:
 from . import ImageMode
 from . import ImagePalette
 
+import collections
+import numbers
 import os
 import string
 import sys
@@ -96,7 +98,11 @@ def isImageType(t):
 def isDirectory(f):
     return isStringType(f) and os.path.isdir(f)
 
-from operator import isNumberType, isSequenceType
+def isNumberType(t):
+    return isinstance(t, numbers.Number)
+
+def isSequenceType(t):
+    return isinstance(t, collections.Sequence)
 
 #
 # Debug level
