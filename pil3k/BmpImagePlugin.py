@@ -27,8 +27,9 @@
 __version__ = "0.7"
 
 
-import string
-import Image, ImageFile, ImagePalette
+from . import Image
+from . import ImageFile
+from . import ImagePalette
 
 
 #
@@ -145,9 +146,7 @@ class BmpImageFile(ImageFile.ImageFile):
                     self.mode = rawmode = "L"
             else:
                 self.mode = "P"
-                self.palette = ImagePalette.raw(
-                    "BGR", string.join(palette, "")
-                    )
+                self.palette = ImagePalette.raw("BGR", "".join(palette))
 
         if not offset:
             offset = self.fp.tell()
