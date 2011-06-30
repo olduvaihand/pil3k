@@ -383,8 +383,17 @@ static PyObject*
 font_getattro(FontObject* self, PyObject* name)
 {
     PyObject* res;
+    char* name_string;
+
+    if (!PyUnicode_Check(name))
+        return NULL;
 
     res = PyObject_GenericGetAttr((PyObject*)self, name);
+
+    name_string = PyBytes_AsString(
+            PyUnicode_EncodeASCII((Py_UNICODE)name,
+                (Py_ssize_t)PyUnicode_GetSize(name), "strict")
+            );
 
     if (res)
         return res;
@@ -392,26 +401,26 @@ font_getattro(FontObject* self, PyObject* name)
     PyErr_Clear();
 
     /* attributes */
-    if (!strcmp(name, "family")) {
+    if (!strcmp(name_string, "family")) {
         if (self->face->family_name)
             return PyUnicode_FromString(self->face->family_name);
         Py_RETURN_NONE;
     }
-    if (!strcmp(name, "style")) {
+    if (!strcmp(name_string, "style")) {
         if (self->face->style_name)
             return PyUnicode_FromString(self->face->style_name);
         Py_RETURN_NONE;
     }
-    if (!strcmp(name, "ascent"))
+    if (!strcmp(name_string, "ascent"))
         return PyLong_FromLong(PIXEL(self->face->size->metrics.ascender));
-    if (!strcmp(name, "descent"))
+    if (!strcmp(name_string, "descent"))
         return PyLong_FromLong(-PIXEL(self->face->size->metrics.descender));
 
-    if (!strcmp(name, "glyphs"))
+    if (!strcmp(name_string, "glyphs"))
         /* number of glyphs provided by this font */
         return PyLong_FromLong(self->face->num_glyphs);
 
-    PyErr_SetString(PyExc_AttributeError, name);
+    PyErr_SetString(PyExc_AttributeError, name_string);
     return NULL;
 }
 

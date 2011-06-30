@@ -536,21 +536,27 @@ static struct PyMethodDef cms_profile_methods[] = {
 static PyObject*  
 cms_profile_getattro(CmsProfileObject* self, PyObject* name)
 {
-    PyObject* bytes_name = PyUnicode_Encode(PyUnicode_AsUnicode(name),
-        PyUnicode_GetSize(name), "ascii", "ignore");
-    char* encoded_name = PyBytes_AsString(bytes_name);
+    char* name_string;
 
-    if (!strcmp(encoded_name, "product_name"))
+    if (!PyUnicode_Check(name))
+        return NULL;
+   
+    name_string = PyBytes_AsString(
+            PyUnicode_EncodeASCII((Py_UNICODE)name,
+                (Py_ssize_t)PyUnicode_GetSize(name), "strict")
+            );
+
+    if (!strcmp(name_string, "product_name"))
         return PyUnicode_FromFormat("%s", cmsTakeProductName(self->profile));
-    if (!strcmp(encoded_name, "product_desc"))
+    if (!strcmp(name_string, "product_desc"))
         return PyUnicode_FromFormat("%s", cmsTakeProductDesc(self->profile));
-    if (!strcmp(encoded_name, "product_info"))
+    if (!strcmp(name_string, "product_info"))
         return PyUnicode_FromFormat("%s", cmsTakeProductInfo(self->profile));
-    if (!strcmp(encoded_name, "rendering_intent"))
+    if (!strcmp(name_string, "rendering_intent"))
         return PyLong_FromLong(cmsTakeRenderingIntent(self->profile));
-    if (!strcmp(encoded_name, "pcs"))
+    if (!strcmp(name_string, "pcs"))
         return PyUnicode_FromFormat("%s", findICmode(cmsGetPCS(self->profile)));
-    if (!strcmp(encoded_name, "color_space"))
+    if (!strcmp(name_string, "color_space"))
         return PyUnicode_FromFormat("%s",
                 findICmode(cmsGetColorSpace(self->profile)));
     /* FIXME: add more properties (creation_datetime etc) */
@@ -604,13 +610,19 @@ static struct PyMethodDef cms_transform_methods[] = {
 static PyObject*  
 cms_transform_getattro(CmsTransformObject* self, PyObject* name)
 {
-    PyObject* bytes_name = PyUnicode_Encode(PyUnicode_AsUnicode(name),
-        PyUnicode_GetSize(name), "ascii", "ignore");
-    char* encoded_name = PyBytes_AsString(bytes_name);
+    char* name_string;
 
-    if (!strcmp(encoded_name, "inputMode"))
+    if (!PyUnicode_Check(name))
+        return NULL;
+   
+    name_string = PyBytes_AsString(
+            PyUnicode_EncodeASCII((Py_UNICODE)name,
+                (Py_ssize_t)PyUnicode_GetSize(name), "strict")
+            );
+
+    if (!strcmp(name_string, "inputMode"))
         return PyUnicode_FromFormat("%s", self->mode_in);
-    if (!strcmp(encoded_name, "outputMode"))
+    if (!strcmp(name_string, "outputMode"))
         return PyUnicode_FromFormat("%s", self->mode_out);
 
     return PyObject_GenericGetAttr((PyObject*)self, name);

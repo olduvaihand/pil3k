@@ -223,6 +223,9 @@ _getattro(ImagingDisplayObject* self, PyObject* name)
 {
     PyObject* res;
 
+    if (!PyUnicode_Check(name))
+        return NULL;
+
     res = PyObject_GenericGetAttr((PyObject*)self, name);
     if (res)
         return res;
