@@ -250,7 +250,7 @@ static struct PyMethodDef methods[] = {
     {NULL, NULL, 0, NULL}    /* sentinel */
 };
 
-statichere PyTypeObject ImagingMapperType = {
+static PyTypeObject ImagingMapperType = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "ImagingMapper",                /* tp_name */
     sizeof(ImagingMapperObject),    /* tp_basicsize */

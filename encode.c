@@ -235,7 +235,7 @@ static struct PyMethodDef methods[] = {
     {NULL, NULL, 0, NULL}    /* sentinel */
 };
 
-statichere PyTypeObject ImagingEncoderType = {
+static PyTypeObject ImagingEncoderType = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "ImagingEncoder",                /* tp_name */
     sizeof(ImagingEncoderObject),    /* tp_basicsize */

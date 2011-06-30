@@ -241,7 +241,7 @@ _getattro(ImagingDisplayObject* self, PyObject* name)
     return NULL;
 }
 
-statichere PyTypeObject ImagingDisplayType = {
+static PyTypeObject ImagingDisplayType = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "ImagingDisplay",                /* tp_name */
     sizeof(ImagingDisplayObject),    /* tp_basicsize */

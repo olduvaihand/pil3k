@@ -424,7 +424,7 @@ font_getattro(FontObject* self, PyObject* name)
     return NULL;
 }
 
-statichere PyTypeObject Font_Type = {
+static PyTypeObject Font_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "Font",                                  /* tp_name */
     sizeof(FontObject),                      /* tp_basicsize */

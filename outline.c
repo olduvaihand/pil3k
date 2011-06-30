@@ -158,7 +158,7 @@ static struct PyMethodDef _outline_methods[] = {
     {NULL, NULL, 0, NULL}    /* sentinel */
 };
 
-statichere PyTypeObject OutlineType = {
+static PyTypeObject OutlineType = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "Outline",                       /* tp_name */
     sizeof(OutlineObject),           /* tp_basicsize */

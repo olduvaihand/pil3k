@@ -616,7 +616,7 @@ static PyMappingMethods path_as_mapping = {
     0                                    /* mp_ass_subscript */
 };
 
-statichere PyTypeObject PyPathType = {
+static PyTypeObject PyPathType = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "Path",                        /* tp_name */
     sizeof(PyPathObject),          /* tp_basicsize */

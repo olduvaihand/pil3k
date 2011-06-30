@@ -3024,7 +3024,7 @@ static PySequenceMethods image_as_sequence = {
 
 /* type description */
 
-statichere PyTypeObject Imaging_Type = {
+static PyTypeObject Imaging_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "ImagingCore",                           /* tp_name */
     sizeof(ImagingObject),                   /* tp_basicsize */
@@ -3046,7 +3046,7 @@ statichere PyTypeObject Imaging_Type = {
 
 #ifdef WITH_IMAGEDRAW
 
-statichere PyTypeObject ImagingFont_Type = {
+static PyTypeObject ImagingFont_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "ImagingFont",                           /* tp_name */
     sizeof(ImagingFontObject),               /* tp_basicsize */
@@ -3066,7 +3066,7 @@ statichere PyTypeObject ImagingFont_Type = {
     PyObject_GenericGetAttr,                 /* tp_getattro */
 };
 
-statichere PyTypeObject ImagingDraw_Type = {
+static PyTypeObject ImagingDraw_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "ImagingDraw",                           /* tp_name */
     sizeof(ImagingDrawObject),               /* tp_basicsize */
@@ -3096,7 +3096,7 @@ static PyMappingMethods pixel_access_as_mapping = {
 
 /* type description */
 
-statichere PyTypeObject PixelAccess_Type = {
+static PyTypeObject PixelAccess_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "PixelAccess",                           /* tp_name */
     sizeof(PixelAccessObject),               /* tp_basicsize */

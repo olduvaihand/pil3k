@@ -564,7 +564,7 @@ cms_profile_getattro(CmsProfileObject* self, PyObject* name)
     return PyObject_GenericGetAttr((PyObject*)self, name);
 }
 
-statichere PyTypeObject CmsProfile_Type = {
+static PyTypeObject CmsProfile_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "CmsProfile",                          /* tp_name */
     sizeof(CmsProfileObject),              /* tp_basicsize */
@@ -628,7 +628,7 @@ cms_transform_getattro(CmsTransformObject* self, PyObject* name)
     return PyObject_GenericGetAttr((PyObject*)self, name);
 }
 
-statichere PyTypeObject CmsTransform_Type = {
+static PyTypeObject CmsTransform_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "CmsTransform",                          /* tp_name */
     sizeof(CmsTransformObject),              /* tp_basicsize */
