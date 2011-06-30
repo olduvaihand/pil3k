@@ -3042,6 +3042,17 @@ static PyTypeObject Imaging_Type = {
     0,                                       /* tp_call */
     0,                                       /* tp_str */
     (getattrofunc)_getattro,                 /* tp_getattro */
+    0,                                       /* tp_setattro */
+    0,                                       /* tp_as_buffer */
+    0,                                       /* tp_flags */
+    0,                                       /* tp_doc */
+    0,                                       /* tp_traverse */
+    0,                                       /* tp_clear */
+    0,                                       /* tp_richcompare */
+    0,                                       /* tp_weaklistoffset */
+    0,                                       /* tp_iter */
+    0,                                       /* tp_iternext */
+    (PyMethodDef)methods                     /* tp_methods */
 };
 
 #ifdef WITH_IMAGEDRAW
@@ -3064,6 +3075,17 @@ static PyTypeObject ImagingFont_Type = {
     0,                                       /* tp_call */
     0,                                       /* tp_str */
     PyObject_GenericGetAttr,                 /* tp_getattro */
+    0,                                       /* tp_setattro */
+    0,                                       /* tp_as_buffer */
+    0,                                       /* tp_flags */
+    0,                                       /* tp_doc */
+    0,                                       /* tp_traverse */
+    0,                                       /* tp_clear */
+    0,                                       /* tp_richcompare */
+    0,                                       /* tp_weaklistoffset */
+    0,                                       /* tp_iter */
+    0,                                       /* tp_iternext */
+    (PyMethodDef)_font_methods               /* tp_methods */
 };
 
 static PyTypeObject ImagingDraw_Type = {
@@ -3084,6 +3106,17 @@ static PyTypeObject ImagingDraw_Type = {
     0,                                       /* tp_call */
     0,                                       /* tp_str */
     PyObject_GenericGetAttr,                 /* tp_getattro */
+    0,                                       /* tp_setattro */
+    0,                                       /* tp_as_buffer */
+    0,                                       /* tp_flags */
+    0,                                       /* tp_doc */
+    0,                                       /* tp_traverse */
+    0,                                       /* tp_clear */
+    0,                                       /* tp_richcompare */
+    0,                                       /* tp_weaklistoffset */
+    0,                                       /* tp_iter */
+    0,                                       /* tp_iternext */
+    (PyMethodDef)_draw_methods               /* tp_methods */
 };
 
 #endif
@@ -3101,7 +3134,7 @@ static PyTypeObject PixelAccess_Type = {
     "PixelAccess",                           /* tp_name */
     sizeof(PixelAccessObject),               /* tp_basicsize */
     0,                                       /* tp_itemsize */
-    (destructor)pixel_access_dealloc         /* tp_dealloc */
+    (destructor)pixel_access_dealloc,        /* tp_dealloc */
     0,                                       /* tp_print */
     0,                                       /* tp_getattr */
     0,                                       /* tp_setattr */
