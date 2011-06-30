@@ -15,8 +15,7 @@
 # See the README file for information on usage and redistribution.
 #
 
-import EpsImagePlugin
-import string
+from . import EpsImagePlugin
 
 ##
 # Simple Postscript graphics interface.
@@ -26,6 +25,7 @@ class PSDraw(object):
     def __init__(self, fp=None):
         if not fp:
             import sys
+
             fp = sys.stdout
         self.fp = fp
 
@@ -70,8 +70,8 @@ class PSDraw(object):
         self.fp.write("{0} {1} M {2} {3} 0 Vr\n".format(*tuple(box)))
 
     def text(self, xy, text):
-        text = string.joinfields(string.splitfields(text, "("), "\\(")
-        text = string.joinfields(string.splitfields(text, ")"), "\\)")
+        text = text.split('(').join('\\(')
+        text = text.split(')').join('\\)')
         xy = xy + (text,)
         self.fp.write("{0} {1} M ({3}) S\n".format(*xy))
 

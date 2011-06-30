@@ -15,7 +15,8 @@
 #
 
 import os
-import Image
+
+from . import Image
 
 import marshal
 

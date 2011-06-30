@@ -15,7 +15,8 @@
 
 __version__ = "0.1"
 
-import Image, ImageFile
+from . import Image
+from . import ImageFile
 
 #
 # Bitstream parser

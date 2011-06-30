@@ -21,8 +21,10 @@
 # See the README file for information on usage and redistribution.
 #
 
-import Image
-import operator, math
+from . import Image
+
+import math
+import operator
 
 ##
 # The <b>ImageStat</b> module calculates global statistics for an

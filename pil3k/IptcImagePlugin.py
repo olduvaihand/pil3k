@@ -19,8 +19,11 @@
 __version__ = "0.3"
 
 
-import Image, ImageFile
-import os, tempfile
+from . import Image
+from . import ImageFile
+
+import os
+import tempfile
 
 
 COMPRESSION = {
@@ -220,7 +223,8 @@ Image.register_extension("IPTC", ".iim")
 
 def getiptcinfo(im):
 
-    import TiffImagePlugin, JpegImagePlugin
+    from . import TiffImagePlugin
+    from . import JpegImagePlugin
     import StringIO
 
     data = None

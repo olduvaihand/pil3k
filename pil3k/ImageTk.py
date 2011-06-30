@@ -25,7 +25,9 @@
 # See the README file for information on usage and redistribution.
 #
 
-import Tkinter, Image
+import Tkinter
+
+from . import Image
 
 ##
 # The <b>ImageTk</b> module contains support to create and modify
@@ -178,7 +180,7 @@ class PhotoImage(object):
         except Tkinter.TclError as v:
             # activate Tkinter hook
             try:
-                import _imagingtk
+                from . import _imagingtk
                 try:
                     _imagingtk.tkinit(tk.interpaddr(), 1)
                 except AttributeError:

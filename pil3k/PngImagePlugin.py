@@ -33,9 +33,12 @@
 
 __version__ = "0.9"
 
-import re, string
+import re
+import zlib
 
-import Image, ImageFile, ImagePalette, zlib
+from . import Image
+from . import ImageFile
+from . import ImagePalette
 
 
 def i16(c):
@@ -43,10 +46,10 @@ def i16(c):
 def i32(c):
     return ord(c[3]) + (ord(c[2])<<8) + (ord(c[1])<<16) + (ord(c[0])<<24)
 
-is_cid = re.compile("\w\w\w\w").match
+is_cid = re.compile(r"\w\w\w\w").match
 
 
-_MAGIC = "\211PNG\r\n\032\n"
+_MAGIC = b"\x89PNG\r\n\x1a\n"
 
 
 _MODES = {
@@ -159,6 +162,7 @@ class PngInfo(object):
     def add_text(self, key, value, zip=0):
         if zip:
             import zlib
+
             self.add("zTXt", key + "\0\0" + zlib.compress(value))
         else:
             self.add("tEXt", key + "\0" + value)
@@ -189,7 +193,7 @@ class PngStream(ChunkStream):
         # Null separator        1 byte (null character)
         # Compression method    1 byte (0)
         # Compressed profile    n bytes (zlib with deflate compression)
-        i = string.find(s, chr(0))
+        i = s.find(chr(0))
         if Image.DEBUG:
             print("iCCP profile name", s[:i])
             print("Compression method", ord(s[i]))
@@ -244,7 +248,7 @@ class PngStream(ChunkStream):
         # transparency
         s = ImageFile._safe_read(self.fp, len)
         if self.im_mode == "P":
-            i = string.find(s, chr(0))
+            i = s.find(chr(0))
             if i >= 0:
                 self.im_info["transparency"] = i
         elif self.im_mode == "L":
@@ -278,7 +282,7 @@ class PngStream(ChunkStream):
         # text
         s = ImageFile._safe_read(self.fp, len)
         try:
-            k, v = string.split(s, "\0", 1)
+            k, v = s.split("\0", 1)
         except ValueError:
             k = s; v = "" # fallback for broken tEXt tags
         if k:
@@ -289,12 +293,13 @@ class PngStream(ChunkStream):
 
         # compressed text
         s = ImageFile._safe_read(self.fp, len)
-        k, v = string.split(s, "\0", 1)
+        k, v = s.split("\0", 1)
         comp_method = ord(v[0])
         if comp_method != 0:
             raise SyntaxError("Unknown compression method {0} in zTXt "
                 "chunk".format(comp_method))
         import zlib
+
         self.im_info[k] = self.im_text[k] = zlib.decompress(v[1:])
         return s
 
@@ -445,7 +450,7 @@ _OUTMODES = {
 def putchunk(fp, cid, *data):
     "Write a PNG chunk (including CRC field)"
 
-    data = string.join(data, "")
+    data = ''.join(data)
 
     fp.write(o32(len(data)) + cid)
     fp.write(data)
@@ -564,6 +569,7 @@ def _save(im, fp, filename, chunk=putchunk, check=0):
         # Compressed profile    n bytes (zlib with deflate compression)
         try:
             import ICCProfile
+
             p = ICCProfile.ICCProfile(im.info["icc_profile"])
             name = p.tags.desc.get("ASCII", p.tags.desc.get("Unicode", p.tags.desc.get("Macintosh", p.tags.desc.get("en", {}).get("US", "ICC Profile")))).encode("latin1", "replace")[:79]
         except ImportError:
@@ -595,7 +601,7 @@ def getchunks(im, **params):
             self.data.append(chunk)
 
     def append(fp, cid, *data):
-        data = string.join(data, "")
+        data = ''.join(data)
         hi, lo = Image.core.crc32(data, Image.core.crc32(cid))
         crc = o16(hi) + o16(lo)
         fp.append((cid, data, crc))

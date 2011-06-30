@@ -18,7 +18,9 @@
 # See the README file for information on usage and redistribution.
 #
 
-import Image, ImageFilter, ImageStat
+from . import Image
+from . import ImageFilter
+from . import ImageStat
 
 class _Enhance(object):
 

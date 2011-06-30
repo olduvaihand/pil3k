@@ -79,8 +79,8 @@ VERSION = "0.1.0 pil"
 
 # --------------------------------------------------------------------.
 
-import Image
-import _imagingcms
+from . import Image
+from . import _imagingcms
 
 core = _imagingcms
 
@@ -205,7 +205,7 @@ class ImageCmsTransform(Image.ImagePointHandler):
 def get_display_profile(handle=None):
     import sys
     if sys.platform == "win32":
-        import ImageWin
+        from . import ImageWin
         if isinstance(handle, ImageWin.HDC):
             profile = core.get_display_profile_win32(handle, 1)
         else:
@@ -771,8 +771,7 @@ def versions():
 if __name__ == "__main__":
     # create a cheap manual from the __doc__ strings for the functions above
 
-    import ImageCms
-    import string
+    from . import ImageCms
     print(__doc__)
 
     for f in dir(pyCMS):
@@ -781,7 +780,7 @@ if __name__ == "__main__":
 
         try:
             exec("doc = ImageCms.{0}.__doc__".format(f))
-            if string.find(doc, "pyCMS") >= 0:
+            if doc.find("pyCMS") >= 0:
                 # so we don't get the __doc__ string for imported modules
                 print(doc)
         except AttributeError:

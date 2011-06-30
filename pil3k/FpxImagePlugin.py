@@ -19,8 +19,10 @@
 __version__ = "0.1"
 
 
-import Image, ImageFile
-from OleFileIO import *
+from . import Image
+from . import ImageFile
+
+from .OleFileIO import MAGIC, OleFileIO, 
 
 
 # we map from colour field tuples to (mode, rawmode) descriptors

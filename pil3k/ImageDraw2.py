@@ -16,7 +16,11 @@
 # See the README file for information on usage and redistribution.
 #
 
-import Image, ImageColor, ImageDraw, ImageFont, ImagePath
+from . import Image
+from . import ImageColor
+from . import ImageDraw
+from . import ImageFont
+from . import ImagePath
 
 class Pen(object):
     def __init__(self, color, width=1, opacity=255):

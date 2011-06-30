@@ -51,7 +51,7 @@ try:
     # the "open" function to identify files, but you cannot load
     # them.  Note that other modules should not refer to _imaging
     # directly; import Image and use the Image.core variable instead.
-    import _imaging
+    from . import _imaging
     core = _imaging
     del _imaging
 except ImportError as v:
@@ -72,7 +72,6 @@ from . import ImagePalette
 import collections
 import numbers
 import os
-import string
 import sys
 
 # type stuff
@@ -292,27 +291,27 @@ def preinit():
         return
 
     try:
-        import BmpImagePlugin
+        from . import BmpImagePlugin
     except ImportError:
         pass
     try:
-        import GifImagePlugin
+        from . import GifImagePlugin
     except ImportError:
         pass
     try:
-        import JpegImagePlugin
+        from . import JpegImagePlugin
     except ImportError:
         pass
     try:
-        import PpmImagePlugin
+        from . import PpmImagePlugin
     except ImportError:
         pass
     try:
-        import PngImagePlugin
+        from . import PngImagePlugin
     except ImportError:
         pass
 #   try:
-#       import TiffImagePlugin
+#       from . import TiffImagePlugin
 #   except ImportError:
 #       pass
 
@@ -553,7 +552,7 @@ class Image(object):
         if s < 0:
             raise RuntimeError("encoder error {0} in tostring".format(s))
 
-        return string.join(data, "")
+        return ''.join(data)
 
     ##
     # Returns the image converted to an X11 bitmap.  This method
@@ -1023,7 +1022,7 @@ class Image(object):
                 "'offset' is deprecated; use 'ImageChops.offset' instead",
                 DeprecationWarning, stacklevel=2
                 )
-        import ImageChops
+        from . import ImageChops
         return ImageChops.offset(self, xoffset, yoffset)
 
     ##
@@ -1090,7 +1089,7 @@ class Image(object):
             box = box + (box[0]+size[0], box[1]+size[1])
 
         if isStringType(im):
-            import ImageColor
+            from . import ImageColor
             im = ImageColor.getcolor(im, self.mode)
 
         elif isImageType(im):
@@ -1244,7 +1243,7 @@ class Image(object):
             palette = ImagePalette.raw(data.rawmode, data.palette)
         else:
             if not isStringType(data):
-                data = string.join(map(chr, data), "")
+                data = ''.join(map(chr, data))
             palette = ImagePalette.raw(rawmode, data)
         self.mode = "P"
         self.palette = palette
@@ -1418,7 +1417,7 @@ class Image(object):
 
         preinit()
 
-        ext = string.lower(os.path.splitext(filename)[1])
+        ext = os.path.splitext(filename)[1].lower()
 
         if not format:
             try:
@@ -1431,10 +1430,10 @@ class Image(object):
                     raise KeyError(ext) # unknown extension
 
         try:
-            save_handler = SAVE[string.upper(format)]
+            save_handler = SAVE[format.upper()]
         except KeyError:
             init()
-            save_handler = SAVE[string.upper(format)] # unknown format
+            save_handler = SAVE[format.upper()] # unknown format
 
         if isStringType(fp):
             import __builtin__
@@ -1765,7 +1764,7 @@ def new(mode, size, color=0):
     if isStringType(color):
         # css3-style specifier
 
-        import ImageColor
+        from . import ImageColor
         color = ImageColor.getcolor(color, mode)
 
     return Image()._new(core.fill(mode, size, color))
@@ -2088,7 +2087,7 @@ def merge(mode, bands):
 #    reject images having another format.
 
 def register_open(id, factory, accept=None):
-    id = string.upper(id)
+    id = id.upper()
     ID.append(id)
     OPEN[id] = factory, accept
 
@@ -2100,7 +2099,7 @@ def register_open(id, factory, accept=None):
 # @param mimetype The image MIME type for this format.
 
 def register_mime(id, mimetype):
-    MIME[string.upper(id)] = mimetype
+    MIME[id.upper()] = mimetype
 
 ##
 # Registers an image save function.  This function should not be
@@ -2110,7 +2109,7 @@ def register_mime(id, mimetype):
 # @param driver A function to save images in this format.
 
 def register_save(id, driver):
-    SAVE[string.upper(id)] = driver
+    SAVE[id.upper()] = driver
 
 ##
 # Registers an image extension.  This function should not be
@@ -2120,7 +2119,7 @@ def register_save(id, driver):
 # @param extension An extension used for this format.
 
 def register_extension(id, extension):
-    EXTENSION[string.lower(extension)] = string.upper(id)
+    EXTENSION[extension.lower()] = id.upper()
 
 
 # --------------------------------------------------------------------
@@ -2131,5 +2130,5 @@ def _show(image, **options):
     apply(_showxv, (image,), options)
 
 def _showxv(image, title=None, **options):
-    import ImageShow
+    from . import ImageShow
     apply(ImageShow.show, (image, title), options)

@@ -18,7 +18,8 @@
 __version__ = "0.1"
 
 
-import Image, ImageFile
+from . import Image
+from . import ImageFile
 
 ##
 # Image plugin for PhotoCD images.  This plugin only reads the 768x512

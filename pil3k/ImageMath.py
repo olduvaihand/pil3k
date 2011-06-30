@@ -15,8 +15,8 @@
 # See the README file for information on usage and redistribution.
 #
 
-import Image
-import _imagingmath
+from . import Image
+from . import _imagingmath
 
 VERBOSE = 0
 

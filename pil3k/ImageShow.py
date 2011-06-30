@@ -12,8 +12,10 @@
 # See the README file for information on usage and redistribution.
 #
 
-import Image
-import os, sys
+from . import Image
+
+import os
+import sys
 
 _viewers = []
 

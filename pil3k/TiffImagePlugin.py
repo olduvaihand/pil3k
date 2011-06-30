@@ -41,10 +41,12 @@
 
 __version__ = "1.3.5"
 
-import Image, ImageFile
-import ImagePalette
+from . import Image
+from . import ImageFile
+from . import ImagePalette
 
-import array, string, sys
+import array
+import sys
 
 II = "II" # little-endian (intel-style)
 MM = "MM" # big-endian (motorola-style)
@@ -352,7 +354,8 @@ class ImageFileDirectory(object):
             tag, typ = i16(ifd), i16(ifd, 2)
 
             if Image.DEBUG:
-                import TiffTags
+                from . import TiffTags
+
                 tagname = TiffTags.TAGS.get(tag, "unknown")
                 typname = TiffTags.TYPES.get(typ, "unknown")
                 print("tag: {0} ({1})".format(tagname, tag), end=" ")
@@ -422,14 +425,14 @@ class ImageFileDirectory(object):
 
             if typ == 1:
                 # byte data
-                data = value = string.join(map(chr, value), "")
+                data = value = ''.join(map(chr, value))
             elif typ == 7:
                 # untyped data
-                data = value = string.join(value, "")
+                data = value = ''.join(value)
             elif type(value[0]) is type(""):
                 # string data
                 typ = 2
-                data = value = string.join(value, "\0") + "\0"
+                data = value = '\0'.join(value) + "\0"
             else:
                 # integer data
                 if tag == STRIPOFFSETS:
@@ -444,12 +447,13 @@ class ImageFileDirectory(object):
                         if v >= 65536:
                             typ = 4
                 if typ == 3:
-                    data = string.join(map(o16, value), "")
+                    data = ''.join(map(o16, value))
                 else:
-                    data = string.join(map(o32, value), "")
+                    data = ''.join(map(o32, value))
 
             if Image.DEBUG:
-                import TiffTags
+                from . import TiffTags
+
                 tagname = TiffTags.TAGS.get(tag, "unknown")
                 typname = TiffTags.TYPES.get(typ, "unknown")
                 print("save: {0} ({1})".format(tagname, tag), end=" ")
@@ -705,7 +709,7 @@ class TiffImageFile(ImageFile.ImageFile):
 
         if self.mode == "P":
             palette = map(lambda a: chr(a / 256), self.tag[COLORMAP])
-            self.palette = ImagePalette.raw("RGB;L", string.join(palette, ""))
+            self.palette = ImagePalette.raw("RGB;L", ''.join(palette))
 #
 # --------------------------------------------------------------------
 # Write TIFF files

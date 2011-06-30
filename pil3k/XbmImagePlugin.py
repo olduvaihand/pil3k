@@ -21,22 +21,24 @@
 
 __version__ = "0.6"
 
-import re, string
-import Image, ImageFile
+import re
+
+from . import Image
+from . import ImageFile
 
 # XBM header
 xbm_head = re.compile(
-    "\s*#define[ \t]+[^_]*_width[ \t]+(?P<width>[0-9]+)[\r\n]+"
-    "#define[ \t]+[^_]*_height[ \t]+(?P<height>[0-9]+)[\r\n]+"
-    "(?P<hotspot>"
-    "#define[ \t]+[^_]*_x_hot[ \t]+(?P<xhot>[0-9]+)[\r\n]+"
-    "#define[ \t]+[^_]*_y_hot[ \t]+(?P<yhot>[0-9]+)[\r\n]+"
-    ")?"
-    "[\\000-\\377]*_bits\\[\\]"
+    r"\s*#define[ \t]+[^_]*_width[ \t]+(?P<width>[0-9]+)[\r\n]+"
+    r"#define[ \t]+[^_]*_height[ \t]+(?P<height>[0-9]+)[\r\n]+"
+    r"(?P<hotspot>"
+    r"#define[ \t]+[^_]*_x_hot[ \t]+(?P<xhot>[0-9]+)[\r\n]+"
+    r"#define[ \t]+[^_]*_y_hot[ \t]+(?P<yhot>[0-9]+)[\r\n]+"
+    r")?"
+    r"[\\000-\\377]*_bits\\[\\]"
 )
 
 def _accept(prefix):
-    return string.lstrip(prefix)[:7] == "#define"
+    return prefix.lstrip()[:7] == "#define"
 
 ##
 # Image plugin for X11 bitmaps.

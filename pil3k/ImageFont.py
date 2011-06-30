@@ -25,8 +25,10 @@
 # See the README file for information on usage and redistribution.
 #
 
-import Image
-import os, string, sys
+from . import Image
+
+import os
+import sys
 
 class _imagingft_not_installed(object):
     # module placeholder
@@ -34,7 +36,7 @@ class _imagingft_not_installed(object):
         raise ImportError("The _imagingft C module is not installed")
 
 try:
-    import _imagingft
+    from . import _imagingft
     core = _imagingft
     del _imagingft
 except ImportError:
@@ -99,7 +101,7 @@ class ImageFont(object):
         # read PILfont header
         if file.readline() != "PILfont\n":
             raise SyntaxError("Not a PILfont file")
-        d = string.split(file.readline(), ";")
+        d = file.readline().split(";")
         self.info = [] # FIXME: should be a dictionary
         while True:
             s = file.readline()
@@ -255,6 +257,7 @@ def load_default():
     "Load a default font."
     from StringIO import StringIO
     import base64
+
     f = ImageFont()
     f._load_pilfont_data(
          # courB08
@@ -379,7 +382,10 @@ w7IkEbzhVQAAAABJRU5ErkJggg==
 
 if __name__ == "__main__":
     # create font data chunk for embedding
-    import base64, os, sys
+    import base64
+    import os
+    import sys
+
     font = "../Images/courB08"
     print("    f._load_pilfont_data(")
     print("         # {0}".format(os.path.basename(font)))
