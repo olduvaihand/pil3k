@@ -1065,7 +1065,6 @@ static PyObject*
 _point(ImagingObject* self, PyObject* args)
 {
     static const char* wrong_number = "wrong number of lut entries";
-
     int n, i;
     int bands;
     Imaging im;
@@ -1243,6 +1242,7 @@ _putdata(ImagingObject* self, PyObject* args)
         case IMAGING_TYPE_INT32:
             for (i = x = y = 0; i < n; i++) {
                 PyObject *op = PySequence_GetItem(data, i);
+
                 IMAGING_PIXEL_INT32(image, x, y) =
                     (INT32) (PyFloat_AsDouble(op) * scale + offset);
                 Py_XDECREF(op);
@@ -1254,6 +1254,7 @@ _putdata(ImagingObject* self, PyObject* args)
         case IMAGING_TYPE_FLOAT32:
             for (i = x = y = 0; i < n; i++) {
                 PyObject *op = PySequence_GetItem(data, i);
+
                 IMAGING_PIXEL_FLOAT32(image, x, y) =
                     (FLOAT32) (PyFloat_AsDouble(op) * scale + offset);
                 Py_XDECREF(op);
@@ -1266,6 +1267,7 @@ _putdata(ImagingObject* self, PyObject* args)
             for (i = x = y = 0; i < n; i++) {
                 char ink[4];
                 PyObject *op = PySequence_GetItem(data, i);
+
                 if (!op || !getink(op, image, ink)) {
                     Py_DECREF(op);
                     return NULL;
@@ -2346,6 +2348,7 @@ _draw_lines(ImagingDrawObject* self, PyObject* args)
 
     if (width <= 1) {
         double *p = NULL;
+
         for (i = 0; i < n-1; i++) {
             p = &xy[i+i];
             if (ImagingDrawLine(self->image->image, (int)p[0], (int)p[1],
@@ -2360,6 +2363,7 @@ _draw_lines(ImagingDrawObject* self, PyObject* args)
     } else {
         for (i = 0; i < n-1; i++) {
             double *p = &xy[i+i];
+
             if (ImagingDrawWideLine(self->image->image, (int)p[0], (int)p[1],
                        (int)p[2], (int)p[3], &ink, width, self->blend) < 0) {
                 free(xy);
@@ -2405,6 +2409,7 @@ _draw_points(ImagingDrawObject* self, PyObject* args)
 
     for (i = 0; i < n; i++) {
         double *p = &xy[i+i];
+
         if (ImagingDrawPoint(self->image->image, (int)p[0], (int)p[1], &ink,
                     self->blend) < 0) {
             free(xy);
@@ -3337,6 +3342,7 @@ PyInit__imaging(PyObject*)
 #ifdef HAVE_LIBJPEG
   {
       extern const char* ImagingJpegVersion(void);
+
       PyDict_SetItemString(dict, "jpeglib_version",
               PyUnicode_FromString(ImagingJpegVersion()));
   }
@@ -3345,6 +3351,7 @@ PyInit__imaging(PyObject*)
 #ifdef HAVE_LIBZ
   {
       extern const char* ImagingZipVersion(void);
+
       PyDict_SetItemString(dict, "zlib_version",
               PyUnicode_FromString(ImagingZipVersion()));
   }
