@@ -542,7 +542,7 @@ cms_profile_getattro(CmsProfileObject* self, PyObject* name)
         return NULL;
    
     name_string = PyBytes_AsString(
-            PyUnicode_EncodeASCII((Py_UNICODE)name,
+            PyUnicode_EncodeASCII((Py_UNICODE*)name,
                 (Py_ssize_t)PyUnicode_GetSize(name), "strict")
             );
 
@@ -595,12 +595,6 @@ static PyTypeObject CmsProfile_Type = {
     cms_profile_methods                    /* tp_methods */
 };
 
-PyObject*
-PyImaging_DisplayWin32(PyObject* self, PyObject* args)
-{
-    ImagingDisplayObject* display;
-};
-
 static struct PyMethodDef cms_transform_methods[] = {
     {"apply", (PyCFunction)cms_transform_apply, METH_VARARGS,
         "FIXME: apply doc string"},
@@ -616,7 +610,7 @@ cms_transform_getattro(CmsTransformObject* self, PyObject* name)
         return NULL;
    
     name_string = PyBytes_AsString(
-            PyUnicode_EncodeASCII((Py_UNICODE)name,
+            PyUnicode_EncodeASCII((Py_UNICODE*)name,
                 (Py_ssize_t)PyUnicode_GetSize(name), "strict")
             );
 
