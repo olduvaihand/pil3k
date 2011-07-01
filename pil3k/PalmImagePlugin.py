@@ -173,7 +173,7 @@ def _save(im, fp, filename, check=0):
     cols = im.size[0]
     rows = im.size[1]
 
-    rowbytes = ((cols + (16/bpp - 1)) / (16 / bpp)) * 2;
+    rowbytes = ((cols + (16//bpp - 1)) // (16 // bpp)) * 2;
     transparent_index = 0
     compression_type = _COMPRESSION_TYPES["none"]
 
@@ -187,7 +187,7 @@ def _save(im, fp, filename, check=0):
         colormapsize = 0
 
     if "offset" in im.info:
-        offset = (rowbytes * rows + 16 + 3 + colormapsize) / 4;
+        offset = (rowbytes * rows + 16 + 3 + colormapsize) // 4;
     else:
         offset = 0
 

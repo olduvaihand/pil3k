@@ -102,7 +102,7 @@ class WmfStubImageFile(ImageFile.StubImageFile):
             x1 = short(s, 10); y1 = short(s, 12)
 
             # normalize size to 72 dots per inch
-            size = (x1 - x0) * 72 / inch, (y1 - y0) * 72 / inch
+            size = (x1 - x0) * 72 // inch, (y1 - y0) * 72 // inch
 
             self.info["wmf_bbox"] = x0, y0, x1, y1
 
@@ -128,8 +128,8 @@ class WmfStubImageFile(ImageFile.StubImageFile):
             size = x1 - x0, y1 - y0
 
             # calculate dots per inch from bbox and frame
-            xdpi = 2540 * (x1 - y0) / (frame[2] - frame[0])
-            ydpi = 2540 * (y1 - y0) / (frame[3] - frame[1])
+            xdpi = 2540 * (x1 - y0) // (frame[2] - frame[0])
+            ydpi = 2540 * (y1 - y0) // (frame[3] - frame[1])
 
             self.info["wmf_bbox"] = x0, y0, x1, y1
 

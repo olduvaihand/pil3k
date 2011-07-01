@@ -477,10 +477,10 @@ class OleFileIO(object):
                 count = i32(s, offset+4)
                 value = self._unicode(s[offset+8:offset+8+count*2])
             elif type == VT_FILETIME:
-                value = long(i32(s, offset+4)) + (long(i32(s, offset+8))<<32)
+                value = int(i32(s, offset+4)) + (int(i32(s, offset+8))<<32)
                 # FIXME: this is a 64-bit int: "number of 100ns periods
                 # since Jan 1,1601".  Should map this to Python time
-                value = value / 10000000 # seconds
+                value = value // 10000000 # seconds
             elif type == VT_UI1:
                 value = ord(s[offset+4])
             elif type == VT_CLSID:

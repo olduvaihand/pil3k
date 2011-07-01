@@ -471,7 +471,7 @@ class ImageFileDirectory(object):
             else:
                 count = len(value)
                 if typ == 5:
-                    count = count / 2        # adjust for rational data field
+                    count = count // 2        # adjust for rational data field
                 append((tag, typ, count, o32(offset), data))
                 offset = offset + len(data)
                 if offset & 1:
@@ -648,8 +648,8 @@ class TiffImageFile(ImageFile.ImageFile):
         yres = getscalar(Y_RESOLUTION, (1, 1))
 
         if xres and yres:
-            xres = xres[0] / (xres[1] or 1)
-            yres = yres[0] / (yres[1] or 1)
+            xres = xres[0] // (xres[1] or 1)
+            yres = yres[0] // (yres[1] or 1)
             resunit = getscalar(RESOLUTION_UNIT, 1)
             if resunit == 2: # dots per inch
                 self.info["dpi"] = xres, yres
@@ -707,7 +707,7 @@ class TiffImageFile(ImageFile.ImageFile):
         # fixup palette descriptor
 
         if self.mode == "P":
-            palette = map(lambda a: chr(a / 256), self.tag[COLORMAP])
+            palette = map(lambda a: chr(a // 256), self.tag[COLORMAP])
             self.palette = ImagePalette.raw("RGB;L", ''.join(palette))
 #
 # --------------------------------------------------------------------
@@ -832,7 +832,7 @@ def _save(im, fp, filename):
         ifd[COLORMAP] = tuple(map(lambda v: ord(v) * 256, lut))
 
     # data orientation
-    stride = len(bits) * ((im.size[0]*bits[0]+7)/8)
+    stride = len(bits) * ((im.size[0]*bits[0]+7)//8)
     ifd[ROWSPERSTRIP] = im.size[1]
     ifd[STRIPBYTECOUNTS] = stride * im.size[1]
     ifd[STRIPOFFSETS] = 0 # this is adjusted by IFD writer

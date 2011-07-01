@@ -204,7 +204,7 @@ def _save(im, fp, filename, check=0):
     if check:
         return check
 
-    stride = ((im.size[0]*bits+7)/8+3)&(~3)
+    stride = ((im.size[0]*bits+7)//8+3)&(~3)
     header = 40 # or 64 for OS/2 version 2
     offset = 14 + header + colors * 4
     image  = stride * im.size[1]

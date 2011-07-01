@@ -127,7 +127,7 @@ def _save(im, fp, filename, check=0):
         return check
 
     # bytes per plane
-    stride = (im.size[0] * bits + 7) / 8
+    stride = (im.size[0] * bits + 7) // 8
 
     # under windows, we could determine the current screen size with
     # "Image.core.display_mode()[1]", but I think that's overkill...

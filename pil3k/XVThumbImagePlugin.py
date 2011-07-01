@@ -28,7 +28,7 @@ PALETTE = ""
 for r in range(8):
     for g in range(8):
         for b in range(4):
-            PALETTE = PALETTE + (chr((r*255)/7)+chr((g*255)/7)+chr((b*255)/3))
+            PALETTE = PALETTE + (chr((r*255)//7)+chr((g*255)//7)+chr((b*255)//3))
 
 ##
 # Image plugin for XV thumbnail images.

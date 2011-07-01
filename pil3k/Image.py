@@ -1334,6 +1334,7 @@ class Image(object):
 
         if expand:
             import math
+
             angle = -angle * math.pi / 180
             a, b, c = math.cos(angle), math.sin(angle), 0.0
             d, e, f = -math.sin(angle), math.cos(angle), 0.0
@@ -1554,8 +1555,10 @@ class Image(object):
 
         # preserve aspect ratio
         x, y = self.size
-        if x > size[0]: y = max(y * size[0] / x, 1); x = size[0]
-        if y > size[1]: x = max(x * size[1] / y, 1); y = size[1]
+        if x > size[0]:
+            y = max(y * size[0] // x, 1); x = size[0]
+        if y > size[1]:
+            x = max(x * size[1] // y, 1); y = size[1]
         size = x, y
 
         if size == self.size:
@@ -1650,12 +1653,23 @@ class Image(object):
         elif method == QUAD:
             # quadrilateral warp.  data specifies the four corners
             # given as NW, SW, SE, and NE.
-            nw = data[0:2]; sw = data[2:4]; se = data[4:6]; ne = data[6:8]
-            x0, y0 = nw; As = 1.0 / w; At = 1.0 / h
-            data = (x0, (ne[0]-x0)*As, (sw[0]-x0)*At,
-                    (se[0]-sw[0]-ne[0]+x0)*As*At,
-                    y0, (ne[1]-y0)*As, (sw[1]-y0)*At,
-                    (se[1]-sw[1]-ne[1]+y0)*As*At)
+            nw = data[0:2]
+            sw = data[2:4]
+            se = data[4:6]
+            ne = data[6:8]
+            x0, y0 = nw
+            As = 1.0 / w
+            At = 1.0 / h
+            data = (
+                x0,
+                (ne[0]-x0)*As,
+                (sw[0]-x0)*At,
+                (se[0]-sw[0]-ne[0]+x0)*As*At,
+                y0,
+                (ne[1]-y0)*As,
+                (sw[1]-y0)*At,
+                (se[1]-sw[1]-ne[1]+y0)*As*At
+            )
         else:
             raise ValueError("unknown transformation method")
 

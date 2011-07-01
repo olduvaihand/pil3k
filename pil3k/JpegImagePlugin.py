@@ -165,7 +165,7 @@ def SOF(self, marker):
     for i in range(6, len(s), 3):
         t = s[i:i+3]
         # 4-tuples: id, vsamp, hsamp, qtable
-        self.layer.append((t[0], ord(t[1])/16, ord(t[1])&15, ord(t[2])))
+        self.layer.append((t[0], ord(t[1])//16, ord(t[1])&15, ord(t[2])))
 
 def DQT(self, marker):
     #
@@ -182,7 +182,7 @@ def DQT(self, marker):
         if len(s) < 65:
             raise SyntaxError("bad quantization table marker")
         v = ord(s[0])
-        if v/16 == 0:
+        if v//16 == 0:
             self.quantization[v&15] = array.array("b", s[1:65])
             s = s[65:]
         else:
@@ -328,12 +328,12 @@ class JpegImageFile(ImageFile.ImageFile):
             a = mode, ""
 
         if size:
-            scale = max(self.size[0] / size[0], self.size[1] / size[1])
+            scale = max(self.size[0] // size[0], self.size[1] // size[1])
             for s in [8, 4, 2, 1]:
                 if scale >= s:
                     break
-            e = e[0], e[1], (e[2]-e[0]+s-1)/s+e[0], (e[3]-e[1]+s-1)/s+e[1]
-            self.size = ((self.size[0]+s-1)/s, (self.size[1]+s-1)/s)
+            e = e[0], e[1], (e[2]-e[0]+s-1)//s+e[0], (e[3]-e[1]+s-1)//s+e[1]
+            self.size = ((self.size[0]+s-1)//s, (self.size[1]+s-1)//s)
             scale = s
 
         self.tile = [(d, e, o, a)]

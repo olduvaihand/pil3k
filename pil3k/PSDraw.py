@@ -84,15 +84,17 @@ class PSDraw(object):
             else:
                 dpi = 100 # greyscale
         # image size (on paper)
-        x = float(im.size[0] * 72) / dpi
-        y = float(im.size[1] * 72) / dpi
+        x = (im.size[0] * 72) / dpi
+        y = (im.size[1] * 72) / dpi
         # max allowed size
-        xmax = float(box[2] - box[0])
-        ymax = float(box[3] - box[1])
+        xmax = box[2] - box[0]
+        ymax = box[3] - box[1]
         if x > xmax:
-            y = y * xmax / x; x = xmax
+            y = y * xmax / x
+            x = xmax
         if y > ymax:
-            x = x * ymax / y; y = ymax
+            x = x * ymax / y
+            y = ymax
         dx = (xmax - x) / 2 + box[0]
         dy = (ymax - y) / 2 + box[1]
         self.fp.write("gsave\n{0} {1} translate\n".format(dx, dy))

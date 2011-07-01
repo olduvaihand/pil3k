@@ -58,7 +58,7 @@ class PcdImageFile(ImageFile.ImageFile):
         d, e, o, a = self.tile[0]
 
         if size:
-            scale = max(self.size[0] / size[0], self.size[1] / size[1])
+            scale = max(self.size[0] // size[0], self.size[1] // size[1])
             for s, o in [(4,0*2048), (2,0*2048), (1,96*2048)]:
                 if scale >= s:
                     break

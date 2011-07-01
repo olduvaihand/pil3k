@@ -268,7 +268,7 @@ class ImImageFile(ImageFile.ImageFile):
         else:
             bits = 8 * len(self.mode)
 
-        size = ((self.size[0] * bits + 7) / 8) * self.size[1]
+        size = ((self.size[0] * bits + 7) // 8) * self.size[1]
         offs = self.__offset + frame * size
 
         self.fp = self.__fp
