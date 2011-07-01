@@ -79,8 +79,8 @@ VERSION = "0.1.0 pil"
 
 # --------------------------------------------------------------------.
 
-from pil3k import Image
-from pil3k import _imagingcms
+import Image # from pil3k
+import _imagingcms # from pil3k
 
 core = _imagingcms
 
@@ -205,7 +205,7 @@ class ImageCmsTransform(Image.ImagePointHandler):
 def get_display_profile(handle=None):
     import sys
     if sys.platform == "win32":
-        from pil3k import ImageWin
+        import ImageWin # from pil3k
         if isinstance(handle, ImageWin.HDC):
             profile = core.get_display_profile_win32(handle, 1)
         else:
@@ -771,7 +771,7 @@ def versions():
 if __name__ == "__main__":
     # create a cheap manual from the __doc__ strings for the functions above
 
-    from pil3k import ImageCms
+    import ImageCms # from pil3k
     print(__doc__)
 
     for f in dir(pyCMS):

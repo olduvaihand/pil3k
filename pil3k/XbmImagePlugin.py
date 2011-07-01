@@ -23,8 +23,8 @@ __version__ = "0.6"
 
 import re
 
-from pil3k import Image
-from pil3k import ImageFile
+import Image # from pil3k
+import ImageFile # from pil3k
 
 # XBM header
 xbm_head = re.compile(

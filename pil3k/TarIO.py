@@ -14,7 +14,7 @@
 # See the README file for information on usage and redistribution.
 #
 
-from pil3k import ContainerIO
+import ContainerIO # from pil3k
 
 ##
 # A file object that provides read access to a given member of a TAR

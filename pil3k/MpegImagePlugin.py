@@ -15,8 +15,8 @@
 
 __version__ = "0.1"
 
-from pil3k import Image
-from pil3k import ImageFile
+import Image # from pil3k
+import ImageFile # from pil3k
 
 #
 # Bitstream parser

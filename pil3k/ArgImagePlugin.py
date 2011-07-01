@@ -20,9 +20,9 @@
 
 __version__ = "0.4"
 
-from pil3k import Image
-from pil3k import ImageFile
-from pil3k import ImagePalette
+import Image # from pil3k
+import ImageFile # from pil3k
+import ImagePalette # from pil3k
 
 from pil3kPngImagePlugin import i16, i32, ChunkStream, _MODES
 

@@ -17,8 +17,8 @@
 # See the README file for information on usage and redistribution.
 #
 
-from pil3k import Image
-from pil3k import FontFile
+import Image # from pil3k
+import FontFile # from pil3k
 
 # --------------------------------------------------------------------
 # parse X Bitmap Distribution Format (BDF)

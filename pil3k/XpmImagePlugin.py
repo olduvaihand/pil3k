@@ -20,9 +20,9 @@ __version__ = "0.2"
 
 import re
 
-from pil3k import Image
-from pil3k import ImageFile
-from pil3k import ImagePalette
+import Image # from pil3k
+import ImageFile # from pil3k
+import ImagePalette # from pil3k
 
 # XPM header
 xpm_head = re.compile(r"\"([0-9]*) ([0-9]*) ([0-9]*) ([0-9]*)")

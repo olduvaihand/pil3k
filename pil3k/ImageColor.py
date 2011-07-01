@@ -17,7 +17,7 @@
 # See the README file for information on usage and redistribution.
 #
 
-from pil3k import Image
+import Image # from pil3k
 
 import re
 

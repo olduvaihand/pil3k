@@ -20,8 +20,8 @@
 __version__ = "0.1"
 
 
-from pil3k import Image
-from pil3k import TiffImagePlugin
+import Image # from pil3k
+import TiffImagePlugin # from pil3k
 from pil3kOleFileIO import MAGIC, OleFileIO
 
 

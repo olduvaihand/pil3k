@@ -15,8 +15,8 @@
 # See the README file for information on usage and redistribution.
 #
 
-from pil3k import Image
-from pil3k import _imagingmath
+import Image # from pil3k
+import _imagingmath # from pil3k
 
 VERBOSE = 0
 

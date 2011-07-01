@@ -33,8 +33,8 @@
 # http://www.wadsworth.org/spider_doc/spider/docs/image_doc.html
 #
 
-from pil3k import Image
-from pil3k import ImageFile
+import Image # from pil3k
+import ImageFile # from pil3k
 
 import os
 import struct
@@ -176,7 +176,7 @@ class SpiderImageFile(ImageFile.ImageFile):
 
     # returns a ImageTk.PhotoImage object, after rescaling to 0..255
     def tkPhotoImage(self):
-        from pil3k import ImageTk
+        import ImageTk # from pil3k
         return ImageTk.PhotoImage(self.convert2byte(), palette=256)
 
 # --------------------------------------------------------------------

@@ -15,7 +15,7 @@
 # See the README file for information on usage and redistribution.
 #
 
-from pil3k import Image
+import Image # from pil3k
 
 ##
 # (New in 1.1.3)  The <b>ImageGrab</b> module can be used to copy
@@ -31,7 +31,7 @@ try:
     grabber = Image.core.grabscreen
 except AttributeError:
     # stand-alone driver (pil plus)
-    from pil3k import _grabscreen
+    import _grabscreen # from pil3k
     grabber = _grabscreen.grab
 
 ##
@@ -67,7 +67,7 @@ def grabclipboard():
     data = Image.core.grabclipboard(debug)
     if Image.isStringType(data):
         import StringIO
-        from pil3k import BmpImagePlugin
+        import BmpImagePlugin # from pil3k
 
         return BmpImagePlugin.DibImageFile(StringIO.StringIO(data))
     return data

@@ -51,8 +51,7 @@ try:
     # the "open" function to identify files, but you cannot load
     # them.  Note that other modules should not refer to _imaging
     # directly; import Image and use the Image.core variable instead.
-    from pil3k import _imaging
-    print('imported _imaging in Image')
+    import _imaging # from pil3k
     core = _imaging
     del _imaging
 except ImportError as v:
@@ -67,10 +66,8 @@ except ImportError as v:
             RuntimeWarning
             )
 
-from pil3k import ImageMode
-print('imported ImageMode in Image')
-from pil3k import ImagePalette
-print('imported ImagePalette in Image')
+import ImageMode # from pil3k
+import ImagePalette # from pil3k
 
 import collections
 import numbers
@@ -224,8 +221,7 @@ def _conv_type_shape(im):
         return shape+(extra,), typ
 
 
-MODES = _MODEINFO.keys()
-MODES.sort()
+MODES = sorted(_MODEINFO.keys())
 
 # raw modes that may be memory mapped.  NOTE: if you change this, you
 # may have to modify the stride calculation in map.c too!
@@ -294,27 +290,27 @@ def preinit():
         return
 
     try:
-        from pil3k import BmpImagePlugin
+        import BmpImagePlugin # from pil3k
     except ImportError:
         pass
     try:
-        from pil3k import GifImagePlugin
+        import GifImagePlugin # from pil3k
     except ImportError:
         pass
     try:
-        from pil3k import JpegImagePlugin
+        import JpegImagePlugin # from pil3k
     except ImportError:
         pass
     try:
-        from pil3k import PpmImagePlugin
+        import PpmImagePlugin # from pil3k
     except ImportError:
         pass
     try:
-        from pil3k import PngImagePlugin
+        import PngImagePlugin # from pil3k
     except ImportError:
         pass
 #   try:
-#       from pil3k import TiffImagePlugin
+#       import TiffImagePlugin # from pil3k
 #   except ImportError:
 #       pass
 
@@ -1025,7 +1021,7 @@ class Image(object):
                 "'offset' is deprecated; use 'ImageChops.offset' instead",
                 DeprecationWarning, stacklevel=2
                 )
-        from pil3k import ImageChops
+        import ImageChops # from pil3k
         return ImageChops.offset(self, xoffset, yoffset)
 
     ##
@@ -1092,7 +1088,7 @@ class Image(object):
             box = box + (box[0]+size[0], box[1]+size[1])
 
         if isStringType(im):
-            from pil3k import ImageColor
+            import ImageColor # from pil3k
             im = ImageColor.getcolor(im, self.mode)
 
         elif isImageType(im):
@@ -1767,7 +1763,7 @@ def new(mode, size, color=0):
     if isStringType(color):
         # css3-style specifier
 
-        from pil3k import ImageColor
+        import ImageColor # from pil3k
         color = ImageColor.getcolor(color, mode)
 
     return Image()._new(core.fill(mode, size, color))
@@ -2133,5 +2129,5 @@ def _show(image, **options):
     apply(_showxv, (image,), options)
 
 def _showxv(image, title=None, **options):
-    from pil3k import ImageShow
+    import ImageShow # from pil3k
     apply(ImageShow.show, (image, title), options)

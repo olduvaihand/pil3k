@@ -25,7 +25,7 @@
 # See the README file for information on usage and redistribution.
 #
 
-from pil3k import Image
+import Image # from pil3k
 
 import os
 import sys
@@ -36,7 +36,7 @@ class _imagingft_not_installed(object):
         raise ImportError("The _imagingft C module is not installed")
 
 try:
-    from pil3k import _imagingft
+    import _imagingft # from pil3k
     core = _imagingft
     del _imagingft
 except ImportError:

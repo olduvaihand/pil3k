@@ -27,7 +27,7 @@
 
 import Tkinter
 
-from pil3k import Image
+import Image # from pil3k
 
 ##
 # The <b>ImageTk</b> module contains support to create and modify
@@ -180,7 +180,7 @@ class PhotoImage(object):
         except Tkinter.TclError as v:
             # activate Tkinter hook
             try:
-                from pil3k import _imagingtk
+                import _imagingtk # from pil3k
                 try:
                     _imagingtk.tkinit(tk.interpaddr(), 1)
                 except AttributeError:

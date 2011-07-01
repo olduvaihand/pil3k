@@ -21,7 +21,7 @@
 #    http://www.flipcode.com/tutorials/tut_q2levels.shtml
 # and has been tested with a few sample files found using google.
 
-from pil3k import Image
+import Image # from pil3k
 
 def i32(c, o=0):
     return ord(c[o])+(ord(c[o+1])<<8)+(ord(c[o+2])<<16)+(ord(c[o+3])<<24)

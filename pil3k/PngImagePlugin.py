@@ -36,9 +36,9 @@ __version__ = "0.9"
 import re
 import zlib
 
-from pil3k import Image
-from pil3k import ImageFile
-from pil3k import ImagePalette
+import Image # from pil3k
+import ImageFile # from pil3k
+import ImagePalette # from pil3k
 
 
 def i16(c):

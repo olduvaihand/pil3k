@@ -16,7 +16,7 @@
 
 import os
 
-from pil3k import Image
+import Image # from pil3k
 
 import marshal
 

@@ -17,7 +17,7 @@
 # extensions.)
 ##
 
-from pil3k import _imaginggl
+import _imaginggl # from pil3k
 
 ##
 # Texture factory.

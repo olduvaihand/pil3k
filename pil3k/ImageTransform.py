@@ -13,7 +13,7 @@
 # See the README file for information on usage and redistribution.
 #
 
-from pil3k import Image
+import Image # from pil3k
 
 class Transform(Image.ImageTransformHandler):
     def __init__(self, data):

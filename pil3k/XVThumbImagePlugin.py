@@ -19,9 +19,9 @@
 
 __version__ = "0.1"
 
-from pil3k import Image
-from pil3k import ImageFile
-from pil3k import ImagePalette
+import Image # from pil3k
+import ImageFile # from pil3k
+import ImagePalette # from pil3k
 
 # standard color palette for thumbnails (RGB332)
 PALETTE = ""

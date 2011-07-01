@@ -14,8 +14,8 @@
 # See the README file for information on usage and redistribution.
 #
 
-from pil3k import Image
-from pil3k import ImageFile
+import Image # from pil3k
+import ImageFile # from pil3k
 
 import struct
 

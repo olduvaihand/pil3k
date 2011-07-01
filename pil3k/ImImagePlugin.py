@@ -30,9 +30,9 @@ __version__ = "0.7"
 
 import re
 
-from pil3k import Image
-from pil3k import ImageFile
-from pil3k import ImagePalette
+import Image # from pil3k
+import ImageFile # from pil3k
+import ImagePalette # from pil3k
 
 
 # --------------------------------------------------------------------

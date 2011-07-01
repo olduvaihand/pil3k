@@ -28,9 +28,9 @@
 __version__ = "0.9"
 
 
-from pil3k import Image
-from pil3k import ImageFile
-from pil3k import ImagePalette
+import Image # from pil3k
+import ImageFile # from pil3k
+import ImagePalette # from pil3k
 
 
 # --------------------------------------------------------------------
@@ -217,7 +217,7 @@ class GifImageFile(ImageFile.ImageFile):
 # Write GIF files
 
 try:
-    from pil3k import _imaging_gif
+    import _imaging_gif # from pil3k
 except ImportError:
     _imaging_gif = None
 

@@ -27,9 +27,9 @@
 
 __version__ = "0.6"
 
-from pil3k import Image
-from pil3k import ImageFile
-from pil3k import ImagePalette
+import Image # from pil3k
+import ImageFile # from pil3k
+import ImagePalette # from pil3k
 
 def i16(c,o):
     return ord(c[o]) + (ord(c[o+1])<<8)

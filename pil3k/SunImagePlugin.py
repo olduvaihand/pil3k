@@ -20,9 +20,9 @@
 __version__ = "0.3"
 
 
-from pil3k import Image
-from pil3k import ImageFile
-from pil3k import ImagePalette
+import Image # from pil3k
+import ImageFile # from pil3k
+import ImagePalette # from pil3k
 
 
 def i16(c):
