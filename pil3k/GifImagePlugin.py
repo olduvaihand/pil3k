@@ -217,7 +217,7 @@ class GifImageFile(ImageFile.ImageFile):
 # Write GIF files
 
 try:
-    import _imaging_gif
+    from pil3k import _imaging_gif
 except ImportError:
     _imaging_gif = None
 

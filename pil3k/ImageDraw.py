@@ -319,7 +319,7 @@ def getdraw(im=None, hints=None):
         except ImportError:
             pass
     if handler is None:
-        import ImageDraw2
+        from pil3k import ImageDraw2
         handler = ImageDraw2
     if im:
         im = handler.Draw(im)

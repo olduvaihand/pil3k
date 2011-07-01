@@ -51,7 +51,7 @@ try:
     # the "open" function to identify files, but you cannot load
     # them.  Note that other modules should not refer to _imaging
     # directly; import Image and use the Image.core variable instead.
-    import _imaging
+    from pil3k import _imaging
     print('imported _imaging in Image')
     core = _imaging
     del _imaging
@@ -67,9 +67,9 @@ except ImportError as v:
             RuntimeWarning
             )
 
-import ImageMode
+from pil3k import ImageMode
 print('imported ImageMode in Image')
-import ImagePalette
+from pil3k import ImagePalette
 print('imported ImagePalette in Image')
 
 import collections

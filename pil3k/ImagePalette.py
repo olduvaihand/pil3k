@@ -18,12 +18,9 @@
 
 import array
 
-import Image
-
+from pil3k import Image
 print('imported Image from ImagePalette')
-
-import ImageColor
-
+from pil3k import ImageColor
 print('imported ImageColor from ImagePalette')
 
 ##
