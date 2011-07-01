@@ -1781,7 +1781,9 @@ def new(mode, size, color=0):
         import ImageColor # from pil3k
         color = ImageColor.getcolor(color, mode)
 
-    return Image()._new(core.fill(mode, size, color))
+    im = core.fill(mode, size, color)
+
+    return Image()._new(im)
 
 ##
 # Creates an image memory from pixel data in a string.

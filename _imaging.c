@@ -170,11 +170,12 @@ PyImagingNew(Imaging imOut)
         return NULL;
     }
 
-#ifdef VERBOSE
+/*#ifdef VERBOSE*/
     printf("imaging %p allocated\n", imagep);
-#endif
+/*#endif*/
 
     imagep->image = imOut;
+
     imagep->access = ImagingAccessNew(imOut);
 
     return (PyObject*)imagep;
@@ -3379,6 +3380,7 @@ PyInit__imaging(void)
 
     PixelAccess_Type.tp_new = &PyType_GenericNew;
     if (PyType_Ready(&PixelAccess_Type) < 0)
+        return NULL;
 
     ImagingAccessInit();
 
