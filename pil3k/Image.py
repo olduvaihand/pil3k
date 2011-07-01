@@ -1435,8 +1435,7 @@ class Image(object):
             save_handler = SAVE[format.upper()] # unknown format
 
         if isStringType(fp):
-            import __builtin__
-            fp = __builtin__.open(fp, "wb")
+            fp = __builtins__.open(fp, "wb")
             close = 1
         else:
             close = 0
@@ -1953,9 +1952,8 @@ def open(fp, mode="r"):
         raise ValueError("bad mode")
 
     if isStringType(fp):
-        import __builtin__
         filename = fp
-        fp = __builtin__.open(fp, "rb")
+        fp = __builtins__.open(fp, "rb")
     else:
         filename = ""
 

@@ -42,8 +42,7 @@ def open(filename):
     if hasattr(filename, "read"):
         fp = filename
     else:
-        import __builtin__
-        fp = __builtin__.open(filename, "rb")
+        fp = __builtins__.open(filename, "rb")
 
     # read header fields
     header = fp.read(32+24+32+12)

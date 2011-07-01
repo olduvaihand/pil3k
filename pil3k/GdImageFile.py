@@ -74,9 +74,8 @@ def open(fp, mode = "r"):
         raise ValueError("bad mode")
 
     if type(fp) == type(""):
-        import __builtin__
         filename = fp
-        fp = __builtin__.open(fp, "rb")
+        fp = __builtins__.open(fp, "rb")
     else:
         filename = ""
 
