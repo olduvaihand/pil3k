@@ -199,7 +199,8 @@ def eval(expression, _dict={}, **kw):
         if hasattr(v, "im"):
             args[k] = _Operand(v)
 
-    out =__builtins__.eval(expression, args)
+    import builtins
+    out = builtins.eval(expression, args)
     try:
         return out.im
     except AttributeError:
