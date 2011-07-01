@@ -121,7 +121,7 @@ class PSFile(object):
 
 
 def _accept(prefix):
-    return prefix[:4] == "%!PS" or i32(prefix) == 0xC6D3D0C5L
+    return prefix[:4] == "%!PS" or i32(prefix) == 0xC6D3D0C5
 
 ##
 # Image plugin for Encapsulated Postscript.  This plugin supports only
@@ -146,7 +146,7 @@ class EpsImageFile(ImageFile.ImageFile):
             offset = 0
             fp.seek(0, 2)
             length = fp.tell()
-        elif i32(s) == 0xC6D3D0C5L:
+        elif i32(s) == 0xC6D3D0C5:
             offset = i32(s[4:])
             length = i32(s[8:])
             fp.seek(offset)
