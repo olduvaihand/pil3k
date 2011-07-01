@@ -476,7 +476,7 @@ def _save(im, fp, filename, chunk=putchunk, check=0):
         #
         # attempt to minimize storage requirements for palette images
 
-        if im.encoderinfo.has_key("bits"):
+        if "bits" in im.encoderinfo:
 
             # number of bits specified by user
             n = 1 << im.encoderinfo["bits"]
@@ -499,12 +499,12 @@ def _save(im, fp, filename, chunk=putchunk, check=0):
             mode = "{0};{1}".format(mode, bits)
 
     # encoder options
-    if im.encoderinfo.has_key("dictionary"):
+    if "dictionary" in im.encoderinfo:
         dictionary = im.encoderinfo["dictionary"]
     else:
         dictionary = ""
 
-    im.encoderconfig = (im.encoderinfo.has_key("optimize"), dictionary)
+    im.encoderconfig = ("optimize" in im.encoderinfo, dictionary)
 
     # get the corresponding PNG mode
     try:
@@ -530,7 +530,7 @@ def _save(im, fp, filename, chunk=putchunk, check=0):
     if im.mode == "P":
         chunk(fp, "PLTE", im.im.getpalette("RGB"))
 
-    if im.encoderinfo.has_key("transparency"):
+    if "transparency" in im.encoderinfo:
         if im.mode == "P":
             transparency = max(0, min(255, im.encoderinfo["transparency"]))
             chunk(fp, "tRNS", chr(255) * transparency + chr(0))
@@ -560,7 +560,7 @@ def _save(im, fp, filename, chunk=putchunk, check=0):
             chunk(fp, cid, data)
 
     # ICC profile writing support -- 2008-06-06 Florian Hoech
-    if im.info.has_key("icc_profile"):
+    if "icc_profile" in im.info:
         # ICC profile
         # according to PNG spec, the iCCP chunk contains:
         # Profile name  1-79 bytes (character string)

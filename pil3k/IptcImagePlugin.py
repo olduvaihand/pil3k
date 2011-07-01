@@ -135,7 +135,7 @@ class IptcImageFile(ImageFile.ImageFile):
         # mode
         layers = ord(self.info[(3,60)][0])
         component = ord(self.info[(3,60)][1])
-        if self.info.has_key((3,65)):
+        if (3,65) in self.info:
             id = ord(self.info[(3,65)][0])-1
         else:
             id = 0

@@ -83,10 +83,10 @@ class PhotoImage(object):
 
         # Tk compatibility: file or data
         if image is None:
-            if kw.has_key("file"):
+            if "file" in kw:
                 image = Image.open(kw["file"])
                 del kw["file"]
-            elif kw.has_key("data"):
+            elif "data" in kw:
                 from StringIO import StringIO
                 image = Image.open(StringIO(kw["data"]))
                 del kw["data"]
@@ -215,10 +215,10 @@ class BitmapImage(object):
 
         # Tk compatibility: file or data
         if image is None:
-            if kw.has_key("file"):
+            if "file" in kw:
                 image = Image.open(kw["file"])
                 del kw["file"]
-            elif kw.has_key("data"):
+            elif "data" in kw:
                 from StringIO import StringIO
                 image = Image.open(StringIO(kw["data"]))
                 del kw["data"]
