@@ -405,8 +405,7 @@ class ImageFileDirectory(object):
         fp.write(o16(len(self.tags)))
 
         # always write in ascending tag order
-        tags = self.tags.items()
-        tags.sort()
+        tags = sorted(self.tags.items())
 
         directory = []
         append = directory.append
