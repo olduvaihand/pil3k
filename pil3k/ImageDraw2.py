@@ -16,11 +16,11 @@
 # See the README file for information on usage and redistribution.
 #
 
-from . import Image
-from . import ImageColor
-from . import ImageDraw
-from . import ImageFont
-from . import ImagePath
+from pil3k import Image
+from pil3k import ImageColor
+from pil3k import ImageDraw
+from pil3k import ImageFont
+from pil3k import ImagePath
 
 class Pen(object):
     def __init__(self, color, width=1, opacity=255):

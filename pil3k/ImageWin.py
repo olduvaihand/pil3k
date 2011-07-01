@@ -17,7 +17,7 @@
 # See the README file for information on usage and redistribution.
 #
 
-from . import Image
+from pil3k import Image
 
 ##
 # The <b>ImageWin</b> module contains support to create and display

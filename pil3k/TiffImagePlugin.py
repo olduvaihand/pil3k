@@ -41,9 +41,9 @@
 
 __version__ = "1.3.5"
 
-from . import Image
-from . import ImageFile
-from . import ImagePalette
+from pil3k import Image
+from pil3k import ImageFile
+from pil3k import ImagePalette
 
 import array
 import sys
@@ -354,7 +354,7 @@ class ImageFileDirectory(object):
             tag, typ = i16(ifd), i16(ifd, 2)
 
             if Image.DEBUG:
-                from . import TiffTags
+                from pil3k import TiffTags
 
                 tagname = TiffTags.TAGS.get(tag, "unknown")
                 typname = TiffTags.TYPES.get(typ, "unknown")
@@ -452,7 +452,7 @@ class ImageFileDirectory(object):
                     data = ''.join(map(o32, value))
 
             if Image.DEBUG:
-                from . import TiffTags
+                from pil3k import TiffTags
 
                 tagname = TiffTags.TAGS.get(tag, "unknown")
                 typname = TiffTags.TYPES.get(typ, "unknown")

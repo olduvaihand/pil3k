@@ -18,9 +18,9 @@
 # See the README file for information on usage and redistribution.
 #
 
-from . import Image
-from . import ImageFilter
-from . import ImageStat
+from pil3k import Image
+from pil3k import ImageFilter
+from pil3k import ImageStat
 
 class _Enhance(object):
 

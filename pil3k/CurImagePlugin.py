@@ -19,8 +19,8 @@
 
 __version__ = "0.1"
 
-from . import Image
-from . import BmpImagePlugin
+from pil3k import Image
+from pil3k import BmpImagePlugin
 
 
 #

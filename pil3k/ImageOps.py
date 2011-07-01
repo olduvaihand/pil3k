@@ -17,7 +17,7 @@
 # See the README file for information on usage and redistribution.
 #
 
-from . import Image
+from pil3k import Image
 
 import operator
 
@@ -44,7 +44,7 @@ def _border(border):
 
 def _color(color, mode):
     if Image.isStringType(color):
-        from . import ImageColor
+        from pil3k import ImageColor
         color = ImageColor.getcolor(color, mode)
     return color
 

@@ -22,8 +22,8 @@
 
 __version__ = "0.4"
 
-from . import Image
-from . import ImageFile
+from pil3k import Image
+from pil3k import ImageFile
 
 import StringIO
 

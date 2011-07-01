@@ -15,8 +15,8 @@
 # See the README file for information on usage and redistribution.
 #
 
-from . import Image
-from . import _imagingmath
+from pil3k import Image
+from pil3k import _imagingmath
 
 VERBOSE = 0
 

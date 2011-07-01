@@ -19,8 +19,8 @@
 __version__ = "0.3"
 
 
-from . import Image
-from . import ImageFile
+from pil3k import Image
+from pil3k import ImageFile
 
 import os
 import tempfile
@@ -223,8 +223,8 @@ Image.register_extension("IPTC", ".iim")
 
 def getiptcinfo(im):
 
-    from . import TiffImagePlugin
-    from . import JpegImagePlugin
+    from pil3k import TiffImagePlugin
+    from pil3k import JpegImagePlugin
     import StringIO
 
     data = None

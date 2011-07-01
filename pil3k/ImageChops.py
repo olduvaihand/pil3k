@@ -15,7 +15,7 @@
 # See the README file for information on usage and redistribution.
 #
 
-from . import Image
+from pil3k import Image
 
 ##
 # The <b>ImageChops</b> module contains a number of arithmetical image

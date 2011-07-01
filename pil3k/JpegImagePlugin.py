@@ -37,8 +37,8 @@ __version__ = "0.6"
 import array
 import struct
 
-from . import Image
-from . import ImageFile
+from pil3k import Image
+from pil3k import ImageFile
 
 def i16(c,o=0):
     return ord(c[o+1]) + (ord(c[o])<<8)
@@ -369,7 +369,7 @@ class JpegImageFile(ImageFile.ImageFile):
         # and is likely to be replaced with something better in a future
         # version.
         import StringIO
-        from . import TiffImagePlugin
+        from pil3k import TiffImagePlugin
 
         def fixup(value):
             if len(value) == 1:

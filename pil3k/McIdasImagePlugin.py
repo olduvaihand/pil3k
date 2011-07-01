@@ -20,8 +20,8 @@ __version__ = "0.2"
 
 import struct
 
-from . import Image
-from . import ImageFile
+from pil3k import Image
+from pil3k import ImageFile
 
 def _accept(s):
     return s[:8] == "\x00\x00\x00\x00\x00\x00\x00\x04"

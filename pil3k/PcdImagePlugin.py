@@ -18,8 +18,8 @@
 __version__ = "0.1"
 
 
-from . import Image
-from . import ImageFile
+from pil3k import Image
+from pil3k import ImageFile
 
 ##
 # Image plugin for PhotoCD images.  This plugin only reads the 768x512

@@ -21,8 +21,8 @@
 __version__ = "0.2"
 
 
-from . import Image
-from . import ImageFile
+from pil3k import Image
+from pil3k import ImageFile
 
 
 def i16(c):

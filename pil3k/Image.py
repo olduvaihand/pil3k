@@ -51,7 +51,8 @@ try:
     # the "open" function to identify files, but you cannot load
     # them.  Note that other modules should not refer to _imaging
     # directly; import Image and use the Image.core variable instead.
-    from . import _imaging
+    import _imaging
+    print('imported _imaging in Image')
     core = _imaging
     del _imaging
 except ImportError as v:
@@ -66,8 +67,10 @@ except ImportError as v:
             RuntimeWarning
             )
 
-from . import ImageMode
-from . import ImagePalette
+import ImageMode
+print('imported ImageMode in Image')
+import ImagePalette
+print('imported ImagePalette in Image')
 
 import collections
 import numbers
@@ -291,27 +294,27 @@ def preinit():
         return
 
     try:
-        from . import BmpImagePlugin
+        from pil3k import BmpImagePlugin
     except ImportError:
         pass
     try:
-        from . import GifImagePlugin
+        from pil3k import GifImagePlugin
     except ImportError:
         pass
     try:
-        from . import JpegImagePlugin
+        from pil3k import JpegImagePlugin
     except ImportError:
         pass
     try:
-        from . import PpmImagePlugin
+        from pil3k import PpmImagePlugin
     except ImportError:
         pass
     try:
-        from . import PngImagePlugin
+        from pil3k import PngImagePlugin
     except ImportError:
         pass
 #   try:
-#       from . import TiffImagePlugin
+#       from pil3k import TiffImagePlugin
 #   except ImportError:
 #       pass
 
@@ -1022,7 +1025,7 @@ class Image(object):
                 "'offset' is deprecated; use 'ImageChops.offset' instead",
                 DeprecationWarning, stacklevel=2
                 )
-        from . import ImageChops
+        from pil3k import ImageChops
         return ImageChops.offset(self, xoffset, yoffset)
 
     ##
@@ -1089,7 +1092,7 @@ class Image(object):
             box = box + (box[0]+size[0], box[1]+size[1])
 
         if isStringType(im):
-            from . import ImageColor
+            from pil3k import ImageColor
             im = ImageColor.getcolor(im, self.mode)
 
         elif isImageType(im):
@@ -1764,7 +1767,7 @@ def new(mode, size, color=0):
     if isStringType(color):
         # css3-style specifier
 
-        from . import ImageColor
+        from pil3k import ImageColor
         color = ImageColor.getcolor(color, mode)
 
     return Image()._new(core.fill(mode, size, color))
@@ -2130,5 +2133,5 @@ def _show(image, **options):
     apply(_showxv, (image,), options)
 
 def _showxv(image, title=None, **options):
-    from . import ImageShow
+    from pil3k import ImageShow
     apply(ImageShow.show, (image, title), options)

@@ -9,8 +9,8 @@
 # See the README file for information on usage and redistribution.
 #
 
-from . import Image
-from . import ImageFile
+from pil3k import Image
+from pil3k import ImageFile
 
 _handler = None
 
