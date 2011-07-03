@@ -524,6 +524,8 @@ class Image(object):
     # @param *args Extra arguments to the encoder.
     # @return An 8-bit string.
 
+    # FIXME: should return a bytes object.  rewrite function as tobytes and
+    # make alias named tostring (or not)
     def tostring(self, encoder_name="raw", *args):
         "Return image as a binary string"
 
@@ -1777,13 +1779,11 @@ def new(mode, size, color=0):
 
     if isStringType(color):
         # css3-style specifier
-
         import ImageColor # from pil3k
+
         color = ImageColor.getcolor(color, mode)
 
-    im = core.fill(mode, size, color)
-
-    return Image()._new(im)
+    return Image()._new(core.fill(mode, size, color))
 
 ##
 # Creates an image memory from pixel data in a string.

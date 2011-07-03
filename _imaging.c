@@ -175,7 +175,6 @@ PyImagingNew(Imaging imOut)
 /*#endif*/
 
     imagep->image = imOut;
-
     imagep->access = ImagingAccessNew(imOut);
 
     return (PyObject*)imagep;
@@ -567,9 +566,13 @@ _fill(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args, "s|(ii)O", &mode, &xsize, &ysize, &color))
         return NULL;
 
+    printf("%s , %i , %i, %p\n", mode, xsize, ysize, color);
+
     im = ImagingNew(mode, xsize, ysize);
     if (!im)
         return NULL;
+    printf("<%p: mode: %s, type: %i, bands: %i, xsize: %i, ysize: %i\n",
+            im, im->mode, im->type, im->bands, im->xsize, im->ysize);
 
     if (color) {
         if (!getink(color, im, buffer)) {
@@ -579,7 +582,11 @@ _fill(PyObject* self, PyObject* args)
     } else
         buffer[0] = buffer[1] = buffer[2] = buffer[3] = 0;
 
+    printf("<%i, %i, %i, %i>\n", buffer[0], buffer[1], buffer[2], buffer[3]);
     (void) ImagingFill(im, buffer);
+    printf("<%i, %i, %i, %i>\n", buffer[0], buffer[1], buffer[2], buffer[3]);
+    printf("<%p: mode: %s, type: %i, bands: %i, xsize: %i, ysize: %i>\n",
+            im, im->mode, im->type, im->bands, im->xsize, im->ysize);
 
     return PyImagingNew(im);
 }
