@@ -383,6 +383,7 @@ static PyObject*
 font_getattro(FontObject* self, PyObject* name)
 {
     PyObject* res;
+    PyObject* name_bytes;
     char* name_string;
 
     if (!PyUnicode_Check(name))
@@ -390,15 +391,15 @@ font_getattro(FontObject* self, PyObject* name)
 
     res = PyObject_GenericGetAttr((PyObject*)self, name);
 
-    name_string = PyBytes_AsString(
-            PyUnicode_EncodeASCII((Py_UNICODE)name,
-                (Py_ssize_t)PyUnicode_GetSize(name), "strict")
-            );
-
     if (res)
         return res;
 
     PyErr_Clear();
+
+    if (!(name_bytes = PyUnicode_AsASCIIString(name)))
+        return NULL;
+    if (!(name_string = PyBytes_AsString(name_bytes)))
+        return NULL;
 
     /* attributes */
     if (!strcmp(name_string, "family")) {

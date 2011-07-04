@@ -222,6 +222,8 @@ static PyObject*
 _getattro(ImagingDisplayObject* self, PyObject* name)
 {
     PyObject* res;
+    PyObject* name_bytes;
+    char* name_string;
 
     if (!PyUnicode_Check(name))
         return NULL;
@@ -231,13 +233,20 @@ _getattro(ImagingDisplayObject* self, PyObject* name)
         return res;
 
     PyErr_Clear();
-    if (!strcmp(name, "mode"))
+
+    if (!(name_bytes = PyUnicode_AsASCIIString(name)))
+        return NULL
+
+    if (!(name_string = PyBytes_AsString(name_bytes)))
+        return NULL;
+
+    if (!strcmp(name_string, "mode"))
         return Py_BuildValue("s", self->dib->mode);
 
-    if (!strcmp(name, "size"))
+    if (!strcmp(name_string, "size"))
         return Py_BuildValue("ii", self->dib->xsize, self->dib->ysize);
 
-    PyErr_SetString(PyExc_AttributeError, name);
+    PyErr_SetString(PyExc_AttributeError, name_string);
     return NULL;
 }
 

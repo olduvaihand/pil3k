@@ -577,21 +577,22 @@ static PyObject*
 path_getattro(PyPathObject* self, PyObject* name)
 {
     PyObject* res;
+    PyObject* name_bytes;
     char* name_string;
 
     if (!PyUnicode_Check(name))
         return NULL;
 
     res = PyObject_GenericGetAttr((PyObject*)self, name);
+
     if (res)
         return res;
-
-    name_string = PyBytes_AsString(
-            PyUnicode_EncodeASCII((Py_UNICODE*)name,
-                (Py_ssize_t)PyUnicode_GetSize(name), "strict")
-            );
-
     PyErr_Clear();
+
+    if (!(name_bytes = PyUnicode_AsASCIIString(name)))
+        return NULL;
+    if (!(name_string = PyBytes_AsString(name_bytes)))
+        return NULL;
 
     if (strcmp(name_string, "id") == 0)
         return Py_BuildValue("l", (long) self->xy);

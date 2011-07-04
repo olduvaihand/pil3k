@@ -536,15 +536,17 @@ static struct PyMethodDef cms_profile_methods[] = {
 static PyObject*  
 cms_profile_getattro(CmsProfileObject* self, PyObject* name)
 {
+    PyObject* name_bytes;
     char* name_string;
 
     if (!PyUnicode_Check(name))
         return NULL;
    
-    name_string = PyBytes_AsString(
-            PyUnicode_EncodeASCII((Py_UNICODE*)name,
-                (Py_ssize_t)PyUnicode_GetSize(name), "strict")
-            );
+    if (!(name_bytes = PyUnicode_AsASCIIString(name)))
+        return NULL;
+
+    if (!(name_string = PyBytes_AsString(name_bytes)))
+        return NULL;
 
     if (!strcmp(name_string, "product_name"))
         return PyUnicode_FromFormat("%s", cmsTakeProductName(self->profile));
@@ -604,15 +606,17 @@ static struct PyMethodDef cms_transform_methods[] = {
 static PyObject*  
 cms_transform_getattro(CmsTransformObject* self, PyObject* name)
 {
+    PyObject* name_bytes;
     char* name_string;
 
     if (!PyUnicode_Check(name))
         return NULL;
-   
-    name_string = PyBytes_AsString(
-            PyUnicode_EncodeASCII((Py_UNICODE*)name,
-                (Py_ssize_t)PyUnicode_GetSize(name), "strict")
-            );
+
+    if (!(name_bytes = PyUnicode_AsASCIIString(name)))
+        return NULL;
+
+    if (!(name_string = PyBytes_AsString(name_bytes)))
+        return NULL;
 
     if (!strcmp(name_string, "inputMode"))
         return PyUnicode_FromFormat("%s", self->mode_in);

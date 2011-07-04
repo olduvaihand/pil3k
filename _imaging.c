@@ -170,9 +170,9 @@ PyImagingNew(Imaging imOut)
         return NULL;
     }
 
-/*#ifdef VERBOSE*/
+#ifdef VERBOSE
     printf("imaging %p allocated\n", imagep);
-/*#endif*/
+#endif
 
     imagep->image = imOut;
     imagep->access = ImagingAccessNew(imOut);
@@ -440,8 +440,8 @@ getpixel(Imaging im, ImagingAccess access, int x, int y)
     } pixel;
 
     if (x < 0 || x >= im->xsize || y < 0 || y >= im->ysize) {
-    PyErr_SetString(PyExc_IndexError, outside_image);
-    return NULL;
+        PyErr_SetString(PyExc_IndexError, outside_image);
+        return NULL;
     }
 
     access->get_pixel(im, x, y, &pixel);
@@ -566,13 +566,9 @@ _fill(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args, "s|(ii)O", &mode, &xsize, &ysize, &color))
         return NULL;
 
-    printf("%s , %i , %i, %p\n", mode, xsize, ysize, color);
-
     im = ImagingNew(mode, xsize, ysize);
     if (!im)
         return NULL;
-    printf("<%p: mode: %s, type: %i, bands: %i, xsize: %i, ysize: %i\n",
-            im, im->mode, im->type, im->bands, im->xsize, im->ysize);
 
     if (color) {
         if (!getink(color, im, buffer)) {
@@ -582,11 +578,7 @@ _fill(PyObject* self, PyObject* args)
     } else
         buffer[0] = buffer[1] = buffer[2] = buffer[3] = 0;
 
-    printf("<%i, %i, %i, %i>\n", buffer[0], buffer[1], buffer[2], buffer[3]);
     (void) ImagingFill(im, buffer);
-    printf("<%i, %i, %i, %i>\n", buffer[0], buffer[1], buffer[2], buffer[3]);
-    printf("<%p: mode: %s, type: %i, bands: %i, xsize: %i, ysize: %i>\n",
-            im, im->mode, im->type, im->bands, im->xsize, im->ysize);
 
     return PyImagingNew(im);
 }
@@ -2965,13 +2957,14 @@ _getattro(ImagingObject* self, PyObject* name)
     res = PyObject_GenericGetAttr((PyObject*)self, name);
     if (res)
         return res;
+
     PyErr_Clear();
 
-    if (!(name_bytes = PyUnicode_EncodeASCII((Py_UNICODE*)name,
-                           (Py_ssize_t)PyUnicode_GetSize(name), "strict")))
+    if (!(name_bytes = PyUnicode_AsASCIIString(name)))
         return NULL;
 
-    name_string = PyBytes_AsString(name_bytes);
+    if (!(name_string = PyBytes_AsString(name_bytes)))
+        return NULL;
 
     if (strcmp(name_string, "mode") == 0)
         return PyUnicode_FromString(self->image->mode);

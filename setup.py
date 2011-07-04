@@ -467,6 +467,7 @@ if __name__ == "__main__":
         author=AUTHOR[0], author_email=AUTHOR[1],
         classifiers=[
             "Development Status :: 6 - Mature",
+            # add Python 3 classifiers
             "Topic :: Multimedia :: Graphics",
             "Topic :: Multimedia :: Graphics :: Capture :: Digital Camera",
             "Topic :: Multimedia :: Graphics :: Capture :: Scanners",
@@ -484,7 +485,7 @@ if __name__ == "__main__":
         name=NAME,
         package_dir={"": "pil3k"},
         packages=[""],
-        platforms="Python 1.5.2 and later.",
+        platforms="Python 3.0 and later",
         scripts = glob.glob("Scripts/pil*.py"),
         url=HOMEPAGE,
         version=VERSION,
