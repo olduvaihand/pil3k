@@ -616,7 +616,7 @@ class Image(object):
         "Explicitly load pixel data."
         if self.im and self.palette and self.palette.dirty:
             # realize palette
-            self.im.putpalette(self.palette.getdata())
+            self.im.putpalette(*self.palette.getdata())
             self.palette.dirty = 0
             self.palette.mode = "RGB"
             self.palette.rawmode = None

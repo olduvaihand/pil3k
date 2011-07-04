@@ -112,7 +112,7 @@ class PhotoImage(object):
 
         self.__mode = mode
         self.__size = size
-        self.__photo = Tkinter.PhotoImage((), kw)
+        self.__photo = Tkinter.PhotoImage(**kw)
         self.tk = self.__photo.tk
         if image:
             self.paste(image)
@@ -234,7 +234,7 @@ class BitmapImage(object):
         else:
             # slow but safe way
             kw["data"] = image.tobitmap()
-        self.__photo = Tkinter.BitmapImage((), kw)
+        self.__photo = Tkinter.BitmapImage(**kw)
 
     def __del__(self):
         name = self.__photo.name
