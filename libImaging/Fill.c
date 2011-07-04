@@ -25,9 +25,6 @@ ImagingFill(Imaging im, const void* colour)
 {
     int x, y;
 
-    printf("im->type (%i) == IMAGING_TYPE_SPECIAL (%i) : %i\n",
-            im->type, IMAGING_TYPE_SPECIAL, (int)(im->type == IMAGING_TYPE_SPECIAL));
-
     if (im->type == IMAGING_TYPE_SPECIAL) {
         /* use generic API */
         ImagingAccess access = ImagingAccessNew(im);
@@ -54,8 +51,6 @@ ImagingFill(Imaging im, const void* colour)
                 memset(im->image[y], cc, im->linesize);
         }
     }
-
-    printf("Completed the fill operation\n");
 
     return im;
 }

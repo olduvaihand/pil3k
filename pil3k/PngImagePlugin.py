@@ -307,6 +307,9 @@ class PngStream(ChunkStream):
 # PNG reader
 
 def _accept(prefix):
+    if isinstance(prefix, str):
+        print('That is not going to work')
+        prefix = prefix.encode('latin-1', 'strict')
     return prefix[:8] == _MAGIC
 
 ##

@@ -47,7 +47,9 @@ def o16(i):
 # Identify/read GIF files
 
 def _accept(prefix):
-    return prefix[:6] in ["GIF87a", "GIF89a"]
+    print(prefix[:6])
+    print(prefix[:6]==b'GIF89a')
+    return prefix[:6] in [b"GIF87a", b"GIF89a"]
 
 ##
 # Image plugin for GIF images.  This plugin supports both GIF87 and
@@ -70,7 +72,7 @@ class GifImageFile(ImageFile.ImageFile):
 
         # Screen
         s = self.fp.read(13)
-        if s[:6] not in ["GIF87a", "GIF89a"]:
+        if s[:6] not in [b"GIF87a", b"GIF89a"]:
             raise SyntaxError("not a GIF file")
 
         self.info["version"] = s[:6]
@@ -130,10 +132,10 @@ class GifImageFile(ImageFile.ImageFile):
         while True:
 
             s = self.fp.read(1)
-            if not s or s == ";":
+            if not s or s == b";":
                 break
 
-            elif s == "!":
+            elif s == b"!":
                 #
                 # extensions
                 #
@@ -170,7 +172,7 @@ class GifImageFile(ImageFile.ImageFile):
                 while self.data():
                     pass
 
-            elif s == ",":
+            elif s == b",":
                 #
                 # local image
                 #
