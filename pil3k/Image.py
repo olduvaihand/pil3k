@@ -813,7 +813,7 @@ class Image(object):
 
         self.load()
 
-        if callable(filter):
+        if isinstance(filter, collections.Callable):
             filter = filter()
         if not hasattr(filter, "filter"):
             raise TypeError("filter argument should be ImageFilter.Filter instance or class")
