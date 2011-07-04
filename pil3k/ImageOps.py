@@ -20,6 +20,7 @@
 import Image # from pil3k
 
 import operator
+import functools
 
 ##
 # (New in 1.1.3) The <b>ImageOps</b> module contains a number of
@@ -214,7 +215,7 @@ def equalize(image, mask=None):
         if len(histo) <= 1:
             lut.extend(range(256))
         else:
-            step = (reduce(operator.add, histo) - histo[-1]) / 255
+            step = (functools.reduce(operator.add, histo) - histo[-1]) / 255
             if not step:
                 lut.extend(range(256))
             else:

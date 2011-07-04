@@ -14,6 +14,8 @@
 #
 # See the README file for information on usage and redistribution.
 #
+import functools
+
 
 class Filter(object):
     pass
@@ -44,7 +46,7 @@ class Kernel(Filter):
     def __init__(self, size, kernel, scale=None, offset=0):
         if scale is None:
             # default scale is sum of kernel
-            scale = reduce(lambda a,b: a+b, kernel)
+            scale = functools.reduce(lambda a,b: a+b, kernel)
         if size[0] * size[1] != len(kernel):
             raise ValueError("not enough coefficients in kernel")
         self.filterargs = size, scale, offset, kernel
