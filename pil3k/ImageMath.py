@@ -84,7 +84,7 @@ class _Operand(object):
         return _Operand(out)
 
     # unary operators
-    def __nonzero__(self):
+    def __bool__(self):
         # an image is "true" if it contains at least one non-zero pixel
         return self.im.getbbox() is not None
     def __abs__(self):
