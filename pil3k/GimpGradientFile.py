@@ -55,7 +55,7 @@ class GradientFile(object):
 
     gradient = None
 
-    def getpalette(self, entries = 256):
+    def getpalette(self, entries=256):
 
         palette = []
 
@@ -78,15 +78,15 @@ class GradientFile(object):
                 scale = segment((xm - x0) / w, (x - x0) / w)
 
             # expand to RGBA
-            r = chr(int(255 * ((rgb1[0] - rgb0[0]) * scale + rgb0[0]) + 0.5))
-            g = chr(int(255 * ((rgb1[1] - rgb0[1]) * scale + rgb0[1]) + 0.5))
-            b = chr(int(255 * ((rgb1[2] - rgb0[2]) * scale + rgb0[2]) + 0.5))
-            a = chr(int(255 * ((rgb1[3] - rgb0[3]) * scale + rgb0[3]) + 0.5))
+            r = bytes(((int(255 * ((rgb1[0] - rgb0[0]) * scale + rgb0[0]) + 0.5)),))
+            g = bytes(((int(255 * ((rgb1[1] - rgb0[1]) * scale + rgb0[1]) + 0.5)),))
+            b = bytes(((int(255 * ((rgb1[2] - rgb0[2]) * scale + rgb0[2]) + 0.5)),))
+            a = bytes(((int(255 * ((rgb1[3] - rgb0[3]) * scale + rgb0[3]) + 0.5)),))
 
             # add to palette
             palette.append(r + g + b + a)
 
-        return "".join(palette), "RGBA"
+        return b"".join(palette), "RGBA"
 
 ##
 # File handler for GIMP's gradient format.
@@ -95,7 +95,7 @@ class GimpGradientFile(GradientFile):
 
     def __init__(self, fp):
 
-        if fp.readline()[:13] != "GIMP Gradient":
+        if fp.readline()[:13] != b"GIMP Gradient":
             raise SyntaxError("not a GIMP gradient file")
 
         count = int(fp.readline())
@@ -112,8 +112,8 @@ class GimpGradientFile(GradientFile):
             rgb0    = w[3:7]
             rgb1    = w[7:11]
 
-            segment = SEGMENTS[int(s[11])]
-            cspace  = int(s[12])
+            segment = SEGMENTS[s[11]]
+            cspace  = s[12]
 
             if cspace != 0:
                 raise IOError("cannot handle HSV colour space")
