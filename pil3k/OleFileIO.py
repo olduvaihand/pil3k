@@ -40,26 +40,58 @@ import io
 
 
 def i16(c, o = 0):
-    return ord(c[o])+(ord(c[o+1])<<8)
+    return c[o]+(c[o+1]<<8)
 
 def i32(c, o = 0):
-    return ord(c[o])+(ord(c[o+1])<<8)+(ord(c[o+2])<<16)+(ord(c[o+3])<<24)
+    return c[o]+(c[o+1]<<8)+(c[o+2]<<16)+(c[o+3]<<24)
 
 
-MAGIC = '\320\317\021\340\241\261\032\341'
+MAGIC = b'\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1'
 
 #
 # --------------------------------------------------------------------
 # property types
 
-VT_EMPTY=0; VT_NULL=1; VT_I2=2; VT_I4=3; VT_R4=4; VT_R8=5; VT_CY=6;
-VT_DATE=7; VT_BSTR=8; VT_DISPATCH=9; VT_ERROR=10; VT_BOOL=11;
-VT_VARIANT=12; VT_UNKNOWN=13; VT_DECIMAL=14; VT_I1=16; VT_UI1=17;
-VT_UI2=18; VT_UI4=19; VT_I8=20; VT_UI8=21; VT_INT=22; VT_UINT=23;
-VT_VOID=24; VT_HRESULT=25; VT_PTR=26; VT_SAFEARRAY=27; VT_CARRAY=28;
-VT_USERDEFINED=29; VT_LPSTR=30; VT_LPWSTR=31; VT_FILETIME=64;
-VT_BLOB=65; VT_STREAM=66; VT_STORAGE=67; VT_STREAMED_OBJECT=68;
-VT_STORED_OBJECT=69; VT_BLOB_OBJECT=70; VT_CF=71; VT_CLSID=72;
+VT_EMPTY=0
+VT_NULL=1
+VT_I2=2
+VT_I4=3
+VT_R4=4
+VT_R8=5
+VT_CY=6
+VT_DATE=7
+VT_BSTR=8
+VT_DISPATCH=9
+VT_ERROR=10
+VT_BOOL=11
+VT_VARIANT=12
+VT_UNKNOWN=13
+VT_DECIMAL=14
+VT_I1=16
+VT_UI1=17
+VT_UI2=18
+VT_UI4=19
+VT_I8=20
+VT_UI8=21
+VT_INT=22
+VT_UINT=23
+VT_VOID=24
+VT_HRESULT=25
+VT_PTR=26
+VT_SAFEARRAY=27
+VT_CARRAY=28
+VT_USERDEFINED=29
+VT_LPSTR=30
+VT_LPWSTR=31
+VT_FILETIME=64
+VT_BLOB=65
+VT_STREAM=66
+VT_STORAGE=67
+VT_STREAMED_OBJECT=68
+VT_STORED_OBJECT=69
+VT_BLOB_OBJECT=70
+VT_CF=71
+VT_CLSID=72
 VT_VECTOR=0x1000;
 
 # map property id to name (for debugging purposes)
@@ -105,7 +137,7 @@ class _OleStream(io.BytesIO):
             data.append(fp.read(sectorsize))
             sect = fat[sect]
 
-        data = ''.join(data)
+        data = b''.join(data)
 
         # print(len(data), size)
 
@@ -197,6 +229,7 @@ class _OleDirectoryEntry(object):
 
             self.kids.sort()
 
+    #FIXME: remove __cmp__ and stick in rich comparison functions
     def __cmp__(self, other):
         "Compare entries by name"
 
@@ -360,11 +393,12 @@ class OleFileIO(object):
         self.root.dump()
 
     def _clsid(self, clsid):
-        if clsid == "\0" * len(clsid):
-            return ""
+        if clsid == b"\x00" * len(clsid):
+            return b""
         return "{0:08X}-{1:04X}-{2:04X}-{3:02X}{4:02X}-{5:02X}{6:02X}{7:02X}"\
                "{8:02X}{9:02X}{10:02X}".format(i32(clsid, 0), i16(clsid, 4),
-               i16(clsid, 6), *tuple(map(ord, clsid[8:16])))
+               i16(clsid, 6), *tuple(map(ord, clsid[8:16]))).encode('latin_1',
+                       errors='replace')
 
     def _list(self, files, prefix, node):
         # listdir helper
@@ -446,7 +480,7 @@ class OleFileIO(object):
         fp.seek(i32(s, 16))
 
         # get section
-        s = "****" + fp.read(i32(fp.read(4))-4)
+        s = b"****" + fp.read(i32(fp.read(4))-4)
 
         for i in range(i32(s, 4)):
 
