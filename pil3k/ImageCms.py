@@ -407,7 +407,8 @@ def buildTransform(inputProfile, outputProfile, inMode, outMode, renderingIntent
             inputProfile = ImageCmsProfile(inputProfile)
         if not isinstance(outputProfile, ImageCmsProfile):
             outputProfile = ImageCmsProfile(outputProfile)
-        return ImageCmsTransform(inputProfile, outputProfile, inMode, outMode, renderingIntent, flags=flags)
+        return ImageCmsTransform(inputProfile, outputProfile, inMode, outMode,
+                                 renderingIntent, flags=flags)
     except (IOError, TypeError, ValueError) as v:
         raise PyCMSError(v)
 
@@ -416,7 +417,10 @@ def buildTransform(inputProfile, outputProfile, inMode, outMode, renderingIntent
 # outputProfile, but tries to simulate the result that would be
 # obtained on the proofProfile device.
 
-def buildProofTransform(inputProfile, outputProfile, proofProfile, inMode, outMode, renderingIntent=INTENT_PERCEPTUAL, proofRenderingIntent=INTENT_ABSOLUTE_COLORIMETRIC, flags=FLAGS["SOFTPROOFING"]):
+def buildProofTransform(inputProfile, outputProfile, proofProfile, inMode,
+        outMode, renderingIntent=INTENT_PERCEPTUAL,
+        proofRenderingIntent=INTENT_ABSOLUTE_COLORIMETRIC,
+        flags=FLAGS["SOFTPROOFING"]):
     """
     ImageCms.buildProofTransform(inputProfile, outputProfile, proofProfile,
         inMode, outMode, [renderingIntent], [proofRenderingIntent])
@@ -491,7 +495,8 @@ def buildProofTransform(inputProfile, outputProfile, proofProfile, inMode, outMo
         raise PyCMSError("renderingIntent must be an integer between 0 and 3")
 
     if type(flags) != type(1) or not (0 <= flags <= _MAX_FLAG):
-        raise PyCMSError("flags must be an integer between 0 and {0}".format(_MAX_FLAG))
+        raise PyCMSError(
+            "flags must be an integer between 0 and {0}".format(_MAX_FLAG))
 
     try:
         if not isinstance(inputProfile, ImageCmsProfile):
@@ -500,7 +505,8 @@ def buildProofTransform(inputProfile, outputProfile, proofProfile, inMode, outMo
             outputProfile = ImageCmsProfile(outputProfile)
         if not isinstance(proofProfile, ImageCmsProfile):
             proofProfile = ImageCmsProfile(proofProfile)
-        return ImageCmsTransform(inputProfile, outputProfile, inMode, outMode, renderingIntent, proofProfile, proofRenderingIntent, flags)
+        return ImageCmsTransform(inputProfile, outputProfile, inMode, outMode,
+                renderingIntent, proofProfile, proofRenderingIntent, flags)
     except (IOError, TypeError, ValueError) as v:
         raise PyCMSError(v)
 
