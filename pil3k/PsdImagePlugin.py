@@ -39,16 +39,16 @@ MODES = {
 # helpers
 
 def i16(c):
-    return ord(c[1]) + (ord(c[0])<<8)
+    return c[1] + (c[0]<<8)
 
 def i32(c):
-    return ord(c[3]) + (ord(c[2])<<8) + (ord(c[1])<<16) + (ord(c[0])<<24)
+    return c[3] + (c[2]<<8) + (c[1]<<16) + (c[0]<<24)
 
 # --------------------------------------------------------------------.
 # read PSD images
 
 def _accept(prefix):
-    return prefix[:4] == "8BPS"
+    return prefix[:4] == b"8BPS"
 
 ##
 # Image plugin for Photoshop images.
@@ -66,7 +66,7 @@ class PsdImageFile(ImageFile.ImageFile):
         # header
 
         s = read(26)
-        if s[:4] != "8BPS" or i16(s[4:]) != 1:
+        if s[:4] != b"8BPS" or i16(s[4:]) != 1:
             raise SyntaxError("not a PSD file")
 
         psd_bits = i16(s[22:])
@@ -171,8 +171,10 @@ def _layerinfo(file):
     for i in range(abs(i16(read(2)))):
 
         # bounding box
-        y0 = i32(read(4)); x0 = i32(read(4))
-        y1 = i32(read(4)); x1 = i32(read(4))
+        y0 = i32(read(4))
+        x0 = i32(read(4))
+        y1 = i32(read(4))
+        x1 = i32(read(4))
 
         # image info
         info = []
@@ -271,9 +273,7 @@ def _maketile(file, mode, bbox, channels):
             layer = mode[channel]
             if mode == "CMYK":
                 layer = layer + ";I"
-            tile.append(
-                ("packbits", bbox, offset, layer)
-                )
+            tile.append(("packbits", bbox, offset, layer))
             for y in range(ysize):
                 offset = offset + i16(bytecount[i:i+2])
                 i = i + 2
