@@ -28,7 +28,7 @@ def read_32t(fobj, (start, length), (width, height)):
     # The 128x128 icon seems to have an extra header for some reason.
     fobj.seek(start)
     sig = fobj.read(4)
-    if sig != '\x00\x00\x00\x00':
+    if sig != b'\x00\x00\x00\x00':
         raise SyntaxError('Unknown signature, expecting 0x00000000')
     return read_32(fobj, (start + 4, length - 4), (width, height))
 
@@ -70,7 +70,7 @@ def read_32(fobj, (start, length), size):
                     "Error reading channel [{0:r} left]".format(bytesleft)
                     )
             band = Image.frombuffer(
-                "L", size, ''.join(data), "raw", "L", 0, 1
+                "L", size, b''.join(data), "raw", "L", 0, 1
                 )
             im.im.putband(band.im, band_ix)
     return {"RGB": im}
@@ -203,7 +203,7 @@ class IcnsImageFile(ImageFile.ImageFile):
         self.load_end()
 
 
-Image.register_open("ICNS", IcnsImageFile, lambda x: x[:4] == 'icns')
+Image.register_open("ICNS", IcnsImageFile, lambda x: x[:4] == b'icns')
 Image.register_extension("ICNS", '.icns')
 
 if __name__ == '__main__':
