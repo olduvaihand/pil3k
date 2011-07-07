@@ -123,6 +123,9 @@ TAGS = {
 
 }
 
+for k, v in TAGS.items():
+    TAGS[k] = v.encode('latin_1', 'replace')
+
 ##
 # Maps EXIF GSP tags to tag names.
 
@@ -155,3 +158,6 @@ GPSTAGS = {
     25: "GPSDestDistanceRef",
     26: "GPSDestDistance"
 }
+
+for k, v in GPSTAGS.items():
+    GPSTAGS[k] = v.encode('latin_1', 'replace')
