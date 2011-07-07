@@ -29,7 +29,7 @@ import ImageFile # from pil3k
 import ImagePalette # from pil3k
 
 def i16(c):
-    return ord(c[1]) + (ord(c[0])<<8)
+    return c[1] + (c[0]<<8)
 
 ##
 # Image plugin for the GD uncompressed format.  Note that this format
@@ -68,12 +68,12 @@ class GdImageFile(ImageFile.ImageFile):
 # @return An image instance.
 # @exception IOError If the image could not be read.
 
-def open(fp, mode = "r"):
+def open(fp, mode="r"):
 
     if mode != "r":
         raise ValueError("bad mode")
 
-    if type(fp) == type(""):
+    if type(fp) == str:
         import builtins
         filename = fp
         fp = builtins.open(fp, "rb")
