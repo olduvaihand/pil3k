@@ -25,7 +25,7 @@ import ImageFile # from pil3k
 #
 # --------------------------------------------------------------------
 
-field = re.compile(r"([a-z]*) ([^ \r\n]*)")
+field = re.compile(br"([a-z]*) ([^ \r\n]*)")
 
 ##
 # Image plugin for IM Tools images.
@@ -40,7 +40,7 @@ class ImtImageFile(ImageFile.ImageFile):
         # Quick rejection: if there's not a LF among the first
         # 100 bytes, this is (probably) not a text header.
 
-        if not "\n" in self.fp.read(100):
+        if not b"\n" in self.fp.read(100):
             raise SyntaxError("not an IM file")
         self.fp.seek(0)
 
@@ -52,11 +52,10 @@ class ImtImageFile(ImageFile.ImageFile):
             if not s:
                 break
 
-            if s == chr(12):
+            if s == b'\x0c':
 
                 # image data begins
-                self.tile = [("raw", (0,0)+self.size,
-                             self.fp.tell(),
+                self.tile = [("raw", (0,0)+self.size, self.fp.tell(),
                              (self.mode, 0, 1))]
 
                 break
@@ -68,20 +67,20 @@ class ImtImageFile(ImageFile.ImageFile):
                 s = s + self.fp.readline()
                 if len(s) == 1 or len(s) > 100:
                     break
-                if s[0] == "*":
+                if s[0] == ord(b"*"):
                     continue # comment
 
                 m = field.match(s)
                 if not m:
                     break
                 k, v = m.group(1,2)
-                if k == "width":
+                if k == b"width":
                     xsize = int(v)
                     self.size = xsize, ysize
-                elif k == "height":
+                elif k == b"height":
                     ysize = int(v)
                     self.size = xsize, ysize
-                elif k == "pixel" and v == "n8":
+                elif k == b"pixel" and v == b"n8":
                     self.mode = "L"
 
 
