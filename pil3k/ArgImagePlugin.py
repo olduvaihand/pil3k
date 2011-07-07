@@ -50,7 +50,7 @@ class ArgStream(ChunkStream):
 
         self.count = 0
         self.id = None
-        self.action = ("NONE",)
+        self.action = (b"NONE",)
 
         self.images = {}
         self.names = {}
@@ -66,7 +66,7 @@ class ArgStream(ChunkStream):
         s = self.fp.read(nbytes)
         self.size = i32(s), i32(s[4:])
         try:
-            self.mode, self.rawmode = _MODES[(ord(s[8]), ord(s[9]))]
+            self.mode, self.rawmode = _MODES[(s[8], s[9])]
         except:
             raise SyntaxError("unknown ARG mode")
 
@@ -153,14 +153,14 @@ class ArgStream(ChunkStream):
         size = i32(s), i32(s[4:])
 
         try:
-            mode, rawmode = _MODES[(ord(s[8]), ord(s[9]))]
+            mode, rawmode = _MODES[(s[8], s[9])]
         except:
             raise SyntaxError("unknown image mode")
 
         if full:
-            if ord(s[12]):
+            if s[12]:
                 pass # interlace not yet supported
-            if ord(s[11]):
+            if s[11]:
                 raise SyntaxError("unknown filter category")
 
         return size, mode, rawmode
@@ -189,7 +189,7 @@ class ArgStream(ChunkStream):
         x, y = i32(s[2:6]), i32(s[6:10])
         bbox = x, y, im.size[0]+x, im.size[1]+y
 
-        if im.mode in ["RGBA"]:
+        if im.mode in [b"RGBA"]:
             # paste with transparency
             # FIXME: should handle P+transparency as well
             self.images[self.id].paste(im, bbox, im)
@@ -197,7 +197,7 @@ class ArgStream(ChunkStream):
             # paste without transparency
             self.images[self.id].paste(im, bbox)
 
-        self.action = ("PAST",)
+        self.action = (b"PAST",)
         self.__store()
 
         return s
@@ -213,7 +213,7 @@ class ArgStream(ChunkStream):
         size, mode, rawmode = self.__getmodesize(s, 0)
 
         # store image (FIXME: handle colour)
-        self.action = ("BLNK",)
+        self.action = (b"BLNK",)
         self.im = Image.core.fill(mode, size, 0)
         self.__store()
 
@@ -231,11 +231,11 @@ class ArgStream(ChunkStream):
         size, mode, rawmode = self.__getmodesize(s)
 
         # decode and store image
-        self.action = ("IHDR",)
+        self.action = (b"IHDR",)
         self.im = Image.core.new(mode, size)
         self.decoder = Image.core.zip_decoder(rawmode)
         self.decoder.setimage(self.im, (0,0) + size)
-        self.data = ""
+        self.data = b""
 
         return s
 
@@ -251,7 +251,7 @@ class ArgStream(ChunkStream):
         size, mode, rawmode = self.__getmodesize(s)
 
         # delta header
-        diff = ord(s[13])
+        diff = s[13]
         offs = i32(s[14:18]), i32(s[18:22])
 
         bbox = offs + (offs[0]+size[0], offs[1]+size[1])
@@ -260,7 +260,7 @@ class ArgStream(ChunkStream):
             print("DHDR", diff, bbox)
 
         # FIXME: decode and apply image
-        self.action = ("DHDR", diff, bbox)
+        self.action = (b"DHDR", diff, bbox)
 
         # setup decoder
         self.im = Image.core.new(mode, size)
@@ -268,7 +268,7 @@ class ArgStream(ChunkStream):
         self.decoder = Image.core.zip_decoder(rawmode)
         self.decoder.setimage(self.im, (0,0) + size)
 
-        self.data = ""
+        self.data = b""
 
         return s
 
@@ -284,11 +284,11 @@ class ArgStream(ChunkStream):
         size, mode, rawmode = self.__getmodesize(s, 0)
 
         # decode and store image
-        self.action = ("JHDR",)
+        self.action = (b"JHDR",)
         self.im = Image.core.new(mode, size)
         self.decoder = Image.core.jpeg_decoder(rawmode)
         self.decoder.setimage(self.im, (0,0) + size)
-        self.data = ""
+        self.data = b""
 
         return s
 
@@ -304,11 +304,11 @@ class ArgStream(ChunkStream):
         size, mode, rawmode = self.__getmodesize(s, 0)
 
         # decode and store image
-        self.action = ("UHDR",)
+        self.action = (b"UHDR",)
         self.im = Image.core.new(mode, size)
         self.decoder = Image.core.raw_decoder(rawmode)
         self.decoder.setimage(self.im, (0,0) + size)
-        self.data = ""
+        self.data = b""
 
         return s
 
@@ -356,11 +356,11 @@ class ArgStream(ChunkStream):
         # apply operation
         cid = self.action[0]
 
-        if cid in ["BLNK", "IHDR", "JHDR", "UHDR"]:
+        if cid in [b"BLNK", b"IHDR", b"JHDR", b"UHDR"]:
             # store
             self.images[self.id] = self.im
 
-        elif cid == "DHDR":
+        elif cid == b"DHDR":
             # paste
             cid, mode, bbox = self.action
             im0 = self.images[self.id]
@@ -427,7 +427,7 @@ class ArgImageFile(ImageFile.ImageFile):
 
         cid, offset, nbytes = self.arg.read()
 
-        if cid != "AHDR":
+        if cid != b"AHDR":
             raise SyntaxError("expected an AHDR chunk")
 
         s = self.arg.call(cid, offset, nbytes)
@@ -472,8 +472,7 @@ class ArgImageFile(ImageFile.ImageFile):
             except EOFError:
                 break
 
-            # FIXME: string exception
-            except "glurk": # AttributeError
+            except AttributeError:
                 if Image.DEBUG:
                     print(cid, nbytes, "(unknown)")
                 s = self.fp.read(nbytes)
