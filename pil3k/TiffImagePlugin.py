@@ -67,22 +67,22 @@ except AttributeError:
 # Read TIFF files
 
 def il16(c,o=0):
-    return ord(c[o]) + (ord(c[o+1])<<8)
+    return c[o] + (c[o+1]<<8)
 def il32(c,o=0):
-    return ord(c[o]) + (ord(c[o+1])<<8) + (ord(c[o+2])<<16) + (ord(c[o+3])<<24)
+    return c[o] + (c[o+1]<<8) + (c[o+2]<<16) + (c[o+3]<<24)
 def ol16(i):
-    return chr(i&255) + chr(i>>8&255)
+    return bytes((i&255, i>>8&255))
 def ol32(i):
-    return chr(i&255) + chr(i>>8&255) + chr(i>>16&255) + chr(i>>24&255)
+    return bytes((i&255, i>>8&255, i>>16&255, i>>24&255))
 
 def ib16(c,o=0):
-    return ord(c[o+1]) + (ord(c[o])<<8)
+    return c[o+1] + (c[o]<<8)
 def ib32(c,o=0):
-    return ord(c[o+3]) + (ord(c[o+2])<<8) + (ord(c[o+1])<<16) + (ord(c[o])<<24)
+    return c[o+3] + (c[o+2]<<8) + (c[o+1]<<16) + (c[o]<<24)
 def ob16(i):
-    return chr(i>>8&255) + chr(i&255)
+    return bytes((i>>8&255, i&255))
 def ob32(i):
-    return chr(i>>24&255) + chr(i>>16&255) + chr(i>>8&255) + chr(i&255)
+    return bytes((i>>24&255, i>>16&255, i>>8&255, i&255))
 
 # a few tag names, just to make the code below a bit more readable
 IMAGEWIDTH = 256
@@ -198,7 +198,8 @@ OPEN_INFO = {
 
 }
 
-PREFIXES = ["MM\000\052", "II\052\000", "II\xBC\000"]
+#PREFIXES = ["MM\000\052", "II\052\000", "II\xBC\000"]
+PREFIXES = [b"MM\x00\x2a", b"II\x2a\x00", b"II\xbc\x00"]
 
 def _accept(prefix):
     return prefix[:4] in PREFIXES
@@ -289,12 +290,12 @@ class ImageFileDirectory(object):
     def load_byte(self, data):
         l = []
         for i in range(len(data)):
-            l.append(ord(data[i]))
+            l.append(data[i])
         return tuple(l)
     load_dispatch[1] = (1, load_byte)
 
     def load_string(self, data):
-        if data[-1:] == '\0':
+        if data[-1:] == b'\x00':
             data = data[:-1]
         return data
     load_dispatch[2] = (1, load_string)
@@ -424,14 +425,15 @@ class ImageFileDirectory(object):
 
             if typ == 1:
                 # byte data
-                data = value = ''.join(map(chr, value))
+                data = value = b''.join(bytes, value))
             elif typ == 7:
                 # untyped data
-                data = value = ''.join(value)
-            elif type(value[0]) is type(""):
+                data = value = ''.join(value).encode('latin_1', errors='replace'))
+            elif type(value[0]) is str:
                 # string data
                 typ = 2
-                data = value = '\0'.join(value) + "\0"
+                data = value = '\x00'.join(value).encode(
+                        'latin_1', errors='replace')) + b'\x00'
             else:
                 # integer data
                 if tag == STRIPOFFSETS:
@@ -446,9 +448,9 @@ class ImageFileDirectory(object):
                         if v >= 65536:
                             typ = 4
                 if typ == 3:
-                    data = ''.join(map(o16, value))
+                    data = b''.join(map(o16, value))
                 else:
-                    data = ''.join(map(o32, value))
+                    data = b''.join(map(o32, value))
 
             if Image.DEBUG:
                 import TiffTags # from pil3k
@@ -467,7 +469,7 @@ class ImageFileDirectory(object):
             if len(data) == 4:
                 append((tag, typ, len(value), data, ""))
             elif len(data) < 4:
-                append((tag, typ, len(value), data + (4-len(data))*"\0", ""))
+                append((tag, typ, len(value), data + (4-len(data))*b"\x00", ""))
             else:
                 count = len(value)
                 if typ == 5:
@@ -491,13 +493,13 @@ class ImageFileDirectory(object):
             fp.write(o16(tag) + o16(typ) + o32(count) + value)
 
         # -- overwrite here for multi-page --
-        fp.write("\0\0\0\0") # end of directory
+        fp.write(b"\x00\x00\x00\x00") # end of directory
 
         # pass 3: write auxiliary data to file
         for tag, typ, count, value, data in directory:
             fp.write(data)
             if len(data) & 1:
-                fp.write("\0")
+                fp.write(b"\x00")
 
         return offset
 
@@ -707,7 +709,7 @@ class TiffImageFile(ImageFile.ImageFile):
         # fixup palette descriptor
 
         if self.mode == "P":
-            palette = map(lambda a: chr(a // 256), self.tag[COLORMAP])
+            palette = map(lambda a: bytes((a // 256,)), self.tag[COLORMAP])
             self.palette = ImagePalette.raw("RGB;L", ''.join(palette))
 #
 # --------------------------------------------------------------------
@@ -829,6 +831,7 @@ def _save(im, fp, filename):
 
     if im.mode == "P":
         lut = im.im.getpalette("RGB", "RGB;L")
+        # FIXME: is the ord necessary or permissible here?
         ifd[COLORMAP] = tuple(map(lambda v: ord(v) * 256, lut))
 
     # data orientation
