@@ -69,5 +69,6 @@ def grabclipboard():
         import io
         import BmpImagePlugin # from pil3k
 
-        return BmpImagePlugin.DibImageFile(io.BytesIO(data))
+        return BmpImagePlugin.DibImageFile(io.BytesIO(data.encode('latin_1',
+            errors='replace'))
     return data
