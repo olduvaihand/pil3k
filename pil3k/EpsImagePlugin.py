@@ -317,16 +317,14 @@ def _save(im, fp, filename, eps=1):
     if eps:
         #
         # write EPS header
-        fp.write("%!PS-Adobe-3.0 EPSF-3.0\n".encode('latin_1',
-            errors='replace'))
-        fp.write("%%Creator: PIL 0.1 EpsEncode\n".encode('latin_1',
-            errors='replace'))
+        fp.write(b"%!PS-Adobe-3.0 EPSF-3.0\n")
+        fp.write(b"%%Creator: PIL 0.1 EpsEncode\n")
         #fp.write("%%CreationDate: %s"...)
         fp.write("%%BoundingBox: 0 0 {0[0]} {0[1]}\n".format(im.size).encode(
             'latin_1', errors='replace'))
-        fp.write("%%Pages: 1\n".encode('latin_1', errors='replace'))
-        fp.write("%%EndComments\n".encode('latin_1', errors='replace'))
-        fp.write("%%Page: 1 1\n".encode('latin_1', errors='replace'))
+        fp.write(b"%%Pages: 1\n")
+        fp.write(b"%%EndComments\n")
+        fp.write(b"%%Page: 1 1\n")
         fp.write("%%ImageData: {0[0]} {0[1]}".format(im.size).encode('latin_1',
             errors='replace'))
         fp.write("{0[0]} {0[1]} 0 1 1 \"{0[2]}\"\n".format(operator).encode(
@@ -334,8 +332,8 @@ def _save(im, fp, filename, eps=1):
 
     #
     # image header
-    fp.write("gsave\n".encode('latin_1', errors='replace'))
-    fp.write("10 dict begin\n".encode('latin_1', errors='replace'))
+    fp.write(b"gsave\n")
+    fp.write(b"10 dict begin\n")
     fp.write("/buf {0} string def\n".format(im.size[0]*operator[1]).encode(
         'latin_1', errors='replace'))
     fp.write("{0[0]} {0[1]} scale\n".format(im.size).encode('latin_1',
@@ -344,14 +342,13 @@ def _save(im, fp, filename, eps=1):
         errors='replace')) # <= bits
     fp.write("[{0[0]} 0 0 -{0[1]} 0 {0[1]}]\n".format(im.size).encode(
         'latin_1', errors='replace'))
-    fp.write("{ currentfile buf readhexstring pop } bind\n").encode(
-            'latin_1', errors='replace'))
+    fp.write(b"{ currentfile buf readhexstring pop } bind\n")
     fp.write("{0[2]}\n".format(operator).encode('latin_1', errors='replace'))
 
     ImageFile._save(im, fp, [("eps", (0,0)+im.size, 0, None)])
 
-    fp.write("\n%%EndBinary\n".encode('latin_1', errors='replace')
-    fp.write("grestore end\n".encode('latin_1', errors='replace')
+    fp.write(b"\n%%EndBinary\n")
+    fp.write(b"grestore end\n")
     fp.flush()
 
 #
