@@ -368,7 +368,7 @@ class JpegImageFile(ImageFile.ImageFile):
         # Extract EXIF information.  This method is highly experimental,
         # and is likely to be replaced with something better in a future
         # version.
-        import StringIO
+        import io
         import TiffImagePlugin # from pil3k
 
         def fixup(value):
@@ -381,7 +381,7 @@ class JpegImageFile(ImageFile.ImageFile):
             data = self.info["exif"]
         except KeyError:
             return None
-        file = StringIO.StringIO(data[6:])
+        file = io.BytesIO(data[6:])
         head = file.read(8)
         exif = {}
         # process dictionary

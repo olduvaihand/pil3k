@@ -87,8 +87,8 @@ class PhotoImage(object):
                 image = Image.open(kw["file"])
                 del kw["file"]
             elif "data" in kw:
-                from StringIO import StringIO
-                image = Image.open(StringIO(kw["data"]))
+                from io import BytesIO
+                image = Image.open(BytesIO(kw["data"]))
                 del kw["data"]
 
         if hasattr(image, "mode") and hasattr(image, "size"):
@@ -219,8 +219,8 @@ class BitmapImage(object):
                 image = Image.open(kw["file"])
                 del kw["file"]
             elif "data" in kw:
-                from StringIO import StringIO
-                image = Image.open(StringIO(kw["data"]))
+                from io import BytesIO
+                image = Image.open(BytesIO(kw["data"]))
                 del kw["data"]
 
         self.__mode = image.mode
