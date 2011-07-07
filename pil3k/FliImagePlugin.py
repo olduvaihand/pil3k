@@ -24,10 +24,10 @@ import ImagePalette # from pil3k
 
 
 def i16(c):
-    return ord(c[0]) + (ord(c[1])<<8)
+    return c[0] + (c[1]<<8)
 
 def i32(c):
-    return ord(c[0]) + (ord(c[1])<<8) + (ord(c[2])<<16) + (ord(c[3])<<24)
+    return c[0] + (c[1]<<8) + (c[2]<<16) + (c[3]<<24)
 
 #
 # decoder
@@ -82,8 +82,8 @@ class FliImageFile(ImageFile.ImageFile):
             elif i16(s[4:6]) == 4:
                 self._palette(palette, 0)
 
-        palette = map(lambda r,g,b: chr(r)+chr(g)+chr(b), palette)
-        self.palette = ImagePalette.raw("RGB", "".join(palette))
+        palette = map(lambda r,g,b: bytes((r, g, b)), palette)
+        self.palette = ImagePalette.raw("RGB", bytes("", 'latin_1').join(palette))
 
         # set things up to decode first frame
         self.frame = -1
@@ -97,15 +97,15 @@ class FliImageFile(ImageFile.ImageFile):
         i = 0
         for e in range(i16(self.fp.read(2))):
             s = self.fp.read(2)
-            i = i + ord(s[0])
-            n = ord(s[1])
+            i = i + s[0]
+            n = s[1]
             if n == 0:
                 n = 256
             s = self.fp.read(n * 3)
             for n in range(0, len(s), 3):
-                r = ord(s[n]) << shift
-                g = ord(s[n+1]) << shift
-                b = ord(s[n+2]) << shift
+                r = s[n] << shift
+                g = s[n+1] << shift
+                b = s[n+2] << shift
                 palette[i] = (r, g, b)
                 i = i + 1
 
