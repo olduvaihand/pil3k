@@ -1990,11 +1990,13 @@ def open(fp, mode="r"):
         print('post preinit testing i={0}'.format(i))
         try:
             factory, accept = OPEN[i]
+            print(accept, accept(prefix))
             if not accept or accept(prefix):
                 fp.seek(0)
                 return factory(fp, filename)
         except (SyntaxError, IndexError, TypeError):
-            pass
+            #pass
+            raise
 
     if init():
         print('init was true')
