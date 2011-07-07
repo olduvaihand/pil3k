@@ -163,9 +163,10 @@ class PngInfo(object):
         if zip:
             import zlib
 
-            self.add(b"zTXt", key + "\0\0" + zlib.compress(value))
+            # FIXME: Find out what format these values need to be in
+            self.add(b"zTXt", key + "\x00\x00" + zlib.compress(value))
         else:
-            self.add(b"tEXt", key + "\0" + value)
+            self.add(b"tEXt", key + "\x00" + value)
 
 # --------------------------------------------------------------------
 # PNG image stream (IHDR/IEND)
@@ -285,7 +286,7 @@ class PngStream(ChunkStream):
             k, v = s.split(b"\x00", 1)
         except ValueError:
             k = s
-            v = "" # fallback for broken tEXt tags
+            v = b"" # fallback for broken tEXt tags
         if k:
             self.im_info[k] = self.im_text[k] = v
         return s
@@ -308,8 +309,6 @@ class PngStream(ChunkStream):
 # PNG reader
 
 def _accept(prefix):
-    if isinstance(prefix, str):
-        prefix = prefix.encode('latin_1', errors='replace')
     return prefix[:8] == _MAGIC
 
 ##
@@ -466,6 +465,7 @@ class _idat(object):
     def __init__(self, fp, chunk):
         self.fp = fp
         self.chunk = chunk
+
     def write(self, data):
         self.chunk(self.fp, b"IDAT", data)
 
