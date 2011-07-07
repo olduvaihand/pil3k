@@ -65,7 +65,8 @@ def Ghostscript(tile, size, fp):
         gs = os.popen(command, "w")
         # adjust for image origin
         if bbox[0] != 0 or bbox[1] != 0:
-            gs.write("{0} {1} translate\n".format(-bbox[0], -bbox[1]))
+            gs.write("{0} {1} translate\n".format(-bbox[0], -bbox[1]).encode(
+                'latin_1', errors='replace'))
         fp.seek(offset)
         while length > 0:
             s = fp.read(8192)
@@ -188,7 +189,7 @@ class EpsImageFile(ImageFile.ImageFile):
             if m:
                 k, v = m.group(1, 2)
                 self.info[k] = v
-                if k == "BoundingBox":
+                if k == b"BoundingBox":
                     try:
                         # Note: The DSC spec says that BoundingBox
                         # fields should be integers, but some drivers
@@ -273,10 +274,7 @@ class EpsImageFile(ImageFile.ImageFile):
                         break
                     if s[:len(id)] == id:
                         self.size = x, y
-                        self.tile2 = [(decoder,
-                                       (0, 0, x, y),
-                                       fp.tell(),
-                                       0)]
+                        self.tile2 = [(decoder, (0, 0, x, y), fp.tell(), 0)]
                         return
 
             s = fp.readline()
@@ -319,31 +317,41 @@ def _save(im, fp, filename, eps=1):
     if eps:
         #
         # write EPS header
-        fp.write("%!PS-Adobe-3.0 EPSF-3.0\n")
-        fp.write("%%Creator: PIL 0.1 EpsEncode\n")
+        fp.write("%!PS-Adobe-3.0 EPSF-3.0\n".encode('latin_1',
+            errors='replace'))
+        fp.write("%%Creator: PIL 0.1 EpsEncode\n".encode('latin_1',
+            errors='replace'))
         #fp.write("%%CreationDate: %s"...)
-        fp.write("%%BoundingBox: 0 0 {0[0]} {0[1]}\n".format(im.size))
-        fp.write("%%Pages: 1\n")
-        fp.write("%%EndComments\n")
-        fp.write("%%Page: 1 1\n")
-        fp.write("%%ImageData: {0[0]} {0[1]}".format(im.size))
-        fp.write("{0[0]} {0[1]} 0 1 1 \"{0[2]}\"\n".format(operator))
+        fp.write("%%BoundingBox: 0 0 {0[0]} {0[1]}\n".format(im.size).encode(
+            'latin_1', errors='replace'))
+        fp.write("%%Pages: 1\n".encode('latin_1', errors='replace'))
+        fp.write("%%EndComments\n".encode('latin_1', errors='replace'))
+        fp.write("%%Page: 1 1\n".encode('latin_1', errors='replace'))
+        fp.write("%%ImageData: {0[0]} {0[1]}".format(im.size).encode('latin_1',
+            errors='replace'))
+        fp.write("{0[0]} {0[1]} 0 1 1 \"{0[2]}\"\n".format(operator).encode(
+            'latin_1', errors='replace'))
 
     #
     # image header
-    fp.write("gsave\n")
-    fp.write("10 dict begin\n")
-    fp.write("/buf {0} string def\n".format(im.size[0] * operator[1]))
-    fp.write("{0[0]} {0[1]} scale\n".format(im.size))
-    fp.write("{0[0]} {0[1]} 8\n".format(im.size)) # <= bits
-    fp.write("[{0[0]} 0 0 -{0[1]} 0 {0[1]}]\n".format(im.size))
-    fp.write("{ currentfile buf readhexstring pop } bind\n")
-    fp.write("{0[2]}\n".format(operator))
+    fp.write("gsave\n".encode('latin_1', errors='replace'))
+    fp.write("10 dict begin\n".encode('latin_1', errors='replace'))
+    fp.write("/buf {0} string def\n".format(im.size[0]*operator[1]).encode(
+        'latin_1', errors='replace'))
+    fp.write("{0[0]} {0[1]} scale\n".format(im.size).encode('latin_1',
+        errors='replace'))
+    fp.write("{0[0]} {0[1]} 8\n".format(im.size).encode('latin_1',
+        errors='replace')) # <= bits
+    fp.write("[{0[0]} 0 0 -{0[1]} 0 {0[1]}]\n".format(im.size).encode(
+        'latin_1', errors='replace'))
+    fp.write("{ currentfile buf readhexstring pop } bind\n").encode(
+            'latin_1', errors='replace'))
+    fp.write("{0[2]}\n".format(operator).encode('latin_1', errors='replace'))
 
     ImageFile._save(im, fp, [("eps", (0,0)+im.size, 0, None)])
 
-    fp.write("\n%%EndBinary\n")
-    fp.write("grestore end\n")
+    fp.write("\n%%EndBinary\n".encode('latin_1', errors='replace')
+    fp.write("grestore end\n".encode('latin_1', errors='replace')
     fp.flush()
 
 #
