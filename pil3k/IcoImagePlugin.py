@@ -27,14 +27,14 @@ import BmpImagePlugin # from pil3k
 # --------------------------------------------------------------------
 
 def i16(c):
-    return ord(c[0]) + (ord(c[1])<<8)
+    return c[0]) + (c[1]<<8)
 
 def i32(c):
-    return ord(c[0]) + (ord(c[1])<<8) + (ord(c[2])<<16) + (ord(c[3])<<24)
+    return c[0] + (c[1]<<8) + (c[2]<<16) + (c[3]<<24)
 
 
 def _accept(prefix):
-    return prefix[:4] == "\0\0\1\0"
+    return prefix[:4] == b'\x00\x00\x01\x00'
 
 ##
 # Image plugin for Windows Icon files.
@@ -52,12 +52,12 @@ class IcoImageFile(BmpImagePlugin.BmpImageFile):
             raise SyntaxError("not an ICO file")
 
         # pick the largest icon in the file
-        m = ""
+        m = b""
         for i in range(i16(s[4:])):
             s = self.fp.read(16)
             if not m:
                 m = s
-            elif ord(s[0]) > ord(m[0]) and ord(s[1]) > ord(m[1]):
+            elif s[0] > m[0] and s[1] > m[1]:
                 m = s
             #print("width", ord(s[0]))
             #print("height", ord(s[1]))
@@ -72,7 +72,7 @@ class IcoImageFile(BmpImagePlugin.BmpImageFile):
         self._bitmap(i32(m[12:]))
 
         # patch up the bitmap height
-        self.size = self.size[0], self.size[1]/2
+        self.size = self.size[0], self.size[1]//2
         d, e, o, a = self.tile[0]
         self.tile[0] = d, (0,0)+self.size, o, a
 
