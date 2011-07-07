@@ -24,7 +24,7 @@
 import Image # from pil3k
 
 def i32(c, o=0):
-    return ord(c[o])+(ord(c[o+1])<<8)+(ord(c[o+2])<<16)+(ord(c[o+3])<<24)
+    return c[o]+(c[o+1]<<8)+(c[o+2]<<16)+(c[o+3]<<24)
 
 ##
 # Load texture from a Quake2 WAL texture file.
@@ -61,8 +61,8 @@ def open(filename):
     im.format_description = "Quake2 Texture"
 
     # strings are null-terminated
-    im.info["name"] = header[:32].split("\0", 1)[0]
-    next_name = header[56:56+32].split("\0", 1)[0]
+    im.info["name"] = header[:32].split(b"\x00", 1)[0]
+    next_name = header[56:56+32].split(b"\x00", 1)[0]
     if next_name:
         im.info["next_name"] = next_name
 
@@ -119,7 +119,7 @@ quake2palette = (
     "\x3d\x01\x01\x19\x19\x3f\x3f\x01\x01\x01\x01\x3f\x16\x16\x13\x10"
     "\x10\x0f\x0d\x0d\x0b\x3c\x2e\x2a\x36\x27\x20\x30\x21\x18\x29\x1b"
     "\x10\x3c\x39\x37\x37\x32\x2f\x31\x2c\x28\x2b\x26\x21\x30\x22\x20"
-)
+).encode('latin_1')
 
 if __name__ == "__main__":
     im = open("../hacks/sample.wal")
