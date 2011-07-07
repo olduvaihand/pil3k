@@ -31,23 +31,23 @@ COMPRESSION = {
     5: "jpeg"
 }
 
-PAD = chr(0) * 4
+PAD = b'x00' * 4
 
 #
 # Helpers
 
 def i16(c):
-    return ord(c[1]) + (ord(c[0])<<8)
+    return c[1] + (c[0]<<8)
 
 def i32(c):
-    return ord(c[3]) + (ord(c[2])<<8) + (ord(c[1])<<16) + (ord(c[0])<<24)
+    return c[3] + (c[2]<<8) + (c[1]<<16) + (c[0]<<24)
 
 def i(c):
-    return i32((PAD + c)[-4:])
+    return i32((PAD + bytes((c,))[-4:])
 
 def dump(c):
     for i in c:
-        print("{0:02x}".format(ord(i),), end=" ")
+        print("{0:02x}".format(i,), end=" ")
     print("\n")
 
 ##
@@ -69,14 +69,14 @@ class IptcImageFile(ImageFile.ImageFile):
         if not len(s):
             return None, 0
 
-        tag = ord(s[1]), ord(s[2])
+        tag = s[1], s[2]
 
         # syntax
-        if ord(s[0]) != 0x1C or tag[0] < 1 or tag[0] > 9:
+        if s[0] != 0x1C or tag[0] < 1 or tag[0] > 9:
             raise SyntaxError("invalid IPTC/NAA file")
 
         # field size
-        size = ord(s[3])
+        size = s[3]
         if size > 132:
             raise IOError("illegal field length in IPTC/NAA file")
         elif size == 128:
@@ -133,10 +133,10 @@ class IptcImageFile(ImageFile.ImageFile):
             # print(tag, self.info[tag])
 
         # mode
-        layers = ord(self.info[(3,60)][0])
-        component = ord(self.info[(3,60)][1])
+        layers = self.info[(3,60)][0]
+        component = self.info[(3,60)][1]
         if (3,65) in self.info:
-            id = ord(self.info[(3,65)][0])-1
+            id = self.info[(3,65)][0]-1
         else:
             id = 0
         if layers == 1 and not component:
@@ -166,7 +166,7 @@ class IptcImageFile(ImageFile.ImageFile):
 
     def load(self):
 
-        if len(self.tile) != 1 or self.tile[0][0] != "iptc":
+        if len(self.tile) != 1 or self.tile[0][0] != b"iptc":
             return ImageFile.ImageFile.load(self)
 
         type, tile, box = self.tile[0]
@@ -181,7 +181,8 @@ class IptcImageFile(ImageFile.ImageFile):
         if encoding == "raw":
             # To simplify access to the extracted file,
             # prepend a PPM header
-            o.write("P5\n{0} {1}\n255\n".format(*self.size))
+            o.write("P5\n{0} {1}\n255\n".format(*self.size).encode('latin_1',
+                errors='replace'))
         while True:
             type, size = self.field()
             if type != (8, 10):
@@ -237,17 +238,17 @@ def getiptcinfo(im):
         # extract the IPTC/NAA resource
         try:
             app = im.app["APP13"]
-            if app[:14] == "Photoshop 3.0\x00":
+            if app[:14] == b"Photoshop 3.0\x00":
                 app = app[14:]
                 # parse the image resource block
                 offset = 0
-                while app[offset:offset+4] == "8BIM":
+                while app[offset:offset+4] == b"8BIM":
                     offset = offset + 4
                     # resource code
                     code = JpegImagePlugin.i16(app, offset)
                     offset = offset + 2
                     # resource name (usually empty)
-                    name_len = ord(app[offset])
+                    name_len = app[offset]
                     name = app[offset+1:offset+1+name_len]
                     offset = 1 + offset + name_len
                     if offset & 1:
