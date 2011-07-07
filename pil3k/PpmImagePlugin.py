@@ -39,7 +39,7 @@ MODES = {
 }
 
 def _accept(prefix):
-    return prefix[0] == "P" and prefix[1] in "0456y"
+    return prefix[0:1] == b"P" and prefix[1:2] in b"0456y"
 
 ##
 # Image plugin for PBM, PGM, and PPM images.
@@ -49,7 +49,7 @@ class PpmImageFile(ImageFile.ImageFile):
     format = "PPM"
     format_description = "Pbmplus image"
 
-    def _token(self, s = ""):
+    def _token(self, s=b""):
         while True: # read until next whitespace
             c = self.fp.read(1)
             if not c or c in string.whitespace:
@@ -61,7 +61,7 @@ class PpmImageFile(ImageFile.ImageFile):
 
         # check magic
         s = self.fp.read(1)
-        if s != "P":
+        if s != b"P":
             raise SyntaxError("not a PPM file")
         mode = MODES[self._token(s)]
 
@@ -75,9 +75,10 @@ class PpmImageFile(ImageFile.ImageFile):
             while True:
                 while True:
                     s = self.fp.read(1)
-                    if s not in string.whitespace:
+                    if s not in string.whitespace.encode('latin_1',
+                            errors='replace'):
                         break
-                if s != "#":
+                if s != b"#":
                     break
                 s = self.fp.readline()
             s = int(self._token(s))
@@ -89,10 +90,8 @@ class PpmImageFile(ImageFile.ImageFile):
                     break
 
         self.size = xsize, ysize
-        self.tile = [("raw",
-                     (0, 0, xsize, ysize),
-                     self.fp.tell(),
-                     (rawmode, 0, 1))]
+        self.tile = [("raw", (0, 0, xsize, ysize), self.fp.tell(),
+            (rawmode, 0, 1))]
 
         # ALTERNATIVE: load via builtin debug function
         # self.im = Image.core.open_ppm(self.filename)
@@ -113,9 +112,10 @@ def _save(im, fp, filename):
         rawmode, head = "RGB", "P6"
     else:
         raise IOError("cannot write mode {0} as PPM".format(im.mode))
-    fp.write(head + "\n{0} {1}\n".format(*im.size))
+    fp.write(head + "\n{0} {1}\n".format(*im.size).encode('latin_1',
+        errors='replace'))
     if head != "P4":
-        fp.write("255\n")
+        fp.write(b"255\n")
     ImageFile._save(im, fp, [("raw", (0,0)+im.size, 0, (rawmode, 0, 1))])
 
     # ALTERNATIVE: save via builtin debug function
