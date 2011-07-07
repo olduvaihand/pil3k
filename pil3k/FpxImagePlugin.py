@@ -22,7 +22,7 @@ __version__ = "0.1"
 import Image # from pil3k
 import ImageFile # from pil3k
 
-from pil3kOleFileIO import MAGIC, OleFileIO, 
+from pil3k.OleFileIO import MAGIC, OleFileIO, 
 
 
 # we map from colour field tuples to (mode, rawmode) descriptors

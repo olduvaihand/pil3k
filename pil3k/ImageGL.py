@@ -25,4 +25,4 @@ import _imaginggl # from pil3k
 class TextureFactory(object):
     pass # overwritten by the _imaginggl module
 
-from pil3k_imaginggl import *
+from pil3k._imaginggl import *

@@ -24,7 +24,7 @@ import Image # from pil3k
 import ImageFile # from pil3k
 import ImagePalette # from pil3k
 
-from pil3kPngImagePlugin import i16, i32, ChunkStream, _MODES
+from pil3k.PngImagePlugin import i16, i32, ChunkStream, _MODES
 
 MAGIC = b"\x8aARG\r\n\x1a\n"
 
