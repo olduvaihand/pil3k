@@ -61,10 +61,10 @@ class CurImageFile(BmpImagePlugin.BmpImageFile):
                 m = s
             elif s[0] > m[0] and s[1] > m[1]:
                 m = s
-            #print("width", ord(s[0]))
-            #print("height", ord(s[1]))
-            #print("colors", ord(s[2]))
-            #print("reserved", ord(s[3]))
+            #print("width", s[0])
+            #print("height", s[1])
+            #print("colors", s[2])
+            #print("reserved", s[3])
             #print("hotspot x", i16(s[4:]))
             #print("hotspot y", i16(s[6:]))
             #print("bytes", i32(s[8:]))
