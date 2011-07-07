@@ -44,8 +44,10 @@ import sys
 def isInt(f):
     try:
         i = int(f)
-        if f-i == 0: return 1
-        else:        return 0
+        if f-i == 0:
+            return 1
+        else:
+            return 0
     except:
         return 0
 
@@ -60,16 +62,19 @@ def isSpiderHeader(t):
     h = (99,) + t   # add 1 value so can use spider header index start=1
     # header values 1,2,5,12,13,22,23 should be integers
     for i in [1,2,5,12,13,22,23]:
-        if not isInt(h[i]): return 0
+        if not isInt(h[i]):
+            return 0
     # check iform
     iform = int(h[5])
-    if not iform in iforms: return 0
+    if not iform in iforms:
+        return 0
     # check other header values
     labrec = int(h[13])   # no. records in file header
     labbyt = int(h[22])   # total no. of bytes in header
     lenbyt = int(h[23])   # record length in bytes
     #print("labrec = {0}, labbyt = {1}, lenbyt = {2}".format(labrec,labbyt,lenbyt))
-    if labbyt != (labrec * lenbyt): return 0
+    if labbyt != (labrec * lenbyt):
+        return 0
     # looks like a valid header
     return labbyt
 
@@ -210,7 +215,8 @@ def makeSpiderHeader(im):
     nsam,nrow = im.size
     lenbyt = nsam * 4  # There are labrec records in the header
     labrec = 1024 // lenbyt
-    if 1024%lenbyt != 0: labrec += 1
+    if 1024%lenbyt != 0:
+        labrec += 1
     labbyt = labrec * lenbyt
     hdr = []
     nvalues = labbyt // 4
