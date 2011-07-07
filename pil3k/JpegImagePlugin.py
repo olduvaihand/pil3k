@@ -41,10 +41,10 @@ import Image # from pil3k
 import ImageFile # from pil3k
 
 def i16(c,o=0):
-    return ord(c[o+1]) + (ord(c[o])<<8)
+    return c[o+1] + (c[o]<<8)
 
 def i32(c,o=0):
-    return ord(c[o+3]) + (ord(c[o+2])<<8) + (ord(c[o+1])<<16) + (ord(c[o])<<24)
+    return c[o+3] + (c[o+2]<<8) + (c[o+1]<<16) + (c[o]<<24)
 
 #
 # Parser
@@ -66,13 +66,13 @@ def APP(self, marker):
     self.app[app] = s # compatibility
     self.applist.append((app, s))
 
-    if marker == 0xFFE0 and s[:4] == "JFIF":
+    if marker == 0xFFE0 and s[:4] == b"JFIF":
         # extract JFIF information
         self.info["jfif"] = version = i16(s, 5) # version
         self.info["jfif_version"] = divmod(version, 256)
         # extract JFIF properties
         try:
-            jfif_unit = ord(s[7])
+            jfif_unit = s[7]
             jfif_density = i16(s, 8), i16(s, 10)
         except:
             pass
@@ -81,13 +81,13 @@ def APP(self, marker):
                 self.info["dpi"] = jfif_density
             self.info["jfif_unit"] = jfif_unit
             self.info["jfif_density"] = jfif_density
-    elif marker == 0xFFE1 and s[:5] == "Exif\0":
+    elif marker == 0xFFE1 and s[:5] == b"Exif\x00":
         # extract Exif information (incomplete)
         self.info["exif"] = s # FIXME: value will change
-    elif marker == 0xFFE2 and s[:5] == "FPXR\0":
+    elif marker == 0xFFE2 and s[:5] == b"FPXR\x00":
         # extract FlashPix information (incomplete)
         self.info["flashpix"] = s # FIXME: value will change
-    elif marker == 0xFFE2 and s[:12] == "ICC_PROFILE\0":
+    elif marker == 0xFFE2 and s[:12] == b"ICC_PROFILE\x00":
         # Since an ICC profile can be larger than the maximum size of
         # a JPEG marker (64K), we need provisions to split it into
         # multiple markers. The format defined by the ICC specifies
@@ -100,11 +100,11 @@ def APP(self, marker):
         # reassemble the profile, rather than assuming that the APP2
         # markers appear in the correct sequence.
         self.icclist.append(s)
-    elif marker == 0xFFEE and s[:5] == "Adobe":
+    elif marker == 0xFFEE and s[:5] == b"Adobe":
         self.info["adobe"] = i16(s, 5)
         # extract Adobe custom properties
         try:
-            adobe_transform = ord(s[1])
+            adobe_transform = s[1]
         except:
             pass
         else:
@@ -132,11 +132,11 @@ def SOF(self, marker):
     s = ImageFile._safe_read(self.fp, n)
     self.size = i16(s[3:]), i16(s[1:])
 
-    self.bits = ord(s[0])
+    self.bits = s[0]
     if self.bits != 8:
         raise SyntaxError("cannot handle {0}-bit layers".format(self.bits))
 
-    self.layers = ord(s[5])
+    self.layers = s[5]
     if self.layers == 1:
         self.mode = "L"
     elif self.layers == 3:
@@ -152,11 +152,12 @@ def SOF(self, marker):
     if self.icclist:
         # fixup icc profile
         self.icclist.sort() # sort by sequence number
-        if ord(self.icclist[0][13]) == len(self.icclist):
+        #if ord(self.icclist[0][13]) == len(self.icclist):
+        if self.icclist[0][13] == len(self.icclist):
             profile = []
             for p in self.icclist:
                 profile.append(p[14:])
-            icc_profile = ''.join(profile)
+            icc_profile = b''.join(profile)
         else:
             icc_profile = None # wrong number of fragments
         self.info["icc_profile"] = icc_profile
@@ -165,7 +166,8 @@ def SOF(self, marker):
     for i in range(6, len(s), 3):
         t = s[i:i+3]
         # 4-tuples: id, vsamp, hsamp, qtable
-        self.layer.append((t[0], ord(t[1])//16, ord(t[1])&15, ord(t[2])))
+        #self.layer.append((t[0], ord(t[1])//16, ord(t[1])&15, ord(t[2])))
+        self.layer.append((bytes((t[0],)), t[1]//16, t[1]&15, t[2]))
 
 def DQT(self, marker):
     #
@@ -181,7 +183,7 @@ def DQT(self, marker):
     while len(s):
         if len(s) < 65:
             raise SyntaxError("bad quantization table marker")
-        v = ord(s[0])
+        v = s[0]
         if v//16 == 0:
             self.quantization[v&15] = array.array("b", s[1:65])
             s = s[65:]
@@ -261,7 +263,7 @@ MARKER = {
 
 
 def _accept(prefix):
-    return prefix[0] == "\377"
+    return prefix[0] == b"\xff"
 
 ##
 # Image plugin for JPEG and JFIF images.
@@ -275,7 +277,7 @@ class JpegImageFile(ImageFile.ImageFile):
 
         s = self.fp.read(1)
 
-        if ord(s[0]) != 255:
+        if s[0] != 255:
             raise SyntaxError("not a JPEG file")
 
         # Create attributes
@@ -311,7 +313,7 @@ class JpegImageFile(ImageFile.ImageFile):
                 s = self.fp.read(1)
             elif i == 0 or i == 65535:
                 # padded marker or junk; move on
-                s = "\xff"
+                s = b"\xff"
             else:
                 raise SyntaxError("no marker found")
 
@@ -444,7 +446,7 @@ def _save(im, fp, filename):
     elif subsampling == "4:1:1":
         subsampling = 2
 
-    extra = ""
+    extra = b""
 
     icc_profile = info.get("icc_profile")
     if icc_profile:
@@ -458,7 +460,9 @@ def _save(im, fp, filename):
         i = 1
         for marker in markers:
             size = struct.pack(">H", 2 + ICC_OVERHEAD_LEN + len(marker))
-            extra = extra + ("\xFF\xE2" + size + "ICC_PROFILE\0" + chr(i) + chr(len(markers)) + marker)
+            # FIXME: figure out what type marker is
+            extra = extra + (b"\xff\xe2" + size + b"ICC_PROFILE\0" +
+                    bytes((i, len(markers))) + marker)
             i = i + 1
 
     # get keyword arguments
