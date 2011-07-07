@@ -48,7 +48,7 @@ class ContainerIO(object):
     #    for current offset, and 2 for end of region.  You cannot move
     #    the pointer outside the defined region.
 
-    def seek(self, offset, mode = 0):
+    def seek(self, offset, mode=0):
         if mode == 1:
             self.pos = self.pos + offset
         elif mode == 2:
@@ -75,13 +75,13 @@ class ContainerIO(object):
     #     read until end of region.
     # @return An 8-bit string.
 
-    def read(self, n = 0):
+    def read(self, n=0):
         if n:
             n = min(n, self.length - self.pos)
         else:
             n = self.length - self.pos
         if not n: # EOF
-            return ""
+            return b""
         self.pos = self.pos + n
         return self.fh.read(n)
 
@@ -91,13 +91,13 @@ class ContainerIO(object):
     # @return An 8-bit string.
 
     def readline(self):
-        s = ""
+        s = b""
         while True:
             c = self.read(1)
             if not c:
                 break
             s = s + c
-            if c == "\n":
+            if c == b"\n":
                 break
         return s
 
