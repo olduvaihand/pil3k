@@ -37,19 +37,16 @@ import ImagePalette # from pil3k
 # Helpers
 
 def i16(c):
-    #return ord(c[0]) + (ord(c[1])<<8)
     return c[0] + (c[1]<<8)
 
 def o16(i):
-    return chr(i&255) + chr(i>>8&255)
+    return bytes((i&255, i>>8&255))
 
 
 # --------------------------------------------------------------------
 # Identify/read GIF files
 
 def _accept(prefix):
-    print(prefix[:6])
-    print(prefix[:6]==b'GIF89a')
     return prefix[:6] in [b"GIF87a", b"GIF89a"]
 
 ##
@@ -82,15 +79,13 @@ class GifImageFile(ImageFile.ImageFile):
 
         self.tile = []
 
-        print(s, type(s), s[10], type(s[10]))
-        #flags = ord(s[10])
         flags = s[10]
 
         bits = (flags & 7) + 1
 
         if flags & 128:
             # get global palette
-            self.info["background"] = s[11] #ord(s[11])
+            self.info["background"] = s[11]
             # check if palette contains colour indices
             p = self.fp.read(3<<bits)
             for i in range(0, len(p), 3):
@@ -144,15 +139,13 @@ class GifImageFile(ImageFile.ImageFile):
                 #
                 s = self.fp.read(1)
                 block = self.data()
-                #if ord(s) == 249:
                 if s == b'\xf9':
                     #
                     # graphic control extension
                     #
-                    #flags = ord(block[0])
                     flags = block[0]
                     if flags & 1:
-                        self.info["transparency"] = block[3] #ord(block[3])
+                        self.info["transparency"] = block[3]
                     self.info["duration"] = i16(block[1:3]) * 10
                     try:
                         # disposal methods
@@ -165,7 +158,6 @@ class GifImageFile(ImageFile.ImageFile):
                             self.dispose = self.im.copy()
                     except (AttributeError, KeyError):
                         pass
-                #elif ord(s) == 255:
                 elif s == b'\xff':
                     #
                     # application extension
@@ -173,7 +165,6 @@ class GifImageFile(ImageFile.ImageFile):
                     self.info["extension"] = block, self.fp.tell()
                     if block[:11] == b"NETSCAPE2.0":
                         block = self.data()
-                        #if len(block) >= 3 and ord(block[0]) == 1:
                         if len(block) >= 3 and block[0] == b'\x01':
                             self.info["loop"] = i16(block[1:3])
                 while self.data():
@@ -188,7 +179,6 @@ class GifImageFile(ImageFile.ImageFile):
                 # extent
                 x0, y0 = i16(s[0:]), i16(s[2:])
                 x1, y1 = x0 + i16(s[4:]), y0 + i16(s[6:])
-                #flags = ord(s[8])
                 flags = s[8]
 
                 interlace = (flags & 64) != 0
@@ -199,7 +189,7 @@ class GifImageFile(ImageFile.ImageFile):
                         ImagePalette.raw("RGB", self.fp.read(3<<bits))
 
                 # image data
-                bits = self.fp.read(1) # ord(self.fp.read(1))
+                bits = ord(self.fp.read(1))
                 self.__offset = self.fp.tell()
                 self.tile = [("gif",
                              (x0, y0, x1, y1),
@@ -284,29 +274,29 @@ def _save(im, fp, filename):
         pass
     else:
         # transparency extension block
-        fp.write("!" +
-                 chr(249) +             # extension intro
-                 chr(4) +               # length
-                 chr(1) +               # transparency info present
-                 o16(0) +               # duration
-                 chr(int(transparency)) # transparency index
-                 + chr(0))
+        fp.write(b"!" +
+                 b'\xf9' +                      # extension intro
+                 b'\x04' +                      # length
+                 b'\x01' +                      # transparency info present
+                 o16(0) +                       # duration
+                 bytes((int(transparency),)) +  # transparency index
+                 b'\x00')
 
     # local image header
-    fp.write("," +
+    fp.write(b"," +
              o16(0) + o16(0) +          # bounding box
              o16(im.size[0]) +          # size
              o16(im.size[1]) +
-             chr(flags) +               # flags
-             chr(8))                    # bits
+             bytes((flags,)) +          # flags
+             b'\x08')                   # bits
 
     imOut.encoderconfig = (8, interlace)
 
     ImageFile._save(imOut, fp, [("gif", (0,0)+im.size, 0, rawmode)])
 
-    fp.write("\0") # end of image data
+    fp.write(b"\x00") # end of image data
 
-    fp.write(";") # end of file
+    fp.write(b";") # end of file
 
     try:
         fp.flush()
@@ -341,12 +331,12 @@ def getheader(im, info=None):
     optimize = info and info.get("optimize", 0)
 
     s = [
-        "GIF87a" +              # magic
+        b"GIF87a" +             # magic
         o16(im.size[0]) +       # size
         o16(im.size[1]) +
-        chr(7 + 128) +          # flags: bits + palette
-        chr(0) +                # background
-        chr(0)                  # reserved/aspect
+        b'\x87' +               # flags: bits + palette
+        b'\x00' +               # background
+        b'\x00'                 # reserved/aspect
     ]
 
     if optimize:
@@ -367,7 +357,7 @@ def getheader(im, info=None):
     else:
         # greyscale
         for i in range(maxcolor):
-            s.append(chr(i) * 3)
+            s.append(bytes((i,)*3))
 
     return s
 
@@ -389,17 +379,17 @@ def getdata(im, offset = (0, 0), **params):
         im.encoderinfo = params
 
         # local image header
-        fp.write("," +
+        fp.write(b"," +
                  o16(offset[0]) +       # offset
                  o16(offset[1]) +
                  o16(im.size[0]) +      # size
                  o16(im.size[1]) +
-                 chr(0) +               # flags
-                 chr(8))                # bits
+                 b'\x00' +              # flags
+                 b'\x08')               # bits
 
         ImageFile._save(im, fp, [("gif", (0,0)+im.size, 0, RAWMODE[im.mode])])
 
-        fp.write("\0") # end of image data
+        fp.write(b"\x00") # end of image data
 
     finally:
         del im.encoderinfo
