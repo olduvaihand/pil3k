@@ -94,7 +94,7 @@ for i in range(2, 33):
 # --------------------------------------------------------------------
 # Read IM directory
 
-split = re.compile(r"^([A-Za-z][^:]*):[ \t]*(.*)[ \t]*$")
+split = re.compile(br"^([A-Za-z][^:]*):[ \t]*(.*)[ \t]*$")
 
 def number(s):
     try:
@@ -115,7 +115,7 @@ class ImImageFile(ImageFile.ImageFile):
         # Quick rejection: if there's not an LF among the first
         # 100 bytes, this is (probably) not a text header.
 
-        if not "\n" in self.fp.read(100):
+        if not b"\n" in self.fp.read(100):
             raise SyntaxError("not an IM file")
         self.fp.seek(0)
 
@@ -133,10 +133,10 @@ class ImImageFile(ImageFile.ImageFile):
             s = self.fp.read(1)
 
             # Some versions of IFUNC uses \n\r instead of \r\n...
-            if s == "\r":
+            if s == b"\r":
                 continue
 
-            if not s or s[0] == chr(0) or s[0] == chr(26):
+            if not s or s[0] == b'\x00' or s[0] == b'\x1a':
                 break
 
             # FIXME: this may read whole file if not a text file
@@ -145,9 +145,9 @@ class ImImageFile(ImageFile.ImageFile):
             if len(s) > 100:
                 raise SyntaxError("not an IM file")
 
-            if s[-2:] == '\r\n':
+            if s[-2:] == b'\r\n':
                 s = s[:-2]
-            elif s[-1:] == '\n':
+            elif s[-1:] == b'\n':
                 s = s[:-1]
 
             try:
@@ -161,8 +161,8 @@ class ImImageFile(ImageFile.ImageFile):
 
                 # Convert value as appropriate
                 if k in [FRAMES, SCALE, SIZE]:
-                    v = v.replace("*", ",")
-                    v = tuple(map(number, v.split(",")))
+                    v = v.replace(b"*", b",")
+                    v = tuple(map(number, v.split(b",")))
                     if len(v) == 1:
                         v = v[0]
                 elif k == MODE and v in OPEN:
@@ -193,7 +193,7 @@ class ImImageFile(ImageFile.ImageFile):
         self.mode = self.info[MODE]
 
         # Skip forward to start of image data
-        while s and s[0] != chr(26):
+        while s and s[0] != b'\x1a':
             s = self.fp.read(1)
         if not s:
             raise SyntaxError("File truncated")
@@ -205,14 +205,14 @@ class ImImageFile(ImageFile.ImageFile):
             linear = 1 # linear greyscale palette
             for i in range(256):
                 if palette[i] == palette[i+256] == palette[i+512]:
-                    if palette[i] != chr(i):
+                    if palette[i] != bytes((i,)):
                         linear = 0
                 else:
                     greyscale = 0
             if self.mode == "L" or self.mode == "LA":
                 if greyscale:
                     if not linear:
-                        self.lut = map(ord, palette[:256])
+                        self.lut = map(int, palette[:256])
                 else:
                     if self.mode == "L":
                         self.mode = self.rawmode = "P"
@@ -221,7 +221,7 @@ class ImImageFile(ImageFile.ImageFile):
                     self.palette = ImagePalette.raw("RGB;L", palette)
             elif self.mode == "RGB":
                 if not greyscale or not linear:
-                    self.lut = map(ord, palette)
+                    self.lut = map(int, palette)
 
         self.frame = 0
 
@@ -317,14 +317,17 @@ def _save(im, fp, filename, check=0):
     if check:
         return check
 
-    fp.write("Image type: {0} image\r\n".format(type))
+    data = []
+
+    data.append("Image type: {0} image\r\n".format(type))
     if filename:
-        fp.write("Name: {0}\r\n".format(filename))
-    fp.write("Image size (x*y): {size[0]}*{size[1]}\r\n".format(size=im.size))
-    fp.write("File size (no of images): {0}\r\n".format(frames))
+        data.append("Name: {0}\r\n".format(filename))
+    data.append("Image size (x*y): {size[0]}*{size[1]}\r\n".format(size=im.size))
+    data.append("File size (no of images): {0}\r\n".format(frames))
     if im.mode == "P":
-        fp.write("Lut: 1\r\n")
-    fp.write("\000" * (511-fp.tell()) + "\032")
+        data.append("Lut: 1\r\n")
+    fp.write(''.join(data).encode('latin_1', errors='replace'))
+    fp.write(b"\x00" * (511-fp.tell()) + b"\x1a")
     if im.mode == "P":
         fp.write(im.im.getpalette("RGB", "RGB;L")) # 768 bytes
     ImageFile._save(im, fp, [("raw", (0,0)+im.size, 0, (rawmode, 0, -1))])
