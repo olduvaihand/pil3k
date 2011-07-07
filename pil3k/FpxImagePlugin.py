@@ -75,7 +75,7 @@ class FpxImageFile(ImageFile.ImageFile):
 
         prop = self.ole.getproperties([
             "Data Object Store {0:06d}".format(index),
-            "\005Image Contents"
+            "\x05Image Contents"
         ])
 
         # size (highest resolution)
@@ -85,7 +85,7 @@ class FpxImageFile(ImageFile.ImageFile):
         size = max(self.size)
         i = 1
         while size > 64:
-            size = size / 2
+            size = size // 2
             i = i + 1
         self.maxid = i - 1
 
@@ -172,8 +172,8 @@ class FpxImageFile(ImageFile.ImageFile):
 
             elif compression == 2:
 
-                internal_color_conversion = ord(s[14])
-                jpeg_tables = ord(s[15])
+                internal_color_conversion = s[14]
+                jpeg_tables = s[15]
                 rawmode = self.rawmode
 
                 if internal_color_conversion:
