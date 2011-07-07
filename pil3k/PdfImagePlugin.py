@@ -25,7 +25,7 @@ __version__ = "0.4"
 import Image # from pil3k
 import ImageFile # from pil3k
 
-import StringIO
+import io # StringIO
 
 
 #
@@ -39,16 +39,17 @@ import StringIO
 #  5. page contents
 
 def _obj(fp, obj, **dict):
-    fp.write("{0} 0 obj\n".format(obj))
+    fp.write("{0} 0 obj\n".format(obj).encode('latin_1', errors='replace')
     if dict:
-        fp.write("<<\n")
+        fp.write(b"<<\n")
         for k, v in dict.items():
             if v is not None:
-                fp.write("/{0} {1}\n".format(k, v))
-        fp.write(">>\n")
+                fp.write("/{0} {1}\n".format(k, v).encode('latin_1',
+                    errors='replace')
+        fp.write(b">>\n")
 
 def _endobj(fp):
-    fp.write("endobj\n")
+    fp.write(b"endobj\n")
 
 ##
 # (Internal) Image save plugin for the PDF format.
@@ -62,8 +63,9 @@ def _save(im, fp, filename):
 
     xref = [0]*(5+1) # placeholders
 
-    fp.write("%PDF-1.2\n")
-    fp.write("% created by PIL PDF driver " + __version__ + "\n")
+    fp.write(b"%PDF-1.2\n")
+    fp.write(("% created by PIL PDF driver " + __version__ + "\n").encode(
+        'latin_1', errors='replace'))
 
     #
     # Get image characteristics
@@ -92,9 +94,9 @@ def _save(im, fp, filename):
         colorspace = "[ /Indexed /DeviceRGB 255 <"
         palette = im.im.getpalette("RGB")
         for i in range(256):
-            r = ord(palette[i*3])
-            g = ord(palette[i*3+1])
-            b = ord(palette[i*3+2])
+            r = palette[i*3]
+            g = palette[i*3+1]
+            b = palette[i*3+2]
             colorspace = colorspace + "{0:02x}{1:02x}{2:02x} ".format(r, g, b)
         colorspace = colorspace + "> ]"
         procset = "/ImageI" # indexed color
@@ -113,23 +115,20 @@ def _save(im, fp, filename):
     # catalogue
 
     xref[1] = fp.tell()
-    _obj(fp, 1, Type = "/Catalog",
-                Pages = "2 0 R")
+    _obj(fp, 1, Type="/Catalog", Pages="2 0 R")
     _endobj(fp)
 
     #
     # pages
 
     xref[2] = fp.tell()
-    _obj(fp, 2, Type = "/Pages",
-                Count = 1,
-                Kids = "[4 0 R]")
+    _obj(fp, 2, Type="/Pages", Count=1, Kids="[4 0 R]")
     _endobj(fp)
 
     #
     # image
 
-    op = StringIO.StringIO()
+    op = io.BytesIO() # StringIO.StringIO()
 
     if filter == "/ASCIIHexDecode":
         if bits == 1:
@@ -159,9 +158,9 @@ def _save(im, fp, filename):
                 DecodeParams = params,
                 ColorSpace = colorspace)
 
-    fp.write("stream\n")
+    fp.write(b"stream\n")
     fp.write(op.getvalue())
-    fp.write("\nendstream\n")
+    fp.write(b"\nendstream\n")
 
     _endobj(fp)
 
@@ -170,44 +169,49 @@ def _save(im, fp, filename):
 
     xref[4] = fp.tell()
     _obj(fp, 4)
-    fp.write("<<\n"\
-             "/Type /Page\n"\
-             "/Parent 2 0 R\n"\
-             "/Resources <<\n"\
-             "/ProcSet [ /PDF {0} ]\n"\
-             "/XObject << /image 3 0 R >>\n"\
-             ">>\n"\
-             "/MediaBox [ 0 0 {1} {2} ]\n"\
-             "/Contents 5 0 R\n"\
-             ">>\n".format(procset, int(width*72.0/resolution),
-                 int(height*72.0/resolution)))
+    fp.write(("<<\n"\
+              "/Type /Page\n"\
+              "/Parent 2 0 R\n"\
+              "/Resources <<\n"\
+              "/ProcSet [ /PDF {0} ]\n"\
+              "/XObject << /image 3 0 R >>\n"\
+              ">>\n"\
+              "/MediaBox [ 0 0 {1} {2} ]\n"\
+              "/Contents 5 0 R\n"\
+              ">>\n".format(procset, int(width*72.0/resolution),
+                  int(height*72.0/resolution))).encode('latin_1',
+                      errors='replace'))
     _endobj(fp)
 
     #
     # page contents
 
-    op = StringIO.StringIO()
+    op = io.BytesIO() # StringIO.StringIO()
 
     op.write("q {0} 0 0 {1} 0 0 cm /image Do Q\n".format(
-        int(width*72.0/resolution), int(height*72.0/resolution)))
+        int(width*72.0/resolution), int(height*72.0/resolution)).encode(
+            'latin_1', errors='replace'))
 
     xref[5] = fp.tell()
-    _obj(fp, 5, Length = len(op.getvalue()))
+    _obj(fp, 5, Length=len(op.getvalue()))
 
-    fp.write("stream\n")
+    fp.write(b"stream\n")
     fp.write(op.getvalue())
-    fp.write("\nendstream\n")
+    fp.write(b"\nendstream\n")
 
     _endobj(fp)
 
     #
     # trailer
     startxref = fp.tell()
-    fp.write("xref\n0 {0}\n0000000000 65535 f \n".format(len(xref)))
+    fp.write("xref\n0 {0}\n0000000000 65535 f \n".format(len(xref)).encode('latin_1',
+        errors='replace'))
     for x in xref[1:]:
-        fp.write("{0:010d} 00000 n \n".format(x))
-    fp.write("trailer\n<<\n/Size {0}\n/Root 1 0 R\n>>\n".format(len(xref)))
-    fp.write("startxref\n{0}\n%%EOF\n".format(startxref))
+        fp.write("{0:010d} 00000 n \n".format(x).encode('latin_1', errors='replace'))
+    fp.write("trailer\n<<\n/Size {0}\n/Root 1 0 R\n>>\n".format(len(xref)).encode(
+        'latin_1', errors='replace'))
+    fp.write("startxref\n{0}\n%%EOF\n".format(startxref).encode('latin_1',
+        errors='replace'))
     fp.flush()
 
 #
