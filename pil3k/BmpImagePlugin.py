@@ -37,10 +37,10 @@ import ImagePalette # from pil3k
 # Read BMP file
 
 def i16(c):
-    return ord(c[0]) + (ord(c[1])<<8)
+    return c[0] + (c[1]<<8)
 
 def i32(c):
-    return ord(c[0]) + (ord(c[1])<<8) + (ord(c[2])<<16) + (ord(c[3])<<24)
+    return c[0] + (c[1]<<8) + (c[2]<<16) + (c[3]<<24)
 
 
 BIT2MODE = {
@@ -54,7 +54,7 @@ BIT2MODE = {
 }
 
 def _accept(prefix):
-    return prefix[:2] == "BM"
+    return prefix[:2] == b"BM"
 
 ##
 # Image plugin for the Windows BMP format.
@@ -94,7 +94,7 @@ class BmpImageFile(ImageFile.ImageFile):
             lutsize = 4
             colors = i32(s[32:])
             direction = -1
-            if s[11] == '\xff':
+            if s[11] == b'\xff':
                 # upside-down storage
                 self.size = self.size[0], 2**32 - self.size[1]
                 direction = 0
@@ -162,7 +162,7 @@ class BmpImageFile(ImageFile.ImageFile):
 
         # HEAD
         s = self.fp.read(14)
-        if s[:2] != "BM":
+        if s[:2] != b"BM":
             raise SyntaxError("Not a BMP file")
         offset = i32(s[10:])
 
@@ -210,7 +210,7 @@ def _save(im, fp, filename, check=0):
     image  = stride * im.size[1]
 
     # bitmap header
-    fp.write("BM" +                     # file type (magic)
+    fp.write(b"BM" +                    # file type (magic)
              o32(offset+image) +        # file size
              o32(0) +                   # reserved
              o32(offset))               # image data offset
@@ -227,14 +227,14 @@ def _save(im, fp, filename, check=0):
              o32(colors) +              # colors used
              o32(colors))               # colors important
 
-    fp.write("\000" * (header - 40))    # padding (for OS/2 format)
+    fp.write(b"\x00\x00\x00" * (header - 40))    # padding (for OS/2 format)
 
     if im.mode == "1":
         for i in (0, 255):
-            fp.write(chr(i) * 4)
+            fp.write(bytes((i,)*4))
     elif im.mode == "L":
         for i in range(256):
-            fp.write(chr(i) * 4)
+            fp.write(bytes((i,)*4))
     elif im.mode == "P":
         fp.write(im.im.getpalette("RGB", "BGRX"))
 
