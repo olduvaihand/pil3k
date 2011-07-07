@@ -26,10 +26,10 @@ import ImageFile # from pil3k
 
 
 def i16(c):
-    return ord(c[1]) + (ord(c[0])<<8)
+    return c[1] + (c[0]<<8)
 
 def i32(c):
-    return ord(c[3]) + (ord(c[2])<<8) + (ord(c[1])<<16) + (ord(c[0])<<24)
+    return c[3] + (c[2]<<8) + (c[1]<<16) + (c[0]<<24)
 
 
 def _accept(prefix):
@@ -51,10 +51,10 @@ class SgiImageFile(ImageFile.ImageFile):
             raise SyntaxError("not an SGI image file")
 
         # relevant header entries
-        compression = ord(s[2])
+        compression = s[2]
 
         # bytes, dimension, zsize
-        layout = ord(s[3]), i16(s[4:]), i16(s[10:])
+        layout = s[3], i16(s[4:]), i16(s[10:])
 
         # determine mode from bytes/zsize
         if layout == (1, 2, 1) or layout == (1, 1, 1):
