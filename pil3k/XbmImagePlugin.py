@@ -28,17 +28,17 @@ import ImageFile # from pil3k
 
 # XBM header
 xbm_head = re.compile(
-    r"\s*#define[ \t]+[^_]*_width[ \t]+(?P<width>[0-9]+)[\r\n]+"
-    r"#define[ \t]+[^_]*_height[ \t]+(?P<height>[0-9]+)[\r\n]+"
-    r"(?P<hotspot>"
-    r"#define[ \t]+[^_]*_x_hot[ \t]+(?P<xhot>[0-9]+)[\r\n]+"
-    r"#define[ \t]+[^_]*_y_hot[ \t]+(?P<yhot>[0-9]+)[\r\n]+"
-    r")?"
-    r"[\\000-\\377]*_bits\\[\\]"
+    br"\s*#define[ \t]+[^_]*_width[ \t]+(?P<width>[0-9]+)[\r\n]+"
+    br"#define[ \t]+[^_]*_height[ \t]+(?P<height>[0-9]+)[\r\n]+"
+    br"(?P<hotspot>"
+    br"#define[ \t]+[^_]*_x_hot[ \t]+(?P<xhot>[0-9]+)[\r\n]+"
+    br"#define[ \t]+[^_]*_y_hot[ \t]+(?P<yhot>[0-9]+)[\r\n]+"
+    br")?"
+    br"[\\000-\\377]*_bits\\[\\]"
 )
 
 def _accept(prefix):
-    return prefix.lstrip()[:7] == "#define"
+    return prefix.lstrip()[:7] == b"#define"
 
 ##
 # Image plugin for X11 bitmaps.
@@ -73,19 +73,23 @@ def _save(im, fp, filename):
     if im.mode != "1":
         raise IOError("cannot write mode {0} as XBM".format(im.mode))
 
-    fp.write("#define im_width {0}\n".format(im.size[0]))
-    fp.write("#define im_height {0}\n".format(im.size[1]))
+    data = []
+
+    data.append("#define im_width {0}\n".format(im.size[0]))
+    data.append("#define im_height {0}\n".format(im.size[1]))
 
     hotspot = im.encoderinfo.get("hotspot")
     if hotspot:
-        fp.write("#define im_x_hot {0}\n".format(hotspot[0]))
-        fp.write("#define im_y_hot {0}\n".format(hotspot[1]))
+        data.append("#define im_x_hot {0}\n".format(hotspot[0]))
+        data.append("#define im_y_hot {0}\n".format(hotspot[1]))
 
-    fp.write("static char im_bits[] = {\n")
+    data.append("static char im_bits[] = {\n")
+
+    data = ''.join(data).encode('latin_1', errors='replace')
 
     ImageFile._save(im, fp, [("xbm", (0,0)+im.size, 0, None)])
 
-    fp.write("};\n")
+    fp.write(b"};\n")
 
 
 Image.register_open("XBM", XbmImageFile, _accept)
