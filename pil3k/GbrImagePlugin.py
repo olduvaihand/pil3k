@@ -17,7 +17,7 @@ import Image # from pil3k
 import ImageFile # from pil3k
 
 def i32(c):
-    return ord(c[3]) + (ord(c[2])<<8) + (ord(c[1])<<16) + (ord(c[0])<<24)
+    return c[3] + (c[2]<<8) + (c[1]<<16) + (c[0]<<24)
 
 def _accept(prefix):
     return i32(prefix) >= 20 and i32(prefix[4:8]) == 1
@@ -61,7 +61,7 @@ class GbrImageFile(ImageFile.ImageFile):
         # create an image out of the brush data block
         self.im = Image.core.new(self.mode, self.size)
         self.im.fromstring(self.data)
-        self.data = ""
+        self.data = d""
 
 #
 # registry
