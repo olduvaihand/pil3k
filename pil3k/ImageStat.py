@@ -55,12 +55,14 @@ class Stat(object):
                 self.h = image_or_list.histogram()
         except AttributeError:
             self.h = image_or_list # assume it to be a histogram list
-        if type(self.h) != type([]):
+        if isinstance(self.h, list): # type(self.h) != type([]):
             raise TypeError("first argument must be image or list")
         self.bands = range(len(self.h) // 256)
 
     def __getattr__(self, id):
         "Calculate missing attribute"
+
+        # FIXME? what type is id? str or bytes?
         if id[:4] == "_get":
             raise AttributeError(id)
         # calculate missing attribute
