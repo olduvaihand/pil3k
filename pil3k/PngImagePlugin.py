@@ -536,7 +536,7 @@ def _save(im, fp, filename, chunk=putchunk, check=0):
     if "transparency" in im.encoderinfo:
         if im.mode == "P":
             transparency = max(0, min(255, im.encoderinfo["transparency"]))
-            chunk(fp, b"tRNS", bytes(('x\ff',)*transparency + (b'\x00',))
+            chunk(fp, b"tRNS", b'\xff'*transparency + b'\x00')
         elif im.mode == "L":
             transparency = max(0, min(65535, im.encoderinfo["transparency"]))
             chunk(fp, b"tRNS", o16(transparency))
