@@ -188,7 +188,7 @@ try:
     byteorder = sys.byteorder
 except AttributeError:
     import struct
-    if struct.unpack("h", b"\0\1")[0] == 1:
+    if struct.unpack("h", b"\x00\x01")[0] == 1:
         byteorder = "big"
     else:
         byteorder = "little"
@@ -553,7 +553,7 @@ class Image(object):
         if s < 0:
             raise RuntimeError("encoder error {0} in tostring".format(s))
 
-        return ''.join(data)
+        return b''.join(data)
 
     ##
     # Returns the image converted to an X11 bitmap.  This method
@@ -574,7 +574,8 @@ class Image(object):
                "#define {name}_height {size[1]}\n"\
                "static char {name}_bits[] = {{\n"\
                "{data}"\
-               "}};".format(name=name, size=self.size, data=data)
+               "}};".format(name=name, size=self.size, data=data).encode(
+                       'latin_1', errors='replace')
 
     ##
     # Loads this image with pixel data from a string.
@@ -670,8 +671,8 @@ class Image(object):
     #    Defaults to 256.
     # @return An Image object.
 
-    def convert(self, mode=None, data=None, dither=None,
-                palette=WEB, colors=256):
+    def convert(self, mode=None, data=None, dither=None, palette=WEB,
+            colors=256):
         "Convert to other pixel format"
 
         if not mode:
@@ -969,7 +970,7 @@ class Image(object):
 
         self.load()
         x, y = self.im.getprojection()
-        return map(ord, x), map(ord, y)
+        return map(int, x), map(int, y)
 
     ##
     # Returns a histogram for the image. The histogram is returned as
@@ -1244,7 +1245,8 @@ class Image(object):
             palette = ImagePalette.raw(data.rawmode, data.palette)
         else:
             if not isStringType(data):
-                data = ''.join(map(chr, data))
+                #data = ''.join(map(chr, data))
+                data = b''.join(bytes(data))
             palette = ImagePalette.raw(rawmode, data)
         self.mode = "P"
         self.palette = palette
@@ -1628,8 +1630,8 @@ class Image(object):
 
         return im
 
-    def __transformer(self, box, image, method, data,
-                      resample=NEAREST, fill=1):
+    def __transformer(self, box, image, method, data, resample=NEAREST,
+            fill=1):
 
         # FIXME: this should be turned into a lazy operation (?)
 
