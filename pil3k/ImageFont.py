@@ -99,13 +99,13 @@ class ImageFont(object):
     def _load_pilfont_data(self, file, image):
 
         # read PILfont header
-        if file.readline() != "PILfont\n":
+        if file.readline() != b"PILfont\n":
             raise SyntaxError("Not a PILfont file")
-        d = file.readline().split(";")
+        d = file.readline().split(b";")
         self.info = [] # FIXME: should be a dictionary
         while True:
             s = file.readline()
-            if not s or s == "DATA\n":
+            if not s or s == b"DATA\n":
                 break
             self.info.append(s)
 
@@ -261,7 +261,7 @@ def load_default():
     f = ImageFont()
     f._load_pilfont_data(
          # courB08
-         BytesIO(base64.decodestring('''
+         BytesIO(base64.decodebytes(b'''
 UElMZm9udAo7Ozs7OzsxMDsKREFUQQoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -353,7 +353,7 @@ AJsAEQAGAAAAAP/6AAX//wCbAAoAoAAPAAYAAAAA//oABQABAKAACgClABEABgAA////+AAGAAAA
 pQAKAKwAEgAGAAD////4AAYAAACsAAoAswASAAYAAP////gABgAAALMACgC6ABIABgAA////+QAG
 AAAAugAKAMEAEQAGAAD////4AAYAAgDBAAoAyAAUAAYAAP////kABQACAMgACgDOABMABgAA////
 +QAGAAIAzgAKANUAEw==
-''')), Image.open(BytesIO(base64.decodestring('''
+''')), Image.open(BytesIO(base64.decodebytes(b'''
 iVBORw0KGgoAAAANSUhEUgAAAx4AAAAUAQAAAAArMtZoAAAEwElEQVR4nABlAJr/AHVE4czCI/4u
 Mc4b7vuds/xzjz5/3/7u/n9vMe7vnfH/9++vPn/xyf5zhxzjt8GHw8+2d83u8x27199/nxuQ6Od9
 M43/5z2I+9n9ZtmDBwMQECDRQw/eQIQohJXxpBCNVE6QCCAAAAD//wBlAJr/AgALyj1t/wINwq0g
