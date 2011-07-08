@@ -941,7 +941,7 @@ class Image(object):
 
         self.load()
         try:
-            return map(ord, self.im.getpalette())
+            return map(int, self.im.getpalette())
         except ValueError:
             return None # no palette
 
