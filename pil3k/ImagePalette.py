@@ -80,13 +80,15 @@ class ImagePalette(object):
             raise ValueError("palette contains raw palette data")
         if type(fp) == type(""):
             fp = open(fp, "w")
-        fp.write("# Palette\n")
-        fp.write("# Mode: {0}\n".format(self.mode))
+        fp.write(b"# Palette\n")
+        fp.write("# Mode: {0}\n".format(self.mode).encode('latin_1',
+            errors='replace'))
         for i in range(256):
-            fp.write("{0}".format(i))
+            fp.write("{0}".format(i).encode('latin_1', errors='replace'))
             for j in range(i, len(self.palette), 256):
-                fp.write(" {0}".format(self.palette[j]))
-            fp.write("\n")
+                fp.write(" {0}".format(self.palette[j]).encode('latin_1',
+                    errors='replace'))
+            fp.write(b"\n")
         fp.close()
 
 # --------------------------------------------------------------------
