@@ -1981,18 +1981,11 @@ def open(fp, mode="r"):
 
     prefix = fp.read(16)
 
-    print('Read: {0}'.format(prefix[:6]))
-    print('About to call preinit')
-
     preinit()
 
-    print('preinit successful')
-
     for i in ID:
-        print('post preinit testing i={0}'.format(i))
         try:
             factory, accept = OPEN[i]
-            print(accept, accept(prefix))
             if not accept or accept(prefix):
                 fp.seek(0)
                 return factory(fp, filename)
@@ -2001,10 +1994,8 @@ def open(fp, mode="r"):
             raise
 
     if init():
-        print('init was true')
 
         for i in ID:
-            print('post init: testing i={0}'.format(i))
             try:
                 factory, accept = OPEN[i]
                 if not accept or accept(prefix):
