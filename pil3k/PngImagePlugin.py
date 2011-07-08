@@ -194,10 +194,10 @@ class PngStream(ChunkStream):
         # Null separator        1 byte (null character)
         # Compression method    1 byte (0)
         # Compressed profile    n bytes (zlib with deflate compression)
-        i = s.find(b'x\00'))
+        i = s.find(b'x\00')
         if Image.DEBUG:
             print("iCCP profile name", s[:i])
-            print("Compression method", ord(s[i]))
+            print("Compression method", s[i])
         comp_method = s[i]
         if comp_method != 0:
             raise SyntaxError("Unknown compression method {0} in iCCP "
