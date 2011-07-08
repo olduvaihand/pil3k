@@ -188,7 +188,7 @@ class ImageFile(Image.Image):
                 # FIXME: This is a hack to handle TIFF's JpegTables tag.
                 prefix = self.tile_prefix
             except AttributeError:
-                prefix = ""
+                prefix = b""
 
             for d, e, o, a in self.tile:
                 d = Image._getdecoder(self.mode, d, a, self.decoderconfig)
@@ -319,13 +319,13 @@ class _ParserFile(object):
 
     def readline(self):
         # FIXME: this is slow!
-        s = ""
+        s = b""
         while True:
             c = self.read(1)
             if not c:
                 break
             s = s + c
-            if c == "\n":
+            if c == b"\n":
                 break
         return s
 
@@ -443,7 +443,7 @@ class Parser(object):
         # finish decoding
         if self.decoder:
             # get rid of what's left in the buffers
-            self.feed("")
+            self.feed(b"")
             self.data = self.decoder = None
             if not self.finished:
                 raise IOError("image was incomplete")
@@ -522,7 +522,7 @@ def _save(im, fp, tile):
 
 def _safe_read(fp, size):
     if size <= 0:
-        return ""
+        return b""
     if size <= SAFEBLOCK:
         return fp.read(size)
     data = []
@@ -532,4 +532,4 @@ def _safe_read(fp, size):
             break
         data.append(block)
         size = size - len(block)
-    return "".join(data)
+    return b"".join(data)
