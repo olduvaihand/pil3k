@@ -115,7 +115,7 @@ class ChunkStream(object):
 
         if Image.DEBUG:
             print("STREAM", cid, pos, len)
-        return getattr(self, "chunk_" + cid)(pos, len)
+        return getattr(self, "chunk_" + cid.decode())(pos, len)
 
     def crc(self, cid, data):
         "Read and verify checksum"
