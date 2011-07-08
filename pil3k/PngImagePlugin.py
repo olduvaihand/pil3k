@@ -524,11 +524,11 @@ def _save(im, fp, filename, chunk=putchunk, check=0):
     fp.write(_MAGIC)
 
     chunk(fp, b"IHDR",
-          o32(im.size[0]), o32(im.size[1]),         #  0: size
-          mode.encode('latin_1', errors='replace'), #  8: depth/type
-          b'\x00',                                  # 10: compression
-          b'\x00',                                  # 11: filter category
-          b'\x00')                                  # 12: interlace flag
+          o32(im.size[0]), o32(im.size[1]), #  0: size
+          mode,                             #  8: depth/type
+          b'\x00',                          # 10: compression
+          b'\x00',                          # 11: filter category
+          b'\x00')                          # 12: interlace flag
 
     if im.mode == "P":
         chunk(fp, b"PLTE", im.im.getpalette("RGB"))
