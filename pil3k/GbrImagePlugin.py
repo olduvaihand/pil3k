@@ -61,7 +61,7 @@ class GbrImageFile(ImageFile.ImageFile):
         # create an image out of the brush data block
         self.im = Image.core.new(self.mode, self.size)
         self.im.fromstring(self.data)
-        self.data = d""
+        self.data = b""
 
 #
 # registry
