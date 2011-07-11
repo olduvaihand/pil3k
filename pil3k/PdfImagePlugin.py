@@ -39,13 +39,13 @@ import io # StringIO
 #  5. page contents
 
 def _obj(fp, obj, **dict):
-    fp.write("{0} 0 obj\n".format(obj).encode('latin_1', errors='replace')
+    fp.write("{0} 0 obj\n".format(obj).encode('latin_1', errors='replace'))
     if dict:
         fp.write(b"<<\n")
         for k, v in dict.items():
             if v is not None:
                 fp.write("/{0} {1}\n".format(k, v).encode('latin_1',
-                    errors='replace')
+                    errors='replace'))
         fp.write(b">>\n")
 
 def _endobj(fp):
@@ -64,7 +64,7 @@ def _save(im, fp, filename):
     xref = [0]*(5+1) # placeholders
 
     fp.write(b"%PDF-1.2\n")
-    fp.write(("% created by PIL PDF driver " + __version__ + "\n").encode(
+    fp.write(("% created by PIL PDF driver " + __version__ + "\n".encode(
         'latin_1', errors='replace'))
 
     #
