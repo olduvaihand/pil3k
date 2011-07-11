@@ -92,13 +92,13 @@ def testimage():
     2
     >>> len(im.histogram())
     768
-    >>> _info(im.point(range(256)*3))
+    >>> _info(im.point(tuple(range(256))*3))
     (None, 'RGB', (128, 128))
     >>> _info(im.resize((64, 64)))
     (None, 'RGB', (64, 64))
     >>> _info(im.rotate(45))
     (None, 'RGB', (128, 128))
-    >>> map(_info, im.split())
+    >>> list(map(_info, im.split()))
     [(None, 'L', (128, 128)), (None, 'L', (128, 128)), (None, 'L', (128, 128))]
     >>> len(im.convert("1").tobitmap())
     10456
