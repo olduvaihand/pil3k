@@ -24,11 +24,10 @@ import ImageFile # from pil3k
 import ImagePalette # from pil3k
 
 # standard color palette for thumbnails (RGB332)
-PALETTE = b""
-for r in range(8):
-    for g in range(8):
-        for b in range(4):
-            PALETTE = PALETTE + bytes(((r*255)//7, (g*255)//7, (g*255)//3))
+PALETTE = b''.join(
+    bytes(((r*255)//7, (g*255)//7, (b*255)//3))
+        for r in range(8) for g in range(8) for b in range(4)
+)
 
 ##
 # Image plugin for XV thumbnail images.
