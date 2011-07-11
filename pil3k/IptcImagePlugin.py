@@ -43,7 +43,7 @@ def i32(c):
     return c[3] + (c[2]<<8) + (c[1]<<16) + (c[0]<<24)
 
 def i(c):
-    return i32((PAD + bytes((c,))[-4:])
+    return i32((PAD + bytes((c,))[-4:]))
 
 def dump(c):
     for i in c:
