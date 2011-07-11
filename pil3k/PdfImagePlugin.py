@@ -64,7 +64,7 @@ def _save(im, fp, filename):
     xref = [0]*(5+1) # placeholders
 
     fp.write(b"%PDF-1.2\n")
-    fp.write(("% created by PIL PDF driver " + __version__ + "\n".encode(
+    fp.write("% created by PIL PDF driver " + __version__ + "\n".encode(
         'latin_1', errors='replace'))
 
     #
