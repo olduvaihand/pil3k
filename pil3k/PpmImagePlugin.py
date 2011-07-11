@@ -27,15 +27,15 @@ import ImageFile # from pil3k
 
 MODES = {
     # standard
-    "P4": "1",
-    "P5": "L",
-    "P6": "RGB",
+    b"P4": "1",
+    b"P5": "L",
+    b"P6": "RGB",
     # extensions
-    "P0CMYK": "CMYK",
+    b"P0CMYK": "CMYK",
     # PIL extensions (for test purposes only)
-    "PyP": "P",
-    "PyRGBA": "RGBA",
-    "PyCMYK": "CMYK"
+    b"PyP": "P",
+    b"PyRGBA": "RGBA",
+    b"PyCMYK": "CMYK"
 }
 
 def _accept(prefix):
@@ -52,7 +52,7 @@ class PpmImageFile(ImageFile.ImageFile):
     def _token(self, s=b""):
         while True: # read until next whitespace
             c = self.fp.read(1)
-            if not c or c in string.whitespace:
+            if not c or c in string.whitespace.encode('latin_1'):
                 break
             s = s + c
         return s
