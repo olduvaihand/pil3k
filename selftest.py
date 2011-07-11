@@ -64,7 +64,7 @@ def testimage():
     None
     >>> a = im.load()
     >>> type(im.im)
-    <type 'ImagingCore'>
+    <class 'ImagingCore'>
 
     You can apply many different operations on images.  Most
     operations return a new image:
