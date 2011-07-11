@@ -31,7 +31,7 @@ def i16(c):
     return c[0] + (c[1]<<8)
 
 def i32(c):
-    return c[0]) + (c[1]<<8) + (c[2]<<16) + (c[3]<<24)
+    return c[0] + (c[1]<<8) + (c[2]<<16) + (c[3]<<24)
 
 ##
 # Image plugin for PIXAR raster images.
