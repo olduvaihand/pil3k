@@ -3354,6 +3354,8 @@ static struct PyModuleDef moduledef = {
     NULL                    /* m_free */
 };
 
+static int module_initialized = 0;
+
 PyMODINIT_FUNC
 PyInit__imaging(void)
 {
@@ -3382,7 +3384,10 @@ PyInit__imaging(void)
     if (PyType_Ready(&PixelAccess_Type) < 0)
         return NULL;
 
-    ImagingAccessInit();
+    if (!module_initialized) {
+        module_initialized++;
+        ImagingAccessInit();
+    }
 
     dict = PyModule_GetDict(module);
 

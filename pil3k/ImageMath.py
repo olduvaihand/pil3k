@@ -210,9 +210,10 @@ def imagemath_convert(self, mode):
     return _Operand(self.im.convert(mode))
 
 ops = {}
-for k, v in globals().items():
-    if k[:10] == "imagemath_":
-        ops[k[10:]] = v
+for k, v in [i for i in globals().items() if i[0][:10] == 'imagemath_']:
+#for k, v in globals().items():
+    #if k[:10] == "imagemath_":
+    ops[k[10:]] = v
 
 ##
 # Evaluates an image expression.
