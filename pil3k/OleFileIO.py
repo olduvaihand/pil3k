@@ -96,10 +96,10 @@ VT_VECTOR=0x1000;
 
 # map property id to name (for debugging purposes)
 
-VT = {}
-for k, v in vars().items():
-    if k[:3] == "VT_":
-        VT[v] = k
+VT = {v: k for k, v in vars().items() if k[:3] == 'VT_'}
+#for k, v in vars().items():
+#    if k[:3] == "VT_":
+#        VT[v] = k
 
 #
 # --------------------------------------------------------------------
