@@ -425,15 +425,15 @@ class ImageFileDirectory(object):
 
             if typ == 1:
                 # byte data
-                data = value = b''.join(bytes, value))
+                data = value = b''.join(bytes, value)
             elif typ == 7:
                 # untyped data
-                data = value = ''.join(value).encode('latin_1', errors='replace'))
+                data = value = ''.join(value).encode('latin_1', errors='replace')
             elif type(value[0]) is str:
                 # string data
                 typ = 2
                 data = value = '\x00'.join(value).encode(
-                        'latin_1', errors='replace')) + b'\x00'
+                        'latin_1', errors='replace') + b'\x00'
             else:
                 # integer data
                 if tag == STRIPOFFSETS:
