@@ -24,7 +24,7 @@ HEADERSIZE = 8
 def nextheader(fobj):
     return struct.unpack('>4sI', fobj.read(HEADERSIZE))
 
-def read_32t(fobj, (start, length), (width, height)):
+def read_32t(fobj, start, length, width, height):
     # The 128x128 icon seems to have an extra header for some reason.
     fobj.seek(start)
     sig = fobj.read(4)
@@ -32,7 +32,7 @@ def read_32t(fobj, (start, length), (width, height)):
         raise SyntaxError('Unknown signature, expecting 0x00000000')
     return read_32(fobj, (start + 4, length - 4), (width, height))
 
-def read_32(fobj, (start, length), size):
+def read_32(fobj, start, length, size):
     """
     Read a 32bit RGB icon resource.  Seems to be either uncompressed or
     an RLE packbits-like scheme.
@@ -75,7 +75,7 @@ def read_32(fobj, (start, length), size):
             im.im.putband(band.im, band_ix)
     return {"RGB": im}
 
-def read_mk(fobj, (start, length), size):
+def read_mk(fobj, start, length, size):
     # Alpha masks seem to be uncompressed
     fobj.seek(start)
     band = Image.frombuffer(
@@ -148,7 +148,7 @@ class IcnsFile(object):
         for code, reader in self.SIZES[size]:
             desc = self.dct.get(code)
             if desc is not None:
-                dct.update(reader(self.fobj, desc, size))
+                dct.update(reader(self.fobj, desc[0], desc[1], size[0], size[1]))
         return dct
 
     def getimage(self, size=None):
