@@ -84,9 +84,9 @@ def build_prototype_image():
     image.putdata(range(len(_Palm8BitColormapValues)))
     palettedata = ()
     for i in range(len(_Palm8BitColormapValues)):
-        palettedata = palettedata + _Palm8BitColormapValues[i]
+        palettedata += _Palm8BitColormapValues[i]
     for i in range(256 - len(_Palm8BitColormapValues)):
-        palettedata = palettedata + (0, 0, 0)
+        palettedata += (0, 0, 0)
     image.putpalette(palettedata)
     return image
 
