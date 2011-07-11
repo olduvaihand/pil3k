@@ -5,10 +5,13 @@ ROOT = "."
 import os, sys
 sys.path.insert(0, ROOT)
 
-from pil3k import Image
-from pil3k import ImageDraw
-from pil3k import ImageFilter
-from pil3k import ImageMath
+import site
+site.addsitedir('/home/olduvaihand/code/PIL3k/pil3k')
+
+import Image
+import ImageDraw
+import ImageFilter
+import ImageMath
 
 try:
     Image.core.ping
