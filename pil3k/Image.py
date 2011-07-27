@@ -1246,7 +1246,8 @@ class Image(object):
         else:
             if not isStringType(data):
                 #data = ''.join(map(chr, data))
-                data = b''.join(bytes(data))
+                assert isinstance(data, tuple), '{0}'.format(data)
+                data = bytes(data)
             palette = ImagePalette.raw(rawmode, data)
         self.mode = "P"
         self.palette = palette

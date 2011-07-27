@@ -103,10 +103,11 @@ def add_directory(path, dir, where=None):
             path.insert(where, dir)
 
 def find_include_file(self, include):
+    print(self.compiler)
     for directory in self.compiler.include_dirs:
         if os.path.isfile(os.path.join(directory, include)):
-            return 1
-    return 0
+            return True
+    return False
 
 def find_library_file(self, library):
     return self.compiler.find_library_file(self.compiler.library_dirs, library)
@@ -195,7 +196,7 @@ class pil_build_ext(build_ext):
 
         for root in (TCL_ROOT, JPEG_ROOT, TCL_ROOT, TIFF_ROOT, ZLIB_ROOT,
                      FREETYPE_ROOT, LCMS_ROOT):
-            if isinstance(root, type(())):
+            if isinstance(root, tuple):
                 lib_root, include_root = root
             else:
                 lib_root = include_root = root
@@ -303,7 +304,7 @@ class pil_build_ext(build_ext):
             defs.append(("HAVE_LIBZ", None))
         if sys.platform == "win32":
             libs.extend(["kernel32", "user32", "gdi32"])
-        if struct.unpack("h", b"\0\1")[0] == 1:
+        if struct.unpack("h", b"\x00\x01")[0] == 1:
             defs.append(("WORDS_BIGENDIAN", None))
 
         exts = [(Extension(
